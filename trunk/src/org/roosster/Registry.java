@@ -35,6 +35,8 @@ import java.sql.Connection;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
+import org.roosster.util.MapperUtil;
+
 /**
  * <b>NOTE:</b> This class must always be thread-safe
  *
@@ -76,10 +78,12 @@ public class Registry
         conf = new Configuration(properties);
 
         try {
+            MapperUtil.getHomeDir();
+            
             callPlugins(PLUGIN_INIT);
             initialized = true;
         } catch (Exception ex) {
-            throw new InitializeException("Exception while initializing plugins", ex);
+            throw new InitializeException("Exception while initializing Registry", ex);
         }
     }
 

@@ -242,9 +242,23 @@ public class MapperUtil
             else
                 homeDir += homeDir.endsWith("/") ? DEF_HOMEDIR : "/"+DEF_HOMEDIR;
             
-            // check if homeDir exists, if not create it
-            
-            // TODO implement this
+            LOG.finest("Checking if "+homeDir+" exists, if not create it");
+            File dir = new File(homeDir);
+
+            if ( dir.exists() ) {
+                if ( !dir.isDirectory() ) {
+                    throw new IllegalArgumentException("Roosster home directory "+
+                                                       homeDir+" is not a directory");
+                }
+            } else {
+                LOG.info("Creating Roosster home directory at "+homeDir);
+                dir.mkdir();
+                
+                if ( !dir.exists() && !dir.isDirectory() )
+                    throw new IllegalStateException("Roosster home dir "+homeDir
+                                                   +" doesn't exist and can't be created");
+            }
+        
         }
 
         return homeDir;
