@@ -26,25 +26,23 @@
  */
 package org.roosster.input.processors;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Logger;
-import java.net.URL;
-import java.io.InputStream;
-import org.apache.commons.io.IOUtils;
+
 import org.roosster.store.Entry;
 import org.roosster.Registry;
 import org.roosster.InitializeException;
+import org.roosster.OperationException;
 import org.roosster.input.ContentTypeProcessor;
 import org.roosster.xml.*;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-
 /**
+ * TODO: Tries to determine, if the stream is a feed, and parses it, if this is the case.
+ * If not, it just indexes it.
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
@@ -52,9 +50,6 @@ public class XmlProcessor implements ContentTypeProcessor
 {
     private static Logger LOG = Logger.getLogger(XmlProcessor.class.getName());
 
-    private static final String ATOM_FEED = "feed";
-    private static final String RSS_FEED  = "rss";
-    private static final String RDF_FEED  = "rdf";
 
     /**
      *
@@ -89,43 +84,13 @@ public class XmlProcessor implements ContentTypeProcessor
             throw new IllegalArgumentException("No parameter is allowed to be null");
 
         try {
-            XmlPullParser parser          = null;
-            int           eventType       = 0;
-            String        currentTag      = null;
+            // TODO only use FeedParser if it's really a feed
 
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            factory.setNamespaceAware(false);
-            factory.setFeature("http://xmlpull.org/v1/doc/features.html#process-namespaces", false);
-
-            parser = factory.newPullParser();
-            parser.setInput(stream, encoding);
-            eventType    = parser.getEventType();
-
-            List entries = new ArrayList();
-            do {
-                currentTag = parser.getName();
-                
-                if ( eventType == XmlPullParser.START_TAG ) {
-                    LOG.finest("Processing Start-Tag of XML-document: "+currentTag);
-                    
-                    if ( ATOM_FEED.equals(currentTag) ) {
-                        AtomFeedParser atomParser = new AtomFeedParser(parser);
-                        entries.addAll( Arrays.asList(atomParser.parse()) );
-    
-                    } else if ( RSS_FEED.equals(currentTag) || currentTag.indexOf(RDF_FEED) > -1 ) {
-                        RssFeedParser rssParser = new RssFeedParser(parser);
-                        entries.addAll( Arrays.asList(rssParser.parse()) );
-    
-                    }
-                }
-
-                eventType = parser.next();
-            } while(eventType != XmlPullParser.END_DOCUMENT);
-
-            return (Entry[]) entries.toArray(new Entry[0]);
+            FeedParser parser = new FeedParser();
+            return parser.parse(url, stream, encoding);
 
         } catch(Exception ex) {
-            throw new Exception(ex);
+            throw new OperationException(ex);
         }
 
     }
