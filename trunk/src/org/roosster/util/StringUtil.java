@@ -84,7 +84,11 @@ public class StringUtil
     {
         try {
             if ( str != null && regex != null ) {
-                return str.split(regex);
+                String[] strings = str.split(regex);
+                for (int i = 0; i < strings.length; i++) {
+                    strings[i] = strings[i].trim();
+                }
+                return strings;
             }
         } catch (PatternSyntaxException ex) {
             LOG.log(Level.WARNING, "Exception while splitting string", ex);
@@ -106,12 +110,12 @@ public class StringUtil
         
         StringBuffer sb = new StringBuffer();
         for(int i = 0; i < strings.length; i++) {
-            sb.append(strings[i]);
+            sb.append(strings[i].trim());
             if ( i+1 < strings.length )
                 sb.append(joinStr);
         }
         
-        return sb.toString();
+        return sb.toString().trim();
     }
     
     /**

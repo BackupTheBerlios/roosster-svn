@@ -6,4 +6,4 @@
     ${props.get('internal.baseurl')}${url}
 #end
 
-#macro( join $strArray ) $stringutil.join($strArray, ",") #end
+#macro( join $strArray )$stringutil.join($strArray, ",") #end

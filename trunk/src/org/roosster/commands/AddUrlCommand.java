@@ -93,7 +93,8 @@ public class AddUrlCommand extends AbstractCommand implements Command
             store.addEntries(entries, force);
             
             output.addOutputMessage("Number of added Entries: "+entries.length);
-            output.setTemplateName("searchform.html");
+            output.addEntries(entries);
+            output.setTemplateName("entries.html");
         }
     }
 
