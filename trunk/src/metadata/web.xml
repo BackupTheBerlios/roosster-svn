@@ -2,21 +2,38 @@
 
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
+    <servlet>
+        <servlet-name>roosster</servlet-name>
+        <servlet-class>org.roosster.mappers.ServletMapper</servlet-class>
+        <!--
+        <init-param>
+           <param-name>roosster.properties</param-name>
+           <param-value>/WEB-INF/roosster.properties</param-value>
+        </init-param>
+        -->
+    </servlet>    
+    
+    <servlet>
+        <servlet-name>atomapi</servlet-name>
+        <servlet-class>org.roosster.mappers.AtomApiServletMapper</servlet-class>
+    </servlet>
   
-   <servlet>
-      <servlet-name>roosster</servlet-name>
-      <servlet-class>org.roosster.mappers.ServletMapper</servlet-class>
-   </servlet>
-  
-   <servlet-mapping>
-      <servlet-name>roosster</servlet-name>
-      <url-pattern>/roosster/*</url-pattern>
-   </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>roosster</servlet-name>
+        <url-pattern>/app/*</url-pattern>
+    </servlet-mapping>
    
-   <session-config>
-      <session-timeout>60</session-timeout>
-   </session-config>
+    <servlet-mapping>
+        <servlet-name>atomapi</servlet-name>
+        <url-pattern>/atom/*</url-pattern>
+    </servlet-mapping>
+   
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
 
-   <welcome-file>index.html</welcome-file>
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
    
 </web-app> 

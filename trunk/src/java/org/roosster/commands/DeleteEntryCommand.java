@@ -37,7 +37,6 @@ import org.roosster.Output;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: DeleteEntryCommand.java,v 1.1 2004/12/03 14:30:13 firstbman Exp $
  */
 public class DeleteEntryCommand extends AbstractCommand implements Command
 {
@@ -59,7 +58,6 @@ public class DeleteEntryCommand extends AbstractCommand implements Command
         int numDeleted = store.deleteEntry( new URL(url) );
 
         output.addOutputMessage("Deleted "+numDeleted+" entry with URL "+url);
-        output.setTemplateName("searchform.html");
     }
 
 

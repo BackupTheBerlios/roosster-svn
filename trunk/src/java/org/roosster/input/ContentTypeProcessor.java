@@ -38,7 +38,6 @@ import org.roosster.Registry;
  * the URL's path.
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: ContentTypeProcessor.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 
 public interface ContentTypeProcessor

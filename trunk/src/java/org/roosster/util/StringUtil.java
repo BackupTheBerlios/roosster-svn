@@ -37,7 +37,6 @@ import org.roosster.Registry;
  * Class that provides basic String functions
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: StringUtil.java,v 1.1 2004/12/03 14:30:16 firstbman Exp $
  */
 public class StringUtil
 {

@@ -38,7 +38,7 @@ public interface Constants
     public static final String ATOM_NS          = "http://purl.org/atom/ns#";
     public static final String ATOM_DATEFORMAT  = "yyyy-MM-dd'T'HH:mm:ssZ";
 
-    public static final String APP_URI          = "http://www.rosster.org";
+    public static final String APP_URI          = "http://www.roosster.org";
     public static final String APP_NAME         = "roosster search";
 
     public static final String DEFAULT_ENC     = "ISO-8859-1";

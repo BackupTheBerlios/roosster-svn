@@ -47,7 +47,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: XmlProcessor.java,v 1.1 2004/12/03 14:30:16 firstbman Exp $
  */
 public class XmlProcessor implements ContentTypeProcessor
 {

@@ -39,7 +39,6 @@ import org.roosster.util.StringUtil;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: TextMode.java,v 1.1 2004/12/03 14:30:14 firstbman Exp $
  */
 public class TextMode implements OutputMode
 {

@@ -99,21 +99,13 @@ public class CliMapper
 
         Map cmdLine = MapperUtil.parseCommandLineArguments(arguments);
 
-        Registry registry = new Registry( MapperUtil.loadProperties(PROP_FILE, cmdLine) );
+        InputStream propInput = getClass().getResourceAsStream(PROP_FILE);
+        Registry registry = new Registry( MapperUtil.loadProperties(propInput, cmdLine) );
 
-        Dispatcher dispatcher = new Dispatcher(registry);
-
-        registry.preProcessRequest(cmdLine);
-            
-        Output output = dispatcher.run(commandName, cmdLine);
-
-        String outputMode = registry.getConfiguration()
-                                    .getProperty(MapperUtil.ARG_OUTPUTMODE, 
-                                                 DEF_OUTPUT_MODE);
-
-        registry.postProcessRequest(cmdLine, output);
+        String outputMode = registry.getConfiguration().getProperty(MapperUtil.ARG_OUTPUTMODE, 
+                                                                    DEF_OUTPUT_MODE);
         
-        output.output(outputMode, outputStream);
+        new Dispatcher(registry).run(commandName, cmdLine).output(outputMode, outputStream);
     }
 
 

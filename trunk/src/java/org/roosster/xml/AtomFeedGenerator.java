@@ -27,18 +27,21 @@
 package org.roosster.xml;
 
 import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.text.DateFormat;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.PrintWriter;
 import java.io.IOException;
-import org.roosster.store.Entry;
 import org.roosster.OperationException;
 import org.roosster.Registry;
 import org.roosster.Constants;
+import org.roosster.store.EntryList;
 
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-import org.xmlpull.v1.XmlSerializer;
+import com.sun.syndication.feed.atom.Feed;
+import com.sun.syndication.feed.atom.Entry;
+import com.sun.syndication.feed.atom.Content;
+import com.sun.syndication.feed.atom.Link;
+import com.sun.syndication.feed.atom.Person;
+import com.sun.syndication.io.WireFeedOutput; 
 
 
 /**
@@ -47,25 +50,19 @@ import org.xmlpull.v1.XmlSerializer;
  *
  * @see <a href="http://atompub.org/2004/10/20/draft-ietf-atompub-format-03.html">Atom Syndication Format Spec v0.3</a>
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: AtomFeedGenerator.java,v 1.1 2004/12/03 14:30:14 firstbman Exp $
  */
 public class AtomFeedGenerator
 {
-    public static final String ATOM_NS     = Constants.ATOM_NS;
-
-    public static final String DEF_GEN_URI = Constants.APP_URI;
-    public static final String DEF_GEN_TXT = Constants.APP_NAME;
+    public static final String ATOM_VERSION  = "0.3";
 
     public static final String DEF_TITLE   = Constants.APP_NAME +" feed";
     public static final String PROP_TITLE  = "output.atom.title";
 
-    private DateFormat df = new SimpleDateFormat(Constants.ATOM_DATEFORMAT);
-
-
+    
     /**
      * @param entries
      */
-    public void createFeed(Registry registry, PrintWriter stream, Entry[] entries)
+    public void createFeed(Registry registry, PrintWriter writer, EntryList entries)
                     throws OperationException
     {
         if ( entries == null )
@@ -73,49 +70,23 @@ public class AtomFeedGenerator
 
         try {
 
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance(null, null);
-            XmlSerializer serializer     = factory.newSerializer();
+            Feed feed = new Feed("atom_"+ ATOM_VERSION);
+            
+            feed.setTitle( registry.getConfiguration().getProperty(PROP_TITLE, DEF_TITLE) );
+            feed.setModified( entries.getLastModified() );
+            
+            // TODO add Generator
+            // TODO add <link rel="alternate"> with url of this invocation
 
-            serializer.setOutput(stream);
-
-            serializer.startDocument(null, null);
-            serializer.setPrefix("", ATOM_NS);
-
-            serializer.startTag(ATOM_NS, "feed").attribute(null, "version", "0.3");
-
-              serializer.startTag(ATOM_NS, "head");
-
-                serializer.startTag(ATOM_NS, "title");
-                serializer.text( registry.getConfiguration().getProperty(PROP_TITLE, DEF_TITLE) );
-                serializer.endTag(ATOM_NS, "title");
-
-                serializer.startTag(ATOM_NS, "generator");
-                serializer.attribute(null, "uri", DEF_GEN_URI).text(DEF_GEN_TXT);
-                serializer.endTag(ATOM_NS, "generator");
-
-                Date newest = null;
-                for(int i = 0; i < entries.length; i++) {
-                    if ( entries[i].getLastModified() != null &&
-                          (newest == null ||  newest.before(entries[i].getLastModified()) ) ) {
-                        newest = entries[i].getLastModified();
-                    }
-                }
-
-                serializer.startTag(ATOM_NS, "updated");
-                serializer.text(formatDate(newest));
-                serializer.endTag(ATOM_NS, "updated");
-
-                // TODO add <link rel="alternate"> with url of this invocation
-
-              serializer.endTag(ATOM_NS, "head");
-
-            for(int i = 0; i < entries.length; i++) {
-                writeEntry(serializer, entries[i]);
+            List atomEntries = new ArrayList();
+            for(int i = 0; i < entries.size(); i++) {
+                atomEntries.add( getEntry((org.roosster.store.Entry) entries.get(i)) );
             }
+            feed.setEntries(atomEntries);
 
-            serializer.endTag(ATOM_NS, "feed");
-            serializer.endDocument();
-
+            WireFeedOutput output = new WireFeedOutput();
+            output.output(feed, writer);
+            
         } catch(Exception ex) {
             throw new OperationException(ex);
         }
@@ -129,46 +100,39 @@ public class AtomFeedGenerator
     /**
      * TODO what about escaping content?
      */
-    private void writeEntry(XmlSerializer serializer, Entry entry)
-                     throws XmlPullParserException, IOException
+    private Entry getEntry(org.roosster.store.Entry entry)
     {
-        serializer.startTag(ATOM_NS, "entry");
+        Person author = new Person();
+        author.setName(entry.getAuthor());
+        author.setEmail(entry.getAuthorEmail());
+        
+        Link link = new Link();
+        link.setHref(entry.getUrl().toString());
+        link.setRel("alternate");
+        
+        List linkList = new ArrayList();
+        linkList.add(link);
 
-          serializer.startTag(ATOM_NS, "title");
-          serializer.text(entry.getTitle());
-          serializer.endTag(ATOM_NS, "title");
+        Content content = new Content();
+        content.setValue(entry.getContent());
+        content.setType(entry.getFileType());
+        
+        List contentList = new ArrayList();
+        contentList.add(content);
+        
+        // now create Atom Entry Element        
+        Entry atomEntry = new Entry();
+        
+        atomEntry.setTitle(entry.getTitle());
+        atomEntry.setAuthor(author);
+        atomEntry.setAlternateLinks(linkList);
+        
 
-          serializer.startTag(ATOM_NS, "author");
-          serializer.startTag(ATOM_NS, "name").text(entry.getAuthor()).endTag(ATOM_NS, "name");
-          serializer.startTag(ATOM_NS, "email").text(entry.getAuthorEmail()).endTag(ATOM_NS, "email");
-          serializer.endTag(ATOM_NS, "author");
-
-          serializer.startTag(ATOM_NS, "link");
-          serializer.attribute(null, "rel", "alternate");
-          serializer.attribute(null, "href", entry.getUrl()+"");
-          serializer.endTag(ATOM_NS, "link");
-
-          serializer.startTag(ATOM_NS, "published");
-          serializer.text(formatDate(entry.getIssued()));
-          serializer.endTag(ATOM_NS, "published");
-
-          serializer.startTag(ATOM_NS, "updated");
-          serializer.text(formatDate(entry.getLastModified()));
-          serializer.endTag(ATOM_NS, "updated");
-
-          serializer.startTag(ATOM_NS, "content");
-          serializer.text(entry.getContent());
-          serializer.endTag(ATOM_NS, "content");
-
-        serializer.endTag(ATOM_NS, "entry");
+        atomEntry.setCreated( entry.getIssued());
+        atomEntry.setModified( entry.getLastModified());
+        atomEntry.setContents(contentList);
+        
+        return atomEntry;
     }
 
-
-    /**
-     *
-     */
-    private String formatDate(Date date)
-    {
-        return date == null ? "" : df.format(date);
-    }
 }

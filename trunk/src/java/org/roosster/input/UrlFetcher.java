@@ -48,7 +48,6 @@ import org.roosster.store.Entry;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: UrlFetcher.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 public class UrlFetcher implements Plugin, Constants
 {
@@ -108,19 +107,6 @@ public class UrlFetcher implements Plugin, Constants
 
         }
     }
-
-
-    /**
-     * 
-     */
-    public void preProcess(Map requestArgs) throws OperationException
-    {}
-
-    
-    /**
-     */
-    public void postProcess(Map requestArgs, Output output) throws OperationException
-    {}
 
 
     /**

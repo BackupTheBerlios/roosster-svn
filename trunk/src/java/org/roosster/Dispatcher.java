@@ -41,7 +41,6 @@ import org.roosster.commands.CommandNotFoundException;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: Dispatcher.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 public class Dispatcher
 {
@@ -75,7 +74,6 @@ public class Dispatcher
 
 
     /**
-     * @param commandName is not allowed to be null
      */
     public Output run(String commandName, Map reqArgs) throws IOException,
                                                               IllegalStateException,

@@ -29,6 +29,7 @@ package org.roosster.mappers;
 import java.io.PrintWriter;
 import java.io.PrintStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
@@ -38,9 +39,7 @@ import java.util.logging.Level;
 import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import javax.servlet.ServletConfig;
-import org.mortbay.http.SocketListener;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.ServletHttpContext;
+import javax.servlet.ServletContext;
 
 import org.roosster.util.MapperUtil;
 import org.roosster.InitializeException;
@@ -52,31 +51,27 @@ import org.roosster.commands.CommandNotFoundException;
 
 
 /**
- * TODO implement shutdown method
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: ServletMapper.java,v 1.1 2004/12/03 14:30:14 firstbman Exp $
  */
 public class ServletMapper extends HttpServlet
 {
     private static Logger LOG = Logger.getLogger(ServletMapper.class.getName());
+    
+    public static final int PUT     = 1;
+    public static final int POST    = 2;
+    public static final int GET     = 3;
+    public static final int DELETE  = 4;
+    
 
-    public static final String PROP_FILE        = "/roosster-web.properties";
+    public static final String PROP_PROPFILE    = "roosster.properties";
+    public static final String DEF_PROPFILE     = "/roosster-web.properties";
 
     public static final String PROP_OUTENC      = "default.output.encoding";
-    public static final String PROP_PORT        = "server.port";
     
-    public static final String RT_PROP_SERVER   = "runtime.server.instance";
-
-    public static final String DEF_CONTENT_TYPE = "text/html";
-    public static final String DEF_OUTPUT_MODE  = "html";
-    public static final String DEF_COMMAND      = "searchform";
+    public static final String DEF_CONTENT_TYPE = "text/xml";
+    public static final String DEF_OUTPUT_MODE  = "atom";
+    public static final String DEF_COMMAND      = "search";
     public static final String DEF_ENC          = "UTF-8";
-    public static final String DEF_PORT         = "8181";
-    
-    public static final String CONTEXT_PATH     = "/roosster";
-    
-    public static final String ARG_BASEURL = "internal.baseurl";
-    public static final String ARG_DOCNUM  = "internal.docnum";
 
     private static Properties properties = null;
     
@@ -84,96 +79,107 @@ public class ServletMapper extends HttpServlet
     private Registry   registry       = null;
     private String     outputEncoding = null;  
     
-    private static Server server      = null;
-
-    /**
-     *
-     */
-    public static void main(String[] args)
-    {
-        try {
-            MapperUtil.initLogging(args);
-            Map cmdLine = MapperUtil.parseCommandLineArguments(args);
-            properties = MapperUtil.loadProperties(PROP_FILE, cmdLine);
-
-            String port = properties.getProperty(PROP_PORT, DEF_PORT);
-            
-            
-            server = new Server();
-
-            SocketListener listener=new SocketListener();
-            listener.setPort( Integer.valueOf(port).intValue() );
-            server.addListener(listener);
-           
-            ServletHttpContext context = (ServletHttpContext) server.getContext("/");
-            context.addServlet("roosster", CONTEXT_PATH+"/*","org.roosster.mappers.ServletMapper");
-            
-            server.start();
-
-        } catch (Exception ex) {
-            if ( LOG.isLoggable(Level.CONFIG) )
-                ex.printStackTrace();
-            else
-                System.out.println("ERROR:  "+ ex.getMessage());
-        }
-    }
 
     /**
      *
      */
     public void init(ServletConfig config) throws ServletException
     {
-        if ( properties == null ) {
-            // TODO get config location from web.xml config
-        }
-      
         try {
+            InputStream propInput = null;
+            
+            // load default properties from classpath if no location is given in web.xml
+            String propFile = config.getInitParameter(PROP_PROPFILE);
+            if ( propFile != null )
+                propInput = config.getServletContext().getResourceAsStream(propFile);
+            else 
+                propInput = getClass().getResourceAsStream(DEF_PROPFILE);
+            
+            properties = MapperUtil.loadProperties(propInput, new HashMap());
+        
             registry = new Registry(properties); 
             dispatcher = new Dispatcher(registry);
             
             outputEncoding = registry.getConfiguration().getProperty(PROP_OUTENC, DEF_ENC);
 
-            registry.setProperty(RT_PROP_SERVER, server);
-            
-        } catch(InitializeException ex) {
+        } catch(Exception ex) {
             throw new ServletException(ex);
         }
     }
 
      
     /**
+     * TODO make a correct implementation here
+     */
+    public long getLastModified(HttpServletRequest req)
+    {
+        return System.currentTimeMillis();
+    }
+
+    
+    /**
+     *
+     */
+    public void doDelete(HttpServletRequest req, HttpServletResponse resp)
+                throws ServletException, IOException
+    {
+        processRequest(DELETE, req, resp);
+    }
+
+    
+    /**
+     *
+     */
+    public void doPut(HttpServletRequest req, HttpServletResponse resp)
+                throws ServletException, IOException
+    {
+        processRequest(PUT, req, resp);
+    }
+
+    
+    /**
      *
      */
     public void doPost(HttpServletRequest req, HttpServletResponse resp)
                 throws ServletException, IOException
     {
+        processRequest(POST, req, resp);
+    }
+
+    
+    /**
+     *
+     */
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
+               throws ServletException, IOException
+    {
+        processRequest(GET, req, resp);
+    }
+
+    
+    /**
+     * 
+     */
+    protected void processRequest(int method,
+                                  HttpServletRequest req, 
+                                  HttpServletResponse resp)
+                           throws ServletException, IOException
+
+    {
         try {
-            String commandName = getCommandName(req);
+            String commandName = getCommandName(method, req);
             Map args = parseRequestArguments(req);
     
-            // set special variables
-            EntryStore store = (EntryStore) registry.getPlugin("store");
-            args.put(ARG_DOCNUM,  new Integer(store.getDocNum()));
-            args.put(ARG_BASEURL, getBaseUrl(req));
-        
-            registry.preProcessRequest(args);
-            
             // run commands            
             Output output = dispatcher.run(commandName, args);
 
-            // determine output mode
+            // determine content type
             String contentType = output.getContentType();
             contentType = contentType == null ? DEF_CONTENT_TYPE : contentType; 
             resp.setContentType(contentType+"; charset="+outputEncoding);
 
-            registry.postProcessRequest(args, output);            
-            
             // output everything
-            String outputMode = (String) args.get(MapperUtil.ARG_OUTPUTMODE);
-            if ( outputMode == null || "".equals(outputMode) )
-                outputMode = DEF_OUTPUT_MODE;
-            
-            output.output(outputMode, resp.getWriter());
+            output.output( getOutputMode(args), resp.getWriter() );
             
         } catch (CommandNotFoundException ex) {
           
@@ -187,43 +193,12 @@ public class ServletMapper extends HttpServlet
             
         }
     }
-
+    
     
     /**
      *
      */
-    public void doGet(HttpServletRequest req, HttpServletResponse resp)
-               throws ServletException, IOException
-    {
-        doPost(req, resp);
-    }
-   
-
-    /**
-     * TODO make a correct implementation here
-     */
-    public long getLastModified(HttpServletRequest req)
-    {
-        return System.currentTimeMillis();
-    }
-
-    
-    // ============ private Helper methods ============
-    
-    
-    /**
-     * 
-     */
-    private String getBaseUrl(HttpServletRequest req)
-    {
-        return "http://"+ req.getServerName() +":"+ req.getServerPort()+ CONTEXT_PATH+"/" ;
-    }
-
-    
-    /**
-     *
-     */
-    private String getCommandName(HttpServletRequest req)
+    protected String getCommandName(int method, HttpServletRequest req)
     {
         String commandName = null;
         
@@ -241,10 +216,22 @@ public class ServletMapper extends HttpServlet
         return commandName == null ? DEF_COMMAND : commandName;
     }
 
+
+    /**
+     *
+     */
+    protected String getOutputMode(Map args)
+    {
+        String mode = (String) args.get(MapperUtil.ARG_OUTPUTMODE);
+        return mode == null || "".equals(mode) ? DEF_OUTPUT_MODE : mode ;
+
+    }
+    
+    
     /**
      * TODO handle multiple value parameters correctly
      */
-    private Map parseRequestArguments(HttpServletRequest req)
+    protected Map parseRequestArguments(HttpServletRequest req)
     {
         Map args = new HashMap();
 
@@ -260,5 +247,15 @@ public class ServletMapper extends HttpServlet
         return args;
     }
 
+
+    /**
+     * 
+     */
+    protected String getBaseUrl(HttpServletRequest req)
+    {
+        return "http://"+ req.getServerName() +":"+ req.getServerPort()+ req.getContextPath()+"/" ;
+    }
+
+    
 }
 

@@ -37,7 +37,6 @@ import org.roosster.Output;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: DeleteEntryCommand.java,v 1.1 2004/12/03 14:30:13 firstbman Exp $
  */
 public class ListAllCommand extends AbstractCommand implements Command
 {
@@ -53,8 +52,6 @@ public class ListAllCommand extends AbstractCommand implements Command
     {
         EntryStore store = (EntryStore) registry.getPlugin("store");
         output.setEntries( store.getAllEntries() );
-        
-        output.setTemplateName("listall.html");
     }
 
 

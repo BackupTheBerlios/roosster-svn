@@ -39,7 +39,6 @@ import org.roosster.xml.AtomFeedGenerator;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: AtomMode.java,v 1.1 2004/12/03 14:30:14 firstbman Exp $
  */
 public class AtomMode implements OutputMode
 {
@@ -56,7 +55,7 @@ public class AtomMode implements OutputMode
 
 
         AtomFeedGenerator generator = new AtomFeedGenerator();
-        generator.createFeed(registry, stream, (Entry[]) entries.toArray(new Entry[0]));
+        generator.createFeed(registry, stream, entries);
     }
 
 

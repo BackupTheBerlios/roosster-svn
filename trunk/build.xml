@@ -36,7 +36,7 @@
         <echo>+ ============================================= +</echo>
         <property environment="env"/>
 
-        <property name="roosster.version" value="0.2-pre" />
+        <property name="roosster.version" value="0.2-pre2" />
 
         <!-- directory definitions-->
         <property name="lib.dir"      location="${basedir}/lib" />
@@ -56,9 +56,10 @@
         <property name="libs.unpacked.file" value="LIBS_UNPACKED" />
         <available file="${dist.dir}/LIBS_UNPACKED" property="libs.unpacked"/>
 
-        <property name="all.jar.file" value="roosster.jar" />
-        <property name="cli.jar.file" value="roosster-cli.jar" />
-        <property name="web.jar.file" value="roosster-web.jar" />
+        <property name="all.jar.file"     value="roosster-all.jar" />
+        <property name="cli.jar.file"     value="roosster-cli.jar" />
+        <property name="min.jar.file"     value="roosster-min.jar" />
+        <property name="starter.jar.file" value="roosster-start.jar" />
         
         <!-- property file definition -->
         <property name="base.prop.file"    value="${baseres.dir}/roosster-base.properties" />
@@ -131,23 +132,53 @@
     </target>
 
     
-    <target name="jar-web"
-            depends="compile, prepare-libs, merge-properties"
+    <target name="dist-jar-minimal"
+            depends="compile, merge-properties"
             description="Builds the .jar file for the standalone web distribution" >
 
         <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
 
-        <jar destfile="${dist.dir}/${web.jar.file}" compress="true">
+        <jar destfile="${dist.dir}/${min.jar.file}" compress="true">
             <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
-            <fileset dir="${dist.dir}/lib/common" includes="**/*" />
-            <fileset dir="${dist.dir}/lib/web" includes="**/*" />
             <fileset dir="${build.dir}" includes="org/roosster/**" />
             <fileset dir="${res.dir}/common" includes="**/*" />
             <fileset dir="${res.dir}/web" includes="**/*" />
             <fileset file="${res.dir}/${web.prop.file}"  />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
-                <attribute name="Main-Class" value="org.roosster.mappers.ServletMapper"/>
+                <section name="org.roosster">
+                    <attribute name="Specification-Title" value="${ant.project.name}"/>
+                    <attribute name="Specification-Version" value="${roosster.version}"/>
+                    <attribute name="Specification-Vendor" value="http://roosster.org"/>
+                    <attribute name="Implementation-Title" value="${ant.project.name}"/>
+                    <attribute name="Implementation-Version" value="${roosster.version} ${TODAY}"/>
+                    <attribute name="Implementation-Vendor" value="http://roosster.org"/>
+                </section>
+            </manifest>
+          </jar>
+    </target>
+
+    
+    <target name="dist-jar-starter"
+            depends="compile, prepare-libs, merge-properties"
+            description="Builds the .jar file for the standalone web distribution" >
+
+        <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+
+        <jar destfile="${dist.dir}/${starter.jar.file}" compress="true">
+            <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+            <fileset dir="${dist.dir}/lib/web" includes="**/*" />
+            <fileset dir="${build.dir}" >
+                <include name="org/roosster/util/MapperUtil.class" />
+                <include name="org/roosster/util/JettyStarter.class" />
+                <include name="org/roosster/InitializeException.class" />
+            </fileset>
+            <fileset dir="${res.dir}/common" includes="**/*" />
+            <fileset dir="${res.dir}/web" includes="**/*" />
+            <fileset file="${res.dir}/${web.prop.file}"  />
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="org.roosster.util.JettyStarter"/>
                 <attribute name="Class-Path" value="."/>
                 <section name="org.roosster">
                     <attribute name="Specification-Title" value="${ant.project.name}"/>
@@ -162,7 +193,7 @@
     </target>
 
     
-    <target name="jar-cli"
+    <target name="dist-jar-cli"
             depends="compile, prepare-libs, merge-properties"
             description="Builds the .jar file for the CLI distribution" >
 
@@ -194,56 +225,15 @@
         </jar>
     </target>
 
-    <target name="jar-all" depends="jar-cli, jar-web">
-        <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
-
-        <jar destfile="${dist.dir}/${all.jar.file}" compress="true">
-            <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
-            <fileset dir="${dist.dir}/lib/web"    includes="**/*" />
-            <fileset dir="${dist.dir}/lib/common" includes="**/*" />
-            <fileset dir="${dist.dir}/lib/cli"    includes="**/*" />
-            <fileset dir="${build.dir}"           includes="org/roosster/**" />
-            <fileset dir="${res.dir}/cli"         includes="**/*" />
-            <fileset dir="${res.dir}/web"         includes="**/*" />
-            <fileset dir="${res.dir}/common"      includes="**/*" />
-            <fileset file="${res.dir}/${cli.prop.file}"  />
-            <fileset file="${res.dir}/${web.prop.file}"  />
-            <fileset file="ARTISTIC.txt" />
-            <fileset file="LICENSE" />
-            <manifest>
-                <attribute name="Built-By" value="${user.name}"/>
-                <attribute name="Main-Class" value="org.roosster.util.MapperUtil"/>
-                <attribute name="Class-Path" value="."/>
-                <section name="org.roosster">
-                    <attribute name="Specification-Title" value="${ant.project.name}"/>
-                    <attribute name="Specification-Version" value="${roosster.version}"/>
-                    <attribute name="Specification-Vendor" value="http://roosster.org"/>
-                    <attribute name="Implementation-Title" value="${ant.project.name}"/>
-                    <attribute name="Implementation-Version" value="${roosster.version} ${TODAY}"/>
-                    <attribute name="Implementation-Vendor" value="http://roosster.org"/>
-                </section>
-            </manifest>
-        </jar>
-    </target>
-    
     
     <target name="dist-war" 
-            depends="jar-all"
-            description="">
-            
-        <property name="lib.tmp.dir" value="${lib.dir}/tmp" />
-        <mkdir dir="${lib.tmp.dir}" />
-        <copy todir="${lib.tmp.dir}" file="${dist.dir}/${all.jar.file}" />
-        <copy todir="${lib.tmp.dir}" flatten="true">
-            <fileset dir="${lib.dir}">
-                <include name="web/*.jar" />
-                <include name="common/*.jar" />
-            </fileset>
-        </copy>
+            depends="dist-jar-minimal, dist-jar-starter"
+            description="builds a ready-to-deploy .war file of roosster">
             
         <war destfile="${dist.dir}/roosster.war" webxml="src/metadata/web.xml">
             <fileset dir="src/html/" />
-            <lib dir="${lib.tmp.dir}" includes="*.jar" />
+            <lib dir="${lib.dir}/common" includes="*.jar" />
+            <classes dir="${build.dir}" includes="org/roosster/**/*.class" />
         </war>
     </target>
     

@@ -95,34 +95,6 @@ public class Registry
     {
         return conf;
     }
-
-    
-    /**
-     * 
-     */
-    public void postProcessRequest(Map requestArgs, Output output) throws OperationException
-    {
-        Iterator values = plugins.values().iterator();
-        while ( values.hasNext() ) {
-            Plugin plugin = (Plugin) values.next();
-            LOG.finest("Calling "+plugin.getClass()+".postProcess()");
-            plugin.postProcess(requestArgs, output);
-        }
-    }
-    
-
-    /**
-     * 
-     */
-    public void preProcessRequest(Map requestArgs) throws OperationException
-    {
-        Iterator values = plugins.values().iterator();
-        while ( values.hasNext() ) {
-            Plugin plugin = (Plugin) values.next();
-            LOG.finest("Calling "+plugin.getClass()+".preProcess()");
-            plugin.preProcess(requestArgs);
-        }
-    }
     
 
     /**

@@ -38,7 +38,6 @@ import org.roosster.input.ContentTypeProcessor;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: TextProcessor.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 public class TextProcessor implements ContentTypeProcessor
 {

@@ -53,7 +53,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
  *
  * @see <a href="http://atompub.org/2004/10/20/draft-ietf-atompub-format-03.html">Atom Syndication Format Spec v0.3</a>
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: AtomFeedParser.java,v 1.1 2004/12/03 14:30:14 firstbman Exp $
  */
 public class AtomFeedParser implements Constants
 {

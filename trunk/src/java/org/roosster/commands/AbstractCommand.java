@@ -37,7 +37,6 @@ import java.util.logging.Logger;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: AbstractCommand.java,v 1.1 2004/12/03 14:30:13 firstbman Exp $
  */
 public abstract class AbstractCommand implements Command
 {

@@ -54,7 +54,6 @@ public class Output
     private Registry     registry       = null;
     private OutputMode   mode           = null;
     private EntryList    entries        = new EntryList();
-    private String       templateName   = null;
     private List         outputMessages = new ArrayList();
     private boolean      truncation     = true;
 
@@ -95,24 +94,6 @@ public class Output
     public void addOutputMessage(String msg)
     {
         outputMessages.add(msg);
-    }
-    
-    
-    /**
-     *
-     */
-    public void setTemplateName(String name)
-    {
-        templateName = name;
-    }
-
-
-    /**
-     *
-     */
-    public String getTemplateName()
-    {
-        return templateName;
     }
 
 

@@ -33,8 +33,6 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 
 import org.roosster.InitializeException;
-import org.roosster.mappers.CliMapper;
-import org.roosster.mappers.ServletMapper;
 
 /**
  * This class provides static utility methods for <code>Mapper</code>-classes
@@ -47,9 +45,6 @@ public class MapperUtil
 {
     private static Logger LOG = Logger.getLogger(MapperUtil.class.getName());
     
-    public static final String ARG_CLIMAPPER  = "cli";
-    public static final String ARG_WEBMAPPER  = "web";
-    
 
     public static final String ARG_OUTPUTMODE    = "output.mode";
 
@@ -61,21 +56,7 @@ public class MapperUtil
 
     private static final String DEF_HOMEDIR      = ".roosster";
     private static String homeDir                = null;
-    
-    
-    /**
-     * 
-     */
-    public static void main(String[] args) 
-    {
-        LOG.config("Testing which mapper to use: "+args[0]);
-        
-        if ( ARG_WEBMAPPER.equals(args[0]) ) 
-            ServletMapper.main( MapperUtil.shift(args) );
-        else
-            CliMapper.main( ARG_CLIMAPPER.equals(args[0]) ? MapperUtil.shift(args) : args ); 
-    }
-    
+
     
     /**
      * removes the first element, shortening the array by one
@@ -177,16 +158,14 @@ public class MapperUtil
     /**
      * @param fileName name of standard property file name
      */
-    public static Properties loadProperties(String fileName, Map cmdLine)
+    public static Properties loadProperties(InputStream propInput, Map cmdLine)
                                throws IOException, IllegalArgumentException
     {
-        InputStream propInput = MapperUtil.class.getResourceAsStream(fileName);
-
         if ( propInput == null )
-            throw new IllegalArgumentException("Can't load default properties file: "+fileName);
+            throw new IllegalArgumentException("Properties inputStream is not allowed to be null");
 
         Properties props = new Properties();
-        props.load(propInput);
+        props.load(propInput);      
 
         // try to load user defines properties
         String propFileName =  (String) cmdLine.get(PROP_FILE_ARG);
@@ -221,6 +200,16 @@ public class MapperUtil
         }
 
         return props;
+    }
+      
+    
+    /**
+     * @param fileName name of standard property file name
+     */
+    public static Properties loadProperties(File file, Map cmdLine)
+                               throws IOException, IllegalArgumentException
+    {
+        return loadProperties(new FileInputStream(file), cmdLine);
     }
     
 

@@ -36,7 +36,6 @@ import org.roosster.Output;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: AddFileCommand.java,v 1.1 2004/12/03 14:30:13 firstbman Exp $
  */
 public class AddFileCommand extends AbstractCommand implements Command
 {

@@ -26,6 +26,7 @@
  */
 package org.roosster.store;
 
+import java.util.Date;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,24 @@ public class EntryList extends AbstractList
     private int limit     = 0;
     private List list = new ArrayList();
 
+
+    /**
+     * @return the <code>Date</code>-object representing the modification time 
+     * of the last modified entry in this Object's list.
+     */
+    public Date getLastModified() 
+    {
+        Date newest = new Date( System.currentTimeMillis() );
+        for(int i = 0; i < list.size(); i++) {
+            Entry entry = (Entry) list.get(i);
+            if ( entry.getLastModified() != null ) {
+                if ( newest.before(entry.getLastModified()) ) 
+                    newest = entry.getLastModified();
+            }
+        }
+        
+        return newest;
+    }
 
     /**
      * 

@@ -153,26 +153,6 @@ public class EntryStore implements Plugin
         return initialized;
     }
 
-    
-    /**
-     * This method is called once for every request, just before the actual 
-     * command chain is executed.
-     */
-    public void preProcess(Map requestArgs) throws OperationException
-    {
-    }
-
-    
-    /**
-     * This method is called once for every request, just before the OutputMode
-     * object is selected and called to generate the actual output.<br/>
-     * Could be used to filter out certain entries from output, or to hardcode 
-     * a certain <code>OutputMode</code>.
-     */
-    public void postProcess(Map requestArgs, Output output) throws OperationException
-    {
-    }
-
 
     /**
      */

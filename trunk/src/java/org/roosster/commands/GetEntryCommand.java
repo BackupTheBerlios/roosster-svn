@@ -41,7 +41,6 @@ import org.roosster.Output;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: GetEntryCommand.java,v 1.1 2004/12/03 14:30:13 firstbman Exp $
  */
 public class GetEntryCommand extends AbstractCommand implements Command
 {
@@ -68,8 +67,6 @@ public class GetEntryCommand extends AbstractCommand implements Command
             output.addEntry(entry);
             output.setTruncation(false); // disable truncation
         }
-        
-        output.setTemplateName(TMPL);
     }
 
 

@@ -35,9 +35,10 @@ import org.roosster.store.EntryStore;
 import org.roosster.store.Entry;
 
 /**
- *
+ * If no query String is provided in the <code>args</code>-Map, then the current 
+ * portion of <code>allEntries</code> is returned
+ * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: SearchCommand.java,v 1.1 2004/12/03 14:30:13 firstbman Exp $
  */
 public class SearchCommand extends AbstractCommand implements Command
 {
@@ -46,10 +47,15 @@ public class SearchCommand extends AbstractCommand implements Command
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        validateArguments(arguments, new String[] {ARG_Q});
-
         EntryStore store = (EntryStore) registry.getPlugin("store");
-        output.setEntries( store.search( (String) arguments.get(ARG_Q) ) );
+
+        String query = (String) arguments.get(ARG_Q);
+        
+        if ( query != null && !"".equals(query) )
+            output.setEntries( store.search(query) );
+        else
+            output.setEntries( store.getAllEntries() );
+
     }
 
 

@@ -78,14 +78,11 @@ public class PutEntryCommand extends AbstractCommand implements Command
             if ( tags != null ) 
                 entry.setTags( StringUtil.splitString(tags, Entry.TAG_SEPARATOR) );
 
-System.out.println("TAGS PutEntry "+tags);
-            
             // now finally update entry in index
             store.addEntries(new Entry[] {entry}, true);
             
             output.addOutputMessage("Entry saved!");
             output.addEntry(entry);
-            output.setTemplateName("entry.html");
 
         } else {
             // TODO make this an error
