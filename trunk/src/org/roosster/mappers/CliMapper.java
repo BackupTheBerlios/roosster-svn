@@ -36,26 +36,27 @@ import java.io.InputStream;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 
-import org.roosster.util.MapperUtil;
 import org.roosster.OperationException;
 import org.roosster.InitializeException;
 import org.roosster.Dispatcher;
 import org.roosster.Registry;
 import org.roosster.Configuration;
-import org.roosster.OutputMode;
 import org.roosster.Output;
+import org.roosster.output.OutputMode;
+import org.roosster.util.MapperUtil;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: CliMapper.java,v 1.1 2004/12/03 14:30:14 firstbman Exp $
  */
 public class CliMapper
 {
     private static Logger LOG = Logger.getLogger(CliMapper.class.getName());
+    
+    private static final String PROP_FILE       = "/roosster-cli.properties";
 
-    public static final String ARG_MODE = "output.mode";
-
+    public static final String ARG_MODE         = "output.mode";
+    public static final String DEF_OUTPUT_MODE  = "text";
 
     /**
      *
@@ -90,7 +91,7 @@ public class CliMapper
 
         MapperUtil.initLogging(arguments);
 
-        String commandName = arguments[0];
+        String commandName = arguments[0] ;
 
         // remove command name from args list
         List args = Arrays.asList(arguments);
@@ -98,19 +99,21 @@ public class CliMapper
 
         Map cmdLine = MapperUtil.parseCommandLineArguments(arguments);
 
-        Registry registry = new Registry( MapperUtil.loadProperties(cmdLine) );
+        Registry registry = new Registry( MapperUtil.loadProperties(PROP_FILE, cmdLine) );
 
         Dispatcher dispatcher = new Dispatcher(registry);
 
+        registry.preProcessRequest(cmdLine);
+            
         Output output = dispatcher.run(commandName, cmdLine);
 
         String outputMode = registry.getConfiguration()
-                                    .getProperty(ARG_MODE, OutputMode.DEF_OUTPUT_MODE);
+                                    .getProperty(MapperUtil.ARG_OUTPUTMODE, 
+                                                 DEF_OUTPUT_MODE);
 
-        LOG.fine("Output Mode is set to "+outputMode);
-
-        output.setOutputMode(outputMode);
-        output.output(outputStream);
+        registry.postProcessRequest(cmdLine, output);
+        
+        output.output(outputMode, outputStream);
     }
 
 

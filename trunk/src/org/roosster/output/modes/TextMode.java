@@ -24,15 +24,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.output;
+package org.roosster.output.modes;
 
 import java.io.PrintWriter;
-import org.roosster.store.Entry;
-import org.roosster.store.EntryList;
-import org.roosster.OutputMode;
+
 import org.roosster.Output;
 import org.roosster.OperationException;
 import org.roosster.Registry;
+import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
+import org.roosster.output.OutputMode;
 import org.roosster.util.StringUtil;
 
 /**

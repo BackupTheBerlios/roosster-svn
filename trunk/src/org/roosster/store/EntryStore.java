@@ -248,7 +248,6 @@ public class EntryStore implements Plugin
             int limit  = getLimit();
             int offset = getOffset();
             LOG.info("Total number of Entries is "+numdocs);
-            LOG.finest("Offset is : "+offset+" / Limit is: "+limit);      
           
             if ( numdocs > offset ) {
                 int lastElem = numdocs >= offset+limit ? offset+limit : numdocs;
@@ -257,6 +256,8 @@ public class EntryStore implements Plugin
                     if ( !reader.isDeleted(i) ) 
                         entries.add( new Entry(reader.document(i)) );
                 }
+                
+                LOG.info("Showing Entries "+offset+" to "+ lastElem);      
             }
             
         } finally {
@@ -457,7 +458,7 @@ public class EntryStore implements Plugin
             Term term = new Term( URLHASH, computeHash(url.toString()) );
             int numDeleted = reader.delete(term);
 
-            LOG.info("Deleted "+numDeleted+" Entries");
+            LOG.config("Deleted "+numDeleted+" Entries");
 
             return numDeleted;
 

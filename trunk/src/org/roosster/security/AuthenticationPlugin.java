@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.output;
+package org.roosster.security;
 
 import java.io.FileNotFoundException;
 import java.io.StringWriter;
@@ -57,6 +57,9 @@ public class AuthenticationPlugin implements Plugin
     
     private Registry  registry    = null;
     private boolean   initialized = false;
+    
+    private String username = null;
+    private String password = null;
 
     
     /**
@@ -66,6 +69,9 @@ public class AuthenticationPlugin implements Plugin
         LOG.finest("Initializing "+getClass());
 
         this.registry = registry;
+        
+        password = registry.getConfiguration().getProperty(PROP_PASSWORD, "");
+        username = registry.getConfiguration().getProperty(PROP_USERNAME, "");
         
         initialized = true;
     }
@@ -93,6 +99,17 @@ public class AuthenticationPlugin implements Plugin
      */
     public void preProcess(Map requestArgs) throws OperationException
     {
+        // if a username is set, we'll check it against the one provided in the request
+        if ( !"".equals(username) ) {
+              String reqPwd = (String) requestArgs.get(PROP_PASSWORD);
+              String reqUsr = (String) requestArgs.get(PROP_USERNAME);
+              
+              if ( username.equals(reqUsr) && password.equals(reqPwd) ) {
+                  LOG.config("Authenticated user: "+username);
+              } else {
+                  throw new AuthenticationException(reqUsr);
+              }
+        } 
     }
 
     

@@ -180,6 +180,16 @@ public class Configuration
 
 
     /**
+     * @return may be null, if {@link #setRequestArguments(Map)} hasn't been called 
+     * during this thread'S execution yet.
+     */
+    public Map getRequestArguments()
+    {
+        return (Map) reqArgs.get();
+    }
+
+
+    /**
      *
      */
     public String getHomeDir()
@@ -188,13 +198,4 @@ public class Configuration
     }
 
     
-    // ============ private Helper methods ============
-
-
-    /**
-     */
-    private Map getRequestArguments()
-    {
-        return (Map) reqArgs.get();
-    }
 }

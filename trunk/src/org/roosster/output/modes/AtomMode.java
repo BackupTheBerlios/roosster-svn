@@ -24,41 +24,57 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster;
+package org.roosster.output.modes;
 
-import java.util.Map;
+import java.io.PrintWriter;
+import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
+import org.roosster.Output;
+import org.roosster.output.OutputMode;
+import org.roosster.OperationException;
+import org.roosster.Registry;
+import org.roosster.xml.AtomFeedGenerator;
+
 
 /**
- * Classes implementing this interface must be thread-safe
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
+ * @version $Id: AtomMode.java,v 1.1 2004/12/03 14:30:14 firstbman Exp $
  */
-public interface Plugin
+public class AtomMode implements OutputMode
 {
+    private String contentType = DEF_CONTENT_TYPE;
 
     /**
-     * This method is called once, at the initilazation stage of the roosster 
-     * application
+     *
      */
-    public void init(Registry registry) throws InitializeException;
+    public void output(Registry registry, Output output, PrintWriter stream, EntryList entries)
+                throws OperationException
+    {
+        if ( entries == null )
+            throw new IllegalArgumentException("entries parameter is not allowed to be null");
 
-    public boolean isInitialized();
 
-    public void shutdown(Registry registry) throws Exception;
-    
+        AtomFeedGenerator generator = new AtomFeedGenerator();
+        generator.createFeed(registry, stream, (Entry[]) entries.toArray(new Entry[0]));
+    }
+
+
+    /**
+     *
+     */
+    public String getContentType() 
+    {
+        return contentType;
+    }
+
     
     /**
-     * This method is called once for every request, just before the actual 
-     * command chain is selected and executed.
+     *
      */
-    public void preProcess(Map requestArgs) throws OperationException;
+    public void setContentType(String type)
+    {
+        this.contentType = type;
+    }
 
-    
-    /**
-     * This method is called once for every request, just before the OutputMode
-     * object is selected and called to generate the actual output.<br/>
-     * Could be used to filter out certain entries from output, or to hardcode 
-     * a certain <code>OutputMode</code>.
-     */
-    public void postProcess(Map requestArgs, Output output) throws OperationException;
 }

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<rdf:RDF
+xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+xmlns:admin="http://webns.net/mvcb/"
+xmlns:cc="http://web.resource.org/cc/"
+xmlns="http://purl.org/rss/1.0/">
+
+<channel rdf:about="http://blog.nur-eine-i.de/">
+<title>things to write home about</title>
+<link>http://blog.nur-eine-i.de/</link>
+<description></description>
+<dc:creator></dc:creator>
+<dc:date>2005-01-07T10:27:17+01:00</dc:date>
+<admin:generatorAgent rdf:resource="http://www.movabletype.org/?v=3.121" />
+<cc:license rdf:resource="http://creativecommons.org/licenses/by/1.0/" />
+
+
+<items>
+<rdf:Seq><rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2005/01/spontan.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2005/01/eine_welle_geht_1.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2005/01/quick_link_pick.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/12/selfbloggerman.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/12/dont_forget_to.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/12/hugster_first_i.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/12/roosster_downlo_1.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/12/roosster_source_1.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/11/conversion_from_1.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/11/smart_people_sh_1.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/11/using_htmlarea_1.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/11/simpycom_anothe.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/11/did_someone_ask_1.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/11/just_some_notes_1.html" />
+<rdf:li rdf:resource="http://blog.nur-eine-i.de/archives/2004/10/why_is_desktop_1.html" />
+</rdf:Seq>
+</items>
+
+</channel>
+
+<item rdf:about="http://blog.nur-eine-i.de/archives/2005/01/spontan.html">
+<title>Spontan</title>
+<link>http://blog.nur-eine-i.de/archives/2005/01/spontan.html</link>
+<description>Ja, das wollte ich ja sein. Also sag ich euch jetzt einfach mal wie geil ich die Composite Shots von Donald Agarrat finde. Man könnte sich gleichzeitig fragen, ob kurz und nahezu sinnleer gleich spontan ist. Aber das lasse ich...</description>
+<dc:subject>blogging</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2005-01-07T10:27:17+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2005/01/eine_welle_geht_1.html">
+<title>Eine Welle geht ...</title>
+<link>http://blog.nur-eine-i.de/archives/2005/01/eine_welle_geht_1.html</link>
+<description>... durch die deutsche Blogwelt. Grund ist das Produkt IzyNews, der belgischen Firma IzySoft. Dieses versucht, die vielen Feed-Quellen des Internets dem Otto-Normal-Anwender zugänglich zu machen. Dafür bietet es einen kostenpflichtigen Abo-Service an, der RSS-Feeds per IMAP zur Verfügung stellt...</description>
+<dc:subject>blogging</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2005-01-07T08:26:25+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2005/01/quick_link_pick.html">
+<title>Quick Link Pick</title>
+<link>http://blog.nur-eine-i.de/archives/2005/01/quick_link_pick.html</link>
+<description>Just some quick links: Slava Pestov had a look at the HotSpot code, and has nothing good to say about it. At the end he says: But the Java runtime is so badly coded that its a wonder it works...</description>
+<dc:subject>blogging</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2005-01-05T11:22:23+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/12/selfbloggerman.html">
+<title>$self-&gt;blog-&gt;german</title>
+<link>http://blog.nur-eine-i.de/archives/2004/12/selfbloggerman.html</link>
+<description><![CDATA[Mein erstes deutsches Posting seit einer langen Zeit. Wenn der Begriff "lange Zeit" auf ein Blog, das noch nicht einmal ein halbes Jahr besteht, &uuml;berhaupt angewendet werden kann. Und ich werde mich auch nicht bei meinem englischen Leser daf&uuml;r entschuldigen,...]]></description>
+<dc:subject>german</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2004-12-30T17:23:21+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/12/dont_forget_to.html">
+<title>Don&apos;t forget to buy a woolly hat</title>
+<link>http://blog.nur-eine-i.de/archives/2004/12/dont_forget_to.html</link>
+<description>Or else your head will fall off within half an hour. At least, when you are living in more or less colder climate (below 10 degree Celsius; most people probably wouldn&apos;t call this cold, but it can feel quite cold...</description>
+<dc:subject></dc:subject>
+<dc:creator>43BenjaminThings</dc:creator>
+<dc:date>2004-12-17T11:09:41+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/12/hugster_first_i.html">
+<title>Hugster - First Impression</title>
+<link>http://blog.nur-eine-i.de/archives/2004/12/hugster_first_i.html</link>
+<description>At first you don&amp;#8217;t really know what this thing is about. Maybe you add some personal goals yourself, the ones no one except yourself can achieve. But then you see other people&amp;#8217;s goals. And that&amp;#8217;s the moment, when the klick...</description>
+<dc:subject>blogging</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2004-12-17T08:27:47+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/12/roosster_downlo_1.html">
+<title>Roosster Download Works again</title>
+<link>http://blog.nur-eine-i.de/archives/2004/12/roosster_downlo_1.html</link>
+<description>Just a short note for your information:Roosster can be downloaded again. Thanks to the nice and fast folks over at berliOS (the german sourceforge). Visit the Roosster project page to download releases, view tickets/tasks, request features, browse the subversion repository,...</description>
+<dc:subject>roosster</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2004-12-04T19:12:11+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/12/roosster_source_1.html">
+<title>Roosster Source and File Repository Move</title>
+<link>http://blog.nur-eine-i.de/archives/2004/12/roosster_source_1.html</link>
+<description><![CDATA[&quot;Cobbler, stick to your trade&quot;! After fiddling around way too often, and thus spending too much time, with administrating the roosster subversion repository I give up. That doesn't mean subversion is too hard to adminster. I'm simply not the administrator...]]></description>
+<dc:subject>roosster</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2004-12-02T23:47:24+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/11/conversion_from_1.html">
+<title>Conversion from Berkeley DB to MySQL</title>
+<link>http://blog.nur-eine-i.de/archives/2004/11/conversion_from_1.html</link>
+<description> I converted my MovableType installation (version 3.121) from Berkeley DB to MySQL, for easier backups and faster rebuild times. I ran into some problems, which I wanted to point out. Maybe others will find it useful.When following Diego&apos;s tip...</description>
+<dc:subject>blogging</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2004-11-30T07:54:00+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/11/smart_people_sh_1.html">
+<title>Bloggers should Publish their Bookmarks</title>
+<link>http://blog.nur-eine-i.de/archives/2004/11/smart_people_sh_1.html</link>
+<description> A little thought that struck me while surfing around other people&apos;s bookmarks on simpy and del.icio.us is learning. Most discussion about social bookmarking I read until now, where all about knowing what other people currently bookmark. But what about...</description>
+<dc:subject>blogging</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2004-11-29T23:44:01+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/11/using_htmlarea_1.html">
+<title>Using HTMLArea with MovableType</title>
+<link>http://blog.nur-eine-i.de/archives/2004/11/using_htmlarea_1.html</link>
+<description><![CDATA[Being annoyed with the different kinds of &quot;not-very-powerful-wiki/markup&quot;-syntaxes, I started looking around for free, online WYSIWIG editors that would integrate smoothly with MovableType. So this is my first post that utilizes an online WYSIWIG editor. I'll describe which editors I...]]></description>
+<dc:subject>blogging</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2004-11-29T08:26:47+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/11/simpycom_anothe.html">
+<title>Simpy.com - Another Social Bookmark Manager</title>
+<link>http://blog.nur-eine-i.de/archives/2004/11/simpycom_anothe.html</link>
+<description>Some time ago Otis Gospodneti&amp;#263; contacted me in regard to roosster. He told me about his social bookmark manager simpy and of course I had to try it. This is my opinion about it. Basically simpy It&apos;s very similar to...</description>
+<dc:subject>blogging</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2004-11-22T23:24:33+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/11/did_someone_ask_1.html">
+<title>Did Someone Ask for Personal Search</title>
+<link>http://blog.nur-eine-i.de/archives/2004/11/did_someone_ask_1.html</link>
+<description>Simply amazing what Firefox/Mozilla extensions are out there. I just found Scrapbook and it&apos;s almost all my archiving/searching/finding dreams come true. Scrapbook is all about capturing web pages. You can either capture a whole page, or just a selected portion...</description>
+<dc:subject>blogging</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2004-11-03T15:54:05+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/11/just_some_notes_1.html">
+<title>Just Some Notes</title>
+<link>http://blog.nur-eine-i.de/archives/2004/11/just_some_notes_1.html</link>
+<description>Here I am, covered up in work, but I still can&apos;t keep my hands off my newsreader. Because I want to share some ideas and notes, and don&apos;t have the time to write full fledged entries, I&apos;ll post only some...</description>
+<dc:subject>blogging</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2004-11-03T09:08:29+01:00</dc:date>
+</item>
+<item rdf:about="http://blog.nur-eine-i.de/archives/2004/10/why_is_desktop_1.html">
+<title>Why is &apos;Desktop Search != Web Search&apos;</title>
+<link>http://blog.nur-eine-i.de/archives/2004/10/why_is_desktop_1.html</link>
+<description>Reading Kevin Burton&apos;s announcement about a Lucene-based Desktop search application I wondered (for the n-th time), why people who develop Desktop Search applications (be it open source groups or companies) take this separation between Desktop and the Web so serious?...</description>
+<dc:subject>roosster</dc:subject>
+<dc:creator>Benjamin</dc:creator>
+<dc:date>2004-10-29T15:54:02+01:00</dc:date>
+</item>
+
+
+</rdf:RDF>

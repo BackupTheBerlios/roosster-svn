@@ -36,27 +36,42 @@
         <echo>+ ============================================= +</echo>
         <property environment="env"/>
 
-        <property name="roosster.version" value="0.1" />
+        <property name="roosster.version" value="0.2-pre" />
 
-        <property name="lib.dir"  location="${basedir}/lib" />
-        <property name="src.dir"  location="${basedir}/src" />
-        <property name="res.dir"  location="${basedir}/resources" />
-        <property name="doc.dir"  location="${basedir}/doc" />
-        <property name="tmpl.dir" location="${basedir}/templates" />
+        <!-- directory definitions-->
+        <property name="lib.dir"      location="${basedir}/lib" />
+        <property name="src.dir"      location="${basedir}/src" />
+        <property name="res.dir"      location="${basedir}/resources" />
+        <property name="baseres.dir"  location="${basedir}/resources/base-res" />
+        <property name="doc.dir"      location="${basedir}/doc" />
+        <property name="tmpl.dir"     location="${basedir}/templates" />
 
         <property name="build.dir" location="${basedir}/build" />
         <property name="dist.dir" location="${basedir}/dist" />
 
-        <property name="libs.unpacked.file" value="LIBS_UNPACKED" />
-        <available file="${dist.dir}/LIBS_UNPACKED" property="libs.unpacked"/>
-
-        <property name="cli.jar.file" value="roosster.jar" />
-        <property name="web.jar.file" value="roosster-web.jar" />
-        <property name="dist.file" value="${ant.project.name}-${roosster.version}.tar.gz" />
-
         <mkdir dir="${dist.dir}" />
         <mkdir dir="${build.dir}" />
 
+        <!-- jar file definition -->
+        <property name="libs.unpacked.file" value="LIBS_UNPACKED" />
+        <available file="${dist.dir}/LIBS_UNPACKED" property="libs.unpacked"/>
+
+        <property name="all.jar.file" value="roosster.jar" />
+        <property name="cli.jar.file" value="roosster-cli.jar" />
+        <property name="web.jar.file" value="roosster-web.jar" />
+        
+        <!-- property file definition -->
+        <property name="base.prop.file"    value="${baseres.dir}/roosster-base.properties" />
+        
+        <property name="web.prop.file"  value="roosster-web.properties" />
+        <property name="cli.prop.file"  value="roosster-cli.properties" />
+        
+        <!-- classpath definition -->
+        <path id="cp.classpath">
+           <fileset dir="${lib.dir}/web" includes="**/*.jar" />
+           <fileset dir="${lib.dir}/common" includes="**/*.jar" />
+           <fileset dir="${lib.dir}/cli" includes="**/*.jar" />
+       </path>
     </target>
 
 
@@ -66,11 +81,7 @@
                debug="true"
                deprecation="true"
                >
-           <classpath>
-               <fileset dir="${lib.dir}/web" includes="**/*.jar" />
-               <fileset dir="${lib.dir}/common" includes="**/*.jar" />
-               <fileset dir="${lib.dir}/cli" includes="**/*.jar" />
-           </classpath>
+           <classpath refid="cp.classpath" />
        </javac>
     </target>
 
@@ -97,8 +108,31 @@
     </target>
 
 
+    <target name="merge-properties" depends="compile">
+        <java classname="org.roosster.util.BuildUtil" failonerror="true">
+            <classpath>
+                <path refid="cp.classpath" />
+                <pathelement location="${build.dir}"/>
+            </classpath>
+            <arg value="${base.prop.file}"/>
+            <arg value="${baseres.dir}/${web.prop.file}"/>
+            <arg value="${res.dir}/${web.prop.file}"/>
+        </java>
+        
+        <java classname="org.roosster.util.BuildUtil" failonerror="true">
+            <classpath>
+                <path refid="cp.classpath" />
+                <pathelement location="${build.dir}"/>
+            </classpath>
+            <arg value="${base.prop.file}"/>
+            <arg value="${baseres.dir}/${cli.prop.file}"/>
+            <arg value="${res.dir}/${cli.prop.file}"/>
+        </java>
+    </target>
+
+    
     <target name="jar-web"
-            depends="compile, unjar-libs"
+            depends="compile, unjar-libs, merge-properties"
             description="Builds the .jar file for the standalone web distribution" >
 
         <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
@@ -111,6 +145,7 @@
             <fileset dir="${res.dir}/common" includes="**/*" />
             <fileset dir="${res.dir}/web" includes="**/*" />
             <fileset dir="${tmpl.dir}" includes="**/*" />
+            <fileset file="${res.dir}/${web.prop.file}"  />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Main-Class" value="org.roosster.mappers.ServletMapper"/>
@@ -127,8 +162,9 @@
           </jar>
     </target>
 
+    
     <target name="jar-cli"
-            depends="compile, unjar-libs"
+            depends="compile, unjar-libs, merge-properties"
             description="Builds the .jar file for the CLI distribution" >
 
         <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
@@ -141,6 +177,9 @@
             <fileset dir="${res.dir}/cli" includes="**/*" />
             <fileset dir="${res.dir}/common" includes="**/*" />
             <fileset dir="${tmpl.dir}" includes="**/*" />
+            <fileset file="${res.dir}/${cli.prop.file}"  />
+            <fileset file="ARTISTIC.txt" />
+            <fileset file="LICENSE" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Main-Class" value="org.roosster.mappers.CliMapper"/>
@@ -154,13 +193,45 @@
                     <attribute name="Implementation-Vendor" value="http://roosster.org"/>
                 </section>
             </manifest>
-          </jar>
+        </jar>
     </target>
 
     <target name="jar-all" depends="jar-cli, jar-web">
+        <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+
+        <jar destfile="${dist.dir}/${all.jar.file}" compress="true">
+            <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+            <fileset dir="${dist.dir}/lib/web"    includes="**/*" />
+            <fileset dir="${dist.dir}/lib/common" includes="**/*" />
+            <fileset dir="${dist.dir}/lib/cli"    includes="**/*" />
+            <fileset dir="${build.dir}"           includes="org/roosster/**" />
+            <fileset dir="${res.dir}/cli"         includes="**/*" />
+            <fileset dir="${res.dir}/web"         includes="**/*" />
+            <fileset dir="${res.dir}/common"      includes="**/*" />
+            <fileset dir="${tmpl.dir}"            includes="**/*" />
+            <fileset file="${res.dir}/${cli.prop.file}"  />
+            <fileset file="${res.dir}/${web.prop.file}"  />
+            <fileset file="ARTISTIC.txt" />
+            <fileset file="LICENSE" />
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="org.roosster.util.MapperUtil"/>
+                <attribute name="Class-Path" value="."/>
+                <section name="org.roosster">
+                    <attribute name="Specification-Title" value="${ant.project.name}"/>
+                    <attribute name="Specification-Version" value="${roosster.version}"/>
+                    <attribute name="Specification-Vendor" value="http://roosster.org"/>
+                    <attribute name="Implementation-Title" value="${ant.project.name}"/>
+                    <attribute name="Implementation-Version" value="${roosster.version} ${TODAY}"/>
+                    <attribute name="Implementation-Vendor" value="http://roosster.org"/>
+                </section>
+            </manifest>
+        </jar>
     </target>
     
     <target name="clean" depends="init" description="Removes 'dist' and 'build' directories">
+        <delete file="${res.dir}/${cli.prop.file}" />
+        <delete file="${res.dir}/${web.prop.file}" />
         <delete dir="${dist.dir}" />
         <delete dir="${build.dir}" />
     </target>

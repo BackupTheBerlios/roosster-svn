@@ -49,8 +49,10 @@ public class Registry
 
     /** Denotes actions that can be performed on plugins
      */
-    public static final int PLUGIN_INIT     = 1;
-    public static final int PLUGIN_SHUTDOWN = 2;
+    public static final int PLUGIN_INIT        = 1;
+    public static final int PLUGIN_SHUTDOWN    = 2;
+    public static final int PLUGIN_PREPROCESS  = 3;
+    public static final int PLUGIN_POSTPROCESS = 4;
 
     public static final String PROP_PLUGIN = "plugins";
 
@@ -90,6 +92,34 @@ public class Registry
         return conf;
     }
 
+    
+    /**
+     * 
+     */
+    public void postProcessRequest(Map requestArgs, Output output) throws OperationException
+    {
+        Iterator values = plugins.values().iterator();
+        while ( values.hasNext() ) {
+            Plugin plugin = (Plugin) values.next();
+            LOG.finest("Calling "+plugin.getClass()+".postProcess()");
+            plugin.postProcess(requestArgs, output);
+        }
+    }
+    
+
+    /**
+     * 
+     */
+    public void preProcessRequest(Map requestArgs) throws OperationException
+    {
+        Iterator values = plugins.values().iterator();
+        while ( values.hasNext() ) {
+            Plugin plugin = (Plugin) values.next();
+            LOG.finest("Calling "+plugin.getClass()+".preProcess()");
+            plugin.preProcess(requestArgs);
+        }
+    }
+    
 
     /**
      *
@@ -135,7 +165,7 @@ public class Registry
     public void shutdown() throws Exception
     {
         if ( initialized ) {
-            LOG.info("Shutting down NOW!");
+            LOG.info("Registry shutting down NOW!");
             callPlugins(PLUGIN_SHUTDOWN);
             initialized = false;
         }
@@ -200,7 +230,7 @@ public class Registry
 
         }
     }
-
+    
 
     /**
      *
@@ -220,8 +250,5 @@ public class Registry
 
         }
     }
-
-
-
 
 }

@@ -60,6 +60,8 @@ public class ServletMapper extends HttpServlet
 {
     private static Logger LOG = Logger.getLogger(ServletMapper.class.getName());
 
+    public static final String PROP_FILE        = "/roosster-web.properties";
+
     public static final String PROP_OUTENC      = "default.output.encoding";
     public static final String PROP_PORT        = "server.port";
     
@@ -73,7 +75,6 @@ public class ServletMapper extends HttpServlet
     
     public static final String CONTEXT_PATH     = "/roosster";
     
-    public static final String ARG_MODE    = "output.mode";
     public static final String ARG_BASEURL = "internal.baseurl";
     public static final String ARG_DOCNUM  = "internal.docnum";
 
@@ -93,7 +94,7 @@ public class ServletMapper extends HttpServlet
         try {
             MapperUtil.initLogging(args);
             Map cmdLine = MapperUtil.parseCommandLineArguments(args);
-            properties = MapperUtil.loadProperties(cmdLine);
+            properties = MapperUtil.loadProperties(PROP_FILE, cmdLine);
 
             String port = properties.getProperty(PROP_PORT, DEF_PORT);
             
@@ -106,7 +107,6 @@ public class ServletMapper extends HttpServlet
            
             ServletHttpContext context = (ServletHttpContext) server.getContext("/");
             context.addServlet("roosster", CONTEXT_PATH+"/*","org.roosster.mappers.ServletMapper");
-            context.setStatsOn(true);
             
             server.start();
 
@@ -147,30 +147,33 @@ public class ServletMapper extends HttpServlet
     public void doPost(HttpServletRequest req, HttpServletResponse resp)
                 throws ServletException, IOException
     {
-        PrintWriter writer = null;
-        
         try {
             String commandName = getCommandName(req);
             Map args = parseRequestArguments(req);
-
-            setSpecialArgs(req, args);
-
+    
+            // set special variables
+            EntryStore store = (EntryStore) registry.getPlugin("store");
+            args.put(ARG_DOCNUM,  new Integer(store.getDocNum()));
+            args.put(ARG_BASEURL, getBaseUrl(req));
+        
+            registry.preProcessRequest(args);
+            
             // run commands            
             Output output = dispatcher.run(commandName, args);
 
             // determine output mode
-            String outputMode = (String) args.get(ARG_MODE);
-            if ( outputMode == null || "".equals(outputMode) )
-                outputMode = DEF_OUTPUT_MODE;
-            
-            output.setOutputMode(outputMode);
             String contentType = output.getContentType();
             contentType = contentType == null ? DEF_CONTENT_TYPE : contentType; 
             resp.setContentType(contentType+"; charset="+outputEncoding);
 
+            registry.postProcessRequest(args, output);            
+            
             // output everything
-            writer = resp.getWriter();
-            output.output(writer);
+            String outputMode = (String) args.get(MapperUtil.ARG_OUTPUTMODE);
+            if ( outputMode == null || "".equals(outputMode) )
+                outputMode = DEF_OUTPUT_MODE;
+            
+            output.output(outputMode, resp.getWriter());
             
         } catch (CommandNotFoundException ex) {
           
@@ -206,20 +209,6 @@ public class ServletMapper extends HttpServlet
 
     
     // ============ private Helper methods ============
-
-    
-    /**
-     * 
-     */
-    private void setSpecialArgs(HttpServletRequest req, Map args) throws IOException
-    {
-        EntryStore store = (EntryStore) registry.getPlugin("store");
-        
-        args.put(ARG_BASEURL, getBaseUrl(req));
-        args.put(ARG_DOCNUM,  new Integer(store.getDocNum()));
-    
-        registry.getConfiguration().setRequestArguments(args);
-    }
     
     
     /**

@@ -1,301 +1,576 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feed version="0.3" xmlns="http://purl.org/atom/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+<?xml version="1.0" encoding="utf-8"?>
+<feed version="0.3" xmlns="http://purl.org/atom/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="en">
 <title>things to write home about</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/"/>
-<modified>2004-10-21T08:00:51Z</modified>
-<tagline/>
-<id>tag:blog.nur-eine-i.de,2004://1</id>
-<generator url="http://www.movabletype.org/" version="3.11">Movable Type</generator>
-<copyright>Copyright (c) 2004, Benjamin</copyright>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/" />
+<modified>2005-01-07T09:30:59Z</modified>
+<tagline></tagline>
+<id>tag:blog.nur-eine-i.de,2005://1</id>
+<generator url="http://www.movabletype.org/" version="3.121">Movable Type</generator>
+<copyright>Copyright (c) 2005, Benjamin</copyright>
 <entry>
-<title>Flickr Architecture</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/flickr_architec.html"/>
-<modified>2004-10-21T08:00:51Z</modified>
-<issued>2004-10-21T07:51:35Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.34</id>
-<created>2004-10-21T07:51:35Z</created>
-<summary type="text/plain">Now that's a presentation I would have liked to attend. One of the Flickr developers, Cal Henderson to be exact, gave a presentation about the architecture of the Flickr website. I've been wondering sometimes already, how such a site would...</summary>
+<title>Spontan</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2005/01/spontan.html" />
+<modified>2005-01-07T09:30:59Z</modified>
+<issued>2005-01-07T09:27:17Z</issued>
+<id>tag:blog.nur-eine-i.de,2005://1.61</id>
+<created>2005-01-07T09:27:17Z</created>
+<summary type="text/plain">Ja, das wollte ich ja sein. Also sag ich euch jetzt einfach mal wie geil ich die Composite Shots von Donald Agarrat finde. Man könnte sich gleichzeitig fragen, ob kurz und nahezu sinnleer gleich spontan ist. Aber das lasse ich...</summary>
 <author>
 <name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
 </author>
-<dc:subject>webapps</dc:subject>
+<dc:subject>blogging</dc:subject>
 <content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-<![CDATA[<p>Now that's a presentation I would have liked to attend. One of the <a href="http://www.flickr.com" class="extlink">Flickr</a> developers, <a href="http://www.ludicorp.com/team_member.php?id=15" class="extlink">Cal Henderson</a> to be exact, gave a presentation about the architecture of the <a href="http://www.flickr.com" class="extlink">Flickr</a> website. I've been wondering sometimes already, how such a site would be built. I mean, they must be handling some serious loads. </p>
-<p><a href="http://www.niallkennedy.com/blog/archives/2004/10/flickr_architec.html" class="extlink">Niall Kennedy</a> has a pdf version of the slides. A good read for everyone remotely interested in technical details of webapps.</p>
-<p>Via: <a href="http://weblogtoolscollection.com/archives/2004/10/20/niall-kennedys-weblog-flickr-architecture/" class="extlink">weblogtoolscollection.com</a></p>
+<![CDATA[<p>Ja, das wollte ich ja sein. Also sag ich euch jetzt einfach mal wie geil ich die <a href="http://www.flickr.com/photos/anzi/sets/75845/">Composite Shots</a> von <a href="http://www.anzidesign.com/mt/">Donald Agarrat</a> finde.</p>
+
+<p>Man könnte sich gleichzeitig fragen, ob kurz und nahezu sinnleer gleich spontan ist. </p>
+
+<p>Aber das lasse ich heute mal.</p>]]>
+
+</content>
+</entry>
+<entry>
+<title>Eine Welle geht ...</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2005/01/eine_welle_geht_1.html" />
+<modified>2005-01-09T17:49:13Z</modified>
+<issued>2005-01-07T07:26:25Z</issued>
+<id>tag:blog.nur-eine-i.de,2005://1.58</id>
+<created>2005-01-07T07:26:25Z</created>
+<summary type="text/plain">... durch die deutsche Blogwelt. Grund ist das Produkt IzyNews, der belgischen Firma IzySoft. Dieses versucht, die vielen Feed-Quellen des Internets dem Otto-Normal-Anwender zugänglich zu machen. Dafür bietet es einen kostenpflichtigen Abo-Service an, der RSS-Feeds per IMAP zur Verfügung stellt...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[<p>... <a href="http://www.treehugginpussy.de/index.php?p=1013">durch</a> <a href="http://blog.schockwellenreiter.de/7558">die</a> <a href="http://www.industrial-technology-and-witchcraft.de/index.php/ITW/comments/blog_content_wird_verkauft/">deutsche</a> <a href="http://www.moving-target.de/comments/4920_0_1_0_C/">Blogwelt</a>.</p>
+
+<p>Grund ist das Produkt <a href="http://izynews.de">IzyNews</a>, der belgischen Firma <a href="http://izysoft.com">IzySoft</a>. Dieses versucht, die vielen Feed-Quellen des Internets dem Otto-Normal-Anwender zugänglich zu machen. Dafür bietet es einen kostenpflichtigen Abo-Service an, der <span class="caps">RSS</span>-Feeds per <span class="caps">IMAP </span>zur Verfügung stellt (es gibt auch ein kostenloses Mini-Abo, das auf 20 Feeds beschränkt ist). Soweit, so gut. </p>]]>
+<![CDATA[<p>Allerdings sehen sich viele deutsche Blogger darin eine Verletzung ihrer, meist die kommerzielle Verwendung ausschliessende, Lizenzvereinbarungen, unter welche sie ihre Inhalte stellen. <a href="http://blog.koehntopp.de/archives/625-Rumble-in-the-Jungle.html">Manche</a> greifen schnell zur technologischen Schrotflinte und sperren IzyNews aus. <a href="http://www.lawblog.de/index.php/archives/2005/01/04/content-klau/">Andere</a> hingegen bevorzugen einen anderen Weg, und wollen IzyNews mit "konventionellen" Mitteln daran hindern ihre Inhalte zu aggregieren und dabei kommerziell zu nutzen.</p>
+
+<p><a href="http://notizen.typepad.com/aus_der_provinz/2005/01/izynews_service.html">Markus</a> hat sich über diese Sache, wie üblich, ein wenig grundsätzlicher Gedanken gemacht, und ist dabei im Gegensatz zu vielen anderen herrlich unaufgeregt. Er fragt sich unter anderem, und das auch nicht zum ersten Mal, ob diese ganze Aufregerei "typisch deutsch" (seine Worte) ist. Ich denke "Ja" und "Nein". </p>
+
+<p>Wenn ich ausdrücklich sage, dass niemand ausser mir mit meinen Blog-Texten Geld verdienen darf, und dieser Wunsch bzw. diese Einschränkung wird einfach übergangen, dann würde ich mich auch aufregen. Soviel zum "Nein".</p>
+
+<p>Allerdings sollte man sich schon mal fragen, wem es denn wirklich weh tut, dass jemand Feeds in einem anderen Medium verbreitet, und sie damit evtl. einer grösseren Leserschaft zur Verfügung stellt, und dafür Geld verlangt. Wer von den Bloggern, die sich so herrlich aufregen, verdient denn soviel Geld mit seinem Bloggen, dass ein Anbieter wie IzyNews, ihnen Geld wegnimmt?</p>
+
+<p>IzyNews wechselt nur die Zugangstechnologie (Feed2Email) und bietet seinen Nutzern durch Vorselektion/Filtern von Feeds einen evtl Nutzen, wenn auch meiner Meinung nach einen sehr fragwürdigen. Und dafür verlangt es Geld. Schön für IzyNews wenn Menschen dafür bezahlen wollen. Schön für die Blogger, wenn sich dadurch ihre Reichweite vergrössert (schön in diesem Zusammenhang ist <a href="http://weblog.plasticthinking.org/item/2005/1/4/hart-aber-gerecht">Moes Frage</a>). Also sollte man doch meinen, dass IzyNews sowas wie eine Win-Win-Situation darstellt. Offensichtlich sehen manche das ein wenig anders. Verständlich, wie gesagt.</p>
+
+<p>Mir ist jedenfalls etwas bewusst geworden. Auf der einen Seite entwickle Open Source Software, bei der ich kommerzielle Verwendung erlaube. Dies tue ich, mit dem Ziel evtl. Anerkennung zu bekommen und meine "Energie" in etwas Praktisches zu stecken. Auf der anderen Seite untersage ich jedoch die kommerzielle Verwendung von meinem Geschreibsel hier auf dem Blog. Dabei würde ich den Wert meiner schriftlichen Ergüsse sogar noch weit unter dem der Software einstufen, ganz zu schweigen von der erheblich geringeren Halbwertszeit meiner Blog-Posts gegenüber meiner Software. Deshalb habe ich meine <a href="http://blog.nur-eine-i.de/license.html">Lizenz</a> jetzt auf die <a href="http://creativecommons.org/licenses/by/2.0/de/">Creative Commons Attribution 2.0 Lizenz</a> umgestellt, und erlaube damit jetzt auch die kommerzielle Nutzung meiner Inhalte. Nicht, dass das einen meiner zwei Leser interessiern würde.</p>
+
+<p>Dennoch kann ich <a href="http://blog.koehntopp.de/archives/628-Ein-paar-ideologische-Steine-ins-Rollen-bringen.html">Kris</a> Argumentation gut nachvollziehen, wenn er von "kooperativer" und "kompetetiver" Wertschöpfung spricht. Ein guter Post für einen hoffentlich guten Schluss.</p>]]>
+</content>
+</entry>
+<entry>
+<title>Quick Link Pick</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2005/01/quick_link_pick.html" />
+<modified>2005-01-05T10:52:33Z</modified>
+<issued>2005-01-05T10:22:23Z</issued>
+<id>tag:blog.nur-eine-i.de,2005://1.57</id>
+<created>2005-01-05T10:22:23Z</created>
+<summary type="text/plain">Just some quick links: Slava Pestov had a look at the HotSpot code, and has nothing good to say about it. At the end he says: But the Java runtime is so badly coded that its a wonder it works...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[<p>Just some quick links:</p>
+<ul>
+<li>
+Slava Pestov had a <a href="http://www.jroller.com/page/slava/20050102#the_hotspot_source_code_is">look</a> at the <a href="http://java.sun.com/products/hotspot/">HotSpot</a> code, and has nothing good to say about it. At the end he says:
+<blockquote>
+But the Java runtime is so badly coded that its a wonder it works at all!
+</blockquote>
+Sometimes I'm really afraid to be in the computer business. Yes I am. <a href="http://www.peerfear.org/rss/permalink/2005/01/04/RahTheSUNGodHasNoClothes/">via</a>
+</li>
+<li>
+Andy Smith posted quite a review <a href="http://anarkystic.com/blog/archives/2005/01/03/so_many_things_to_do.php">review</a> about <a href="http://43things.com/home/">43 Things</a> only to discover that the name <em>43 Things</em> is <a href="http://anarkystic.com/blog/archives/2005/01/04/only_43_things.php">meant literally</a>.
+<p>I've played with 43 Things a bit too, but I'm so used to my own, not-very-optimal todo tracking with a wiki, that I probably won't really use it.</p>
+</li>
+<li>
+But the best thing today is Cameron Purdy's <a href="http://jroller.com/page/cpurdy/20050104#what_do_you_do_for">post</a> about how not to answer a certain category of questions at a party. Simply hilarious. Go read it!
+</li>
+</ul>
+
+<p>And as a sidenote: <a href="http://roosster.org/dev">Roosster</a> is moving along quite fast, since I found some time last week. The next release is just around the corner. The code and templates need some more tweaking, and of course the documentation will have to be improved a lot. But I won't release version 0.2, until the documentation is <strong>considerably</strong> improved. Don't hate anything more, than an interesting open source project with no documentation. Well, that's probably not totally correct.</p>]]>
+
+</content>
+</entry>
+<entry>
+<title>$self-&gt;blog-&gt;german</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/12/selfbloggerman.html" />
+<modified>2004-12-30T20:02:13Z</modified>
+<issued>2004-12-30T16:23:21Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.56</id>
+<created>2004-12-30T16:23:21Z</created>
+<summary type="text/plain"><![CDATA[Mein erstes deutsches Posting seit einer langen Zeit. Wenn der Begriff "lange Zeit" auf ein Blog, das noch nicht einmal ein halbes Jahr besteht, &uuml;berhaupt angewendet werden kann. Und ich werde mich auch nicht bei meinem englischen Leser daf&uuml;r entschuldigen,...]]></summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>german</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[<p>Mein erstes deutsches Posting seit einer langen Zeit. Wenn der Begriff "lange Zeit" auf ein Blog, das noch nicht einmal ein halbes Jahr besteht, &uuml;berhaupt angewendet werden kann. Und ich werde mich auch nicht bei meinem englischen Leser daf&uuml;r entschuldigen, dass ich auf deutsch schreibe, weil er es sowieso nicht lesen k&ouml;nnte.</p>
+
+<p>Wie auch immer, ich hatte einfach mal wieder Lust, spontan zu schreiben, und mir nicht lange Gedanken &uuml;ber Formulierung und Thema zu machen. Ich frage mich wirklich wie <a href="http://notizen.typepad.com/">manche Leute</a> es schaffen mehrmals am Tag oder manchmal "nur" t&auml;glich seitenlange Posts zu schreiben. Das werde ich wohl nie schaffen, und wenn ich es mir recht &uuml;berlege, ist eigentlich auch gar nicht mein Ziel. Trotzdem bewundere ich diese F&auml;higkeiten in gewisser Weise.</p>]]>
+<![CDATA[<p>Womit wir schon ein wenig beim Thema w&auml;ren. Vielleicht angeregt durch manche <a href="http://www.jluster.org/entry/545/predicting_2005">Vor-</a> und <a href="http://www.kottke.org/04/12/favorite-weblogs-2004">R&uuml;ckschauen</a>, haben ich in den letzten Tagen ein wenig &uuml;ber mein eigenes Schreiben und Bloggen nachgedacht und bin zu dem Schluss gekommen, dass ich einfach ein wenig spontaner werden muss.</p>
+
+<p>Kleinere und h&auml;ufigere Postings (nicht, dass ich jemals viele lange Posts geschrieben h&auml;tte). Mich nicht davor scheuen &uuml;ber Dinge zu schreiben, &uuml;ber die andere schon geschrieben haben, zumindest solange ich "dem Ganzen" etwas Neues hinzuf&uuml;ge, und sei es nur meine Meinung. Und letztlich: Mehr Deutsch!</p>
+
+<p>Auch wenn mein Englisch in Ordnung ist, und ich doch (hoffentlich) recht fl&uuml;ssig schreibe, ist es nunmal nicht meine Muttersprache und auf Englisch schreiben f&auml;llt mir doch ein wenig schwerer als auf Deutsch. Meine stark technisch orientierten Posts, werde ich wahrscheinlich weiterhin in englischer Sprache schreiben, weil ich immer noch der Meinung bin, dass der Großteil einer m&ouml;glichen Interessentengruppe f&uuml;r diese Sachen, englischsprachig ist, aber f&uuml;r meine Erg&uuml;sse &uuml;ber andere Themen, werde ich mich haupts&auml;chlich der deutschen Sprache bedienen.</p>
+
+<p>Man k&ouml;nnte also meinen, dass einer meiner Vors&auml;tze f&uuml;r das neue Jahr ist, wobei ich noch nie ernsthaft irgendwelche Vors&auml;tze aufgestellt oder befolgt h&auml;tte, mehr zu bloggen und die Kommunikationsm&ouml;glichkeiten dieses Mediums besser auszunutzen.</p>]]>
+</content>
+</entry>
+<entry>
+<title>Don&apos;t forget to buy a woolly hat</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/12/dont_forget_to.html" />
+<modified>2004-12-17T10:32:50Z</modified>
+<issued>2004-12-17T10:09:41Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.53</id>
+<created>2004-12-17T10:09:41Z</created>
+<summary type="text/plain">Or else your head will fall off within half an hour. At least, when you are living in more or less colder climate (below 10 degree Celsius; most people probably wouldn&apos;t call this cold, but it can feel quite cold...</summary>
+<author>
+<name>43BenjaminThings</name>
+<url>http://hugster.43things.com/people/view/benjamin</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[<div class='goalentry'>Or else your head will fall off within half an hour. At least, when you are living in more or less colder climate (below 10 degree Celsius; most people probably wouldn't call this cold, but it can <em>feel</em> quite cold to a head without hair). 
+But apart from that danger, it's pretty cool, to get up in the morning and not care in <strong>any</strong> way about your hair.</div><div class='goalprogresslink'>(<a href='http://hugster.43things.com/people/progress/benjamin?on=2453'>See more progress on "shave my head"...</a>)</div>]]>
+
+</content>
+</entry>
+<entry>
+<title>Hugster - First Impression</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/12/hugster_first_i.html" />
+<modified>2004-12-17T07:35:52Z</modified>
+<issued>2004-12-17T07:27:47Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.52</id>
+<created>2004-12-17T07:27:47Z</created>
+<summary type="text/plain">At first you don&amp;#8217;t really know what this thing is about. Maybe you add some personal goals yourself, the ones no one except yourself can achieve. But then you see other people&amp;#8217;s goals. And that&amp;#8217;s the moment, when the klick...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[<p>At first you don&#8217;t really know what <a href="http://hugster.43things.com">this thing</a> is about. Maybe you add some personal goals yourself, the ones no one except yourself can achieve. <br />
+
+But then you see other people&#8217;s goals. And that&#8217;s the moment, when the <em>klick</em> happens. <br />
+Inspiration. You get reminded of goals you very seldom think of, but that somehow have a special meaning to you. <br />
+The <a href="http://hugster.43things.com/things/view/648">marathon goal</a> is such a goal for me. People who know me, will find this totally ridiculous, because I&#8217;m not really the sports guy. I&#8217;m not totally lazy either, but when it comes to achieving hard, long running goals I could try harder (sometimes).</p>
+
+<p>Anyways, the point I wanted to make is: <a href="http://hugster.43things.com">Hugster</a> somehow makes me feel good. At least now, after the first five minutes using it. We&#8217;ll see if it can hold up that feeling.</p>
+
+Links:
+<ul>
+<li><a href="http://hugster.43things.com">Hugster</a></li>
+<li><a href="http://twinkler.43things.com">Twinkler</a></li>
+<li><a href="http://robotcoop.com/">The Robot Co-op Blog (the company/team behind the Hugster/Twinkler)</a></li>
+</ul>]]>
+
+</content>
+</entry>
+<entry>
+<title>Roosster Download Works again</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/12/roosster_downlo_1.html" />
+<modified>2004-12-04T18:39:18Z</modified>
+<issued>2004-12-04T18:12:11Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.48</id>
+<created>2004-12-04T18:12:11Z</created>
+<summary type="text/plain">Just a short note for your information:Roosster can be downloaded again. Thanks to the nice and fast folks over at berliOS (the german sourceforge). Visit the Roosster project page to download releases, view tickets/tasks, request features, browse the subversion repository,...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>roosster</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[<p>Just a short note for your information:<br /><a href="http://roosster.org/dev">Roosster</a> can be downloaded again. Thanks to the nice and fast folks over at <a href="http://developer.berlios.de">berliOS</a> (the german <a href="http://sf.net">sourceforge</a>). Visit the <a href="http://developer.berlios.de/projects/roosster">Roosster project page</a> to download releases, view tickets/tasks, request features, browse the subversion repository, subscribe to the mailing list and the usual other things.</p>
+
+<p>In case you wonder why I chose to host the project at berliOS instead of sourceforge, the answer is simple. Subversion support! BerliOS supports subversion (as well as good ol' CVS), while sourceforge currently supports only CVS. Although it's planned to provide subversion support in 2005.</p>
+
+<p>That's it for now. Have a nice weekend.</p>]]>
+
+</content>
+</entry>
+<entry>
+<title>Roosster Source and File Repository Move</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/12/roosster_source_1.html" />
+<modified>2004-12-04T18:40:44Z</modified>
+<issued>2004-12-02T22:47:24Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.47</id>
+<created>2004-12-02T22:47:24Z</created>
+<summary type="text/plain"><![CDATA[&quot;Cobbler, stick to your trade&quot;! After fiddling around way too often, and thus spending too much time, with administrating the roosster subversion repository I give up. That doesn't mean subversion is too hard to adminster. I'm simply not the administrator...]]></summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>roosster</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[<p>&quot;Cobbler, stick to your trade&quot;! After fiddling around way too often, and thus spending too much time, with administrating the <a title="link to roosster.org" href="http://roosster.org/dev">roosster</a>
+subversion repository I give up. That doesn't mean subversion is too hard to
+adminster. I'm simply not the administrator type. Oddly enough,
+administration was my first interest when entering the IT industry.</p>
+
+<p>However, I requested a project at <a title="link to sourceforge.net" href="http://sf.net">sourceforge</a> and hope to get approved soon. Or better, the project is approved but not yet active. </p>
+<p>In the meantime, I've moved away from <a href="http://projects.edgewall.com/trac/" title="Link to Trac's Homepage">Trac</a>, which doesn't make sense without a local subversion repository, and installed <a href="http://www.kwiki.org" title="Link to Kwiki's Homepage">Kwiki</a>
+instead (and again I was amazed by the simplicity and ingenuity of this
+piece of software; if I'll ever write anything close to Kwiki, that'll
+be a lifetime's achievement; ok, maybe that's a bit exaggerated). So
+documentation will stay at <a href="http://roosster.org/dev">roosster.org</a>, while source repository and releases will go to sourceforge. <br />
+Of course this all delayed the 0.2 release, which includes an embedded
+web server and the accompanying HTML interface. I'll keep you updated
+on this.<span style="text-decoration: underline;"></span></p>]]>
+
+</content>
+</entry>
+<entry>
+<title>Conversion from Berkeley DB to MySQL</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/11/conversion_from_1.html" />
+<modified>2004-11-30T07:44:50Z</modified>
+<issued>2004-11-30T06:54:00Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.46</id>
+<created>2004-11-30T06:54:00Z</created>
+<summary type="text/plain"> I converted my MovableType installation (version 3.121) from Berkeley DB to MySQL, for easier backups and faster rebuild times. I ran into some problems, which I wanted to point out. Maybe others will find it useful.When following Diego&apos;s tip...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[
+I converted my MovableType installation (version 3.121) from Berkeley DB to MySQL, for
+easier backups and faster rebuild times. I ran into some problems,
+which I wanted to point out. Maybe others will find it useful.<br /><br />When following <a href="http://www.dynamicobjects.com/d2r/archives/technology/index.html">Diego's</a> tip to keep both the Berkeley and DBI/MySQL settings in <code>mt.cfg</code> while running <code>mt-db2sql.cgi</code>
+everything is fine. As long as you don't use nested categories, or
+subcategories as they are sometimes called. If you happen to use
+subcategories, the <code>mt-db2sql.cgi</code> script will fail without any meaningful error message. <br />
+The solution is simple: Move all your subcategories temporarily to the
+top-level, while running the conversion script. After the conversion
+has ended successfully, you can move them back to their previous
+destination in the category tree.<br />
+<br />]]>
+<![CDATA[
+<br />]]>
+</content>
+</entry>
+<entry>
+<title>Bloggers should Publish their Bookmarks</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/11/smart_people_sh_1.html" />
+<modified>2004-11-30T08:26:31Z</modified>
+<issued>2004-11-29T22:44:01Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.44</id>
+<created>2004-11-29T22:44:01Z</created>
+<summary type="text/plain"> A little thought that struck me while surfing around other people&apos;s bookmarks on simpy and del.icio.us is learning. Most discussion about social bookmarking I read until now, where all about knowing what other people currently bookmark. But what about...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[
+A little thought that struck me while surfing around other people's bookmarks on <a href="http://simpy.com">simpy</a> and <a href="http://del.icio.us">del.icio.us</a> is <span style="font-style: italic;">learning</span>. Most discussion about social bookmarking I read until now, where all about knowing what other people currently bookmark. <br />
+But what about the past bookmarks? Bookmarks are like a small glimpse
+of people's memory. And if you know the del.icio.us or simpy (insert
+similar tools here) account of some expert in a field of interest to
+you, surfing this person's bookmarks is like asking him some (although
+unspecific) questions.<br />
+It's like going up to this expert's house and looking at his bookshelf. A great way of learning, from my point of view.<br />
+<br />
+All this is nothing new, and other people probably have mentioned it
+already. But it was one use of social bookmarking I hadn't experienced
+before, and which I find extremely useful.<br />
+<br />
+I think every blogger should publish his or her username at the various social bookmarking platforms. <br />]]>
+
+</content>
+</entry>
+<entry>
+<title>Using HTMLArea with MovableType</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/11/using_htmlarea_1.html" />
+<modified>2004-11-30T07:31:21Z</modified>
+<issued>2004-11-29T07:26:47Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.45</id>
+<created>2004-11-29T07:26:47Z</created>
+<summary type="text/plain"><![CDATA[Being annoyed with the different kinds of &quot;not-very-powerful-wiki/markup&quot;-syntaxes, I started looking around for free, online WYSIWIG editors that would integrate smoothly with MovableType. So this is my first post that utilizes an online WYSIWIG editor. I'll describe which editors I...]]></summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[Being annoyed with the different kinds of
+&quot;not-very-powerful-wiki/markup&quot;-syntaxes, I started looking around for free,
+online WYSIWIG editors that would integrate smoothly with MovableType. <br />
+<br />
+So this is my first post that utilizes an online WYSIWIG editor. I'll
+describe which editors I tried to use, which one I finally chose, how I
+integrated it into MovableType and finally how well it works. The
+latter will be subject to change as I write more posts with my chosen
+editor, and explore the innards of the editor. <br />]]>
+<![CDATA[<p>The requirements an editor had to fulfill, for me to even consider it, were:<br />
+</p>
+<ul><li>A license that lets me use the editor free of charge (I'm not very pedantic about OpenSource licenses).</li>
+<li>Simple installation (not more than uploading some files and adding some lines of javascript to the file I need the editor on).</li>
+<li>No serverside component; again, I want to keep it simple.</li>
+<li>Must work cross-platform, cross-browser (although I currently use only Firefox).</li>
+</ul>
+So after some searching I found some editor that fulfilled these requirements and started testing them. <br />
+<span style="font-style: italic;">Note:</span> I don't claim these
+three to be the only online WYSIWYG editors that fit my needs. They
+simply were the first I found. There are other editors, which may
+equally well suit my (or your) needs.<br />
+
+
+<h3>FCKeditor<br />
+
+</h3><a href="http://blog.nur-eine-i.de/images/onlineeditors-screenshots/fckeditor-advanced.jpg"><img vspace="10" hspace="10" border="0" align="right" src="http://blog.nur-eine-i.de/images/onlineeditors-screenshots/fckeditor-advanced-thumb.jpg" /></a>At first I tried <a href="http://www.fckeditor.net/" title="Link to FCKeditor Homepage">FCKeditor</a> (version 2.0 b1). It's licensed under the <a href="http://www.opensource.org/licenses/lgpl-license.php" title="Link to the complete text of the Lesser GNU Public License">LGPL</a>,
+pretty easy to install and very configurable. For example it's easy to
+define
+your own set of buttons that make up your toolbar, to adapt the editor
+to your needs, or even skin the whole editor via an API.  <br />
+The editor
+provides the user with possibilities to edit nearly everything. You can even edit the <span style="font-family: courier new,courier,monospace;">style</span>
+and <span style="font-family: courier new,courier,monospace;">id </span>attributes of most elements through the editors interface. So
+there's almost no need to hand-edit the HTML code, even for advanced
+users.<br /><br />But
+all configurability didn't help me getting it to work properly. The
+install was a breeze, properly substituting the textareas in question,
+and showing the toolbar for text formatting. But after some time of
+editing, popup-windows (mainly the ones, for specifiying the <span style="font-family: courier new,courier,monospace;">href</span>
+for a link) didn't close properly and my links got totally messed up.
+All this, for no apparent reason. And as you might guess: Not being
+able to use links, can get annoying very fast, when writing blog
+entries.<br />
+Sad but true. It's still too much beta. Maybe I'll try it again, if it's more stable.<br />
+<h3>Cross-Browser Rich Text Editor</h3>
+
+The second editor I tried was the Cross-Browser <a href="http://www.kevinroth.com/rte/demo.htm" title="Link to Rich Text Editor's Homepage">Rich Text Editor</a>
+(referred to as RTE from now on). Again, the installation process
+consists of uploading some files and adding some javascript statements
+to the right file. But although the online demo and the example, that's
+bundled with the RTE's distribution, worked perfectly, I couldn't get the editor
+to work with MovableType, even after nearly an hour of tweaking and poking around. The
+javascript console showed no errors, and the textarea was displayed,
+but it showed no toolbar for formatting text entered into the textarea.<br />
+So although RTE looked like it would be the simple editor I was looking for, it didn't work for me.<br />
+<h3><a href="http://blog.nur-eine-i.de/images/onlineeditors-screenshots/htmlarea.jpg"><img vspace="10" hspace="10" border="0" align="left" alt="Screenshot of HTMLArea's editing window" src="http://blog.nur-eine-i.de/images/onlineeditors-screenshots/htmlarea-thumb.jpg" /></a>HTMLArea </h3>
+<a href="http://www.htmlarea.com">HTMLArea</a> is the editor I now use.
+Version 3, which is currently in beta state, supports Mozilla/Firefox,
+but works flawlessly, as far as I tested it. The installation is easy.
+Apart from uploading some files, you, again, just have to add some
+lines of javascript, to the file where you want the editor, and
+everything is done. <br />The
+editor's toolbar is small but still contains everything needed,
+although it's not as powerful as FCKeditor. It probably is enough for
+most editing needs and simple enough not to get in the writer's way.<br />Until now the HTML code HTMLAread produces seems fairly. <br />
+As a programmer I miss the capability to format blocks as <span style="font-family: courier new,courier,monospace;">&lt;code&gt;</span>. But formatting such blocks with <span style="font-family: courier new,courier,monospace;">Courier</span> works for now, although it's not what you'd call semantic.<br />
+<h3>MovableType Integration</h3>I used version <a href="http://sourceforge.net/projects/itools-htmlarea/" title="Link to download page of HTMLArea 3.0RC1">3.0RC1</a> of HTMLArea. As long as the
+API doesn't change, the instructions should work with newer versions too.<br />
+As always: If you are unsure about what you're doing (or worse: Don't
+know at all what you are doing), make at least a backup of the files you are
+editing, and read the complete instructions before you start. If you're
+still unsure, ask someone who knows better.<br />
+With MovableType Integration I mean using the WYSIWYG editor for
+editing blog entries. Therefore it's sufficient to enhance the needed
+textareas in the file <span style="font-family: courier new,courier,monospace;">tmpl/cms/edit_entry.tmpl</span> of your MovableType installation. So open up this file in your favorite text editor and add the following lines to the <span style="font-family: courier new,courier,monospace;">&lt;script&gt;</span> tag at the top of the file, where <span style="font-family: courier new,courier,monospace;">_editor_url</span> corresponds to the URL where you uploaded the files of the HTMLarea.
+
+<p /><pre>_editor_url = &quot;/htmlarea&quot;;<br />_editor_lang = &quot;en&quot;;<br /></pre><p />
+
+Now include the javascript file <span style="font-family: courier new,courier,monospace;">htmlarea.js</span> into the page. You can do this
+with something similar to the following. But be sure to change the path
+to where you uploaded the file (setting of <span style="font-family: courier new,courier,monospace;">_editor_url</span> above).<br />
+
+<p /><pre>&lt;script src=&quot;/htmlarea/htmlarea.js&quot; type=&quot;text/javascript&quot; /&gt;</pre><p>
+
+After you've done this, look for the textareas <span style="font-family: courier new,courier,monospace;">text</span> and <span style="font-family: courier new,courier,monospace;">text_more</span> and place the following code <span style="font-weight: bold;">after</span> the textarea tags. 
+
+</p><p /><pre>&lt;script type=&quot;text/javascript&quot;&gt;<br />var editor1 = new HTMLArea(&quot;text&quot;);<br />editor1.generate();<br /><br />var editor = new HTMLArea(&quot;text_more&quot;);<br />editor.generate();<br />&lt;/script&gt;<br /></pre><p>
+
+Save and close the file. Done. <br />
+Now log into your MovableType installation and start editing old or new
+entries. When editing old entries, make sure that the entries were
+formatted using HTML and that you selected <span style="font-family: courier new,courier,monospace;">None</span> in the <span style="font-style: italic;">Text Formatter</span> select box.<br />
+If you encounter any problems: Read the instructions again!<br />
+Of course it's possible to use HTMLArea for more than just the blog
+editing textareas. But you'll have to figure this out yourself if you
+need it.<br />
+
+</p><h3>... more</h3>That's it, for my quick and dirty review. Look at this <a href="http://www.bris.ac.uk/is/projects/cms/ttw/ttw.html">comparison chart</a> to learn of more online WYSIWYG editors, than the ones I mentioned here.<br />
+<br />
+<br />]]>
+</content>
+</entry>
+<entry>
+<title>Simpy.com - Another Social Bookmark Manager</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/11/simpycom_anothe.html" />
+<modified>2004-11-30T06:52:17Z</modified>
+<issued>2004-11-22T22:24:33Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.41</id>
+<created>2004-11-22T22:24:33Z</created>
+<summary type="text/plain">Some time ago Otis Gospodneti&amp;#263; contacted me in regard to roosster. He told me about his social bookmark manager simpy and of course I had to try it. This is my opinion about it. Basically simpy It&apos;s very similar to...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[Some time ago <a href="http://jroller.com/page/otis">Otis Gospodneti&#263;</a> contacted me in regard to <a href="http://roosster.org/">roosster</a>. He told me about his social bookmark manager <a href="http://www.simpy.com">simpy</a> and of course I had to try it. This is my opinion about it. 
+<a href="http://blog.nur-eine-i.de/images/simpy-screenshots/keyword-search.jpg"><img src="http://blog.nur-eine-i.de/images/simpy-screenshots/keyword-search-thumb.jpg" alt="screenshot of simpy's search page" style="margin:5px;float:right;" /></a>
+
+<p>Basically <a href="http://www.simpy.com">simpy</a> It's very similar to <a href="http://del.icio.us">del.icio.us</a>, with a slightly more "professional" feel to the UI.</p>
+
+<p>Because of this similarity, and because I assume most people know about del.icio.us, I will directly compare simpy with del.icio.us. I don't do this, to bitch about any of the two, but rather to make easier to understand what simpy does.</p>]]>
+<![CDATA[<h3>Features</h3>
+
+<ul>
+<li>
+<a href="http://blog.nur-eine-i.de/images/simpy-screenshots/add-bookmark.jpg">
+<img src="http://blog.nur-eine-i.de/images/simpy-screenshots/add-bookmark-thumb.jpg" alt="screenshot of simpy's search page" style="margin:5px;float:right" /></a>
+
+Both services allow a note, and an arbitrary number of tags/keywords to be associated with a bookmarked page.
+
+<br/>
+When adding a bookmark, simpy lists the most used tags together with a radio button, so you can easily associate already used tags with a new bookmark. This prevents the usual problem of del.icio.us were you accidently created several tags with similar names. If you bookmark a page with simpy, that was already bookmarked by other simpy users, the service, suggests you the most used keywords by these other users, and provides radio buttons for easy using these tags too (btw this could lead to some interesting <em>evolution</em> or <em>emergence</em> observations).
+
+</li>
+<li>Simpy allows batch importing of your browser's bookmarks, and similarly exports pages bookmarked via simpy as a browser's bookmarks file. Though it's odd, that the import supports Mozilla/Firefox, IE, Safari and Opera, while the export only supports Mozilla/Firefox and IE. 
+<br/>
+This import/export can (or could) be done in del.icio.us too, although with the help of 3rd party tools, that use the del.icio.us API. <em>Slight advantage for simpy</em>.
+</li>
+<li>
+Simpy sports a Bookmarklet for easy bookmarking of pages. Also there's a special Mozilla/Firefox Sidebar-page, which gives you access to frequently used functions of simpy.
+<br/>
+There are already a lot of Bookmarkelets/Extensions that speed up working with del.icio.us, so in this area it's <em>a tie</em>.
+</li>
+<li>
+Being developed by a <a href="http://jakarta.apache.org/lucene">Lucene</a>-guru (Otis wrote <a href="http://www.manning.com/catalog/view.php?book=hatcher2">Lucene in Action</a> together with Erik Hatcher and is the maintainer of the <a href="http://jguru.com/faq/Lucene">jGuru.com Lucene FAQ</a>), you bet that simpy has some nifty search features. And it has. You can either search your own bookmarks, or all user's bookmarks, Your search can be refined by adding/removing keywords/tags to your query, similar to chaining tags at del.icio.us. The search is fast and supports many (if not all, haven't tested them) of <a href="http://jakarta.apache.org/lucene/docs/queryparsersyntax.html">Lucene's Query Syntax</a>, which is a lot more than what del.icio.us has to offer. Although it may be that not many people actually use complex queries on their bookmarks. Anyways, <em>one point for simpy</em>.
+</li>
+<li>
+Simpy has no API (yet). Acccording to Otis, this will be included in a December's release. Therefore, hacking cool tools for simpy like it's done for del.icio.us (see <a href="http://www.scifihifi.com/cocoalicious/">cocoalicious</a>, btw people should be #$%&* when they create such obscure names) is not possible. <em>Advantage for del.icio.us</em>.
+</li>
+<li>
+Both services claim to allow social bookmarking. I won't go into detail how I understand the term <em>social bookmarking</em> (others <a href="http://exonous.typepad.com/beatblog/2004/05/social_bookmark.html">have</a>  <a href="http://notizen.typepad.com/aus_der_provinz/2004/09/was_social_soft.html">done</a> this before and better).
+<br/>
+The social component in simpy is called <em>Topics</em>. It's quite powerful but takes some time getting used to. Topics allow you to group certain users/sbscription into groups and filter them to your liking. Of course you can browse tags too, similar to del.icio.us. Which brings us to del.icio.us' social component. Which is based on tagging. You tag bookmark with a certain keyword, other people might use the same keyword, and will find you and your bookmarks (of course there's a little more to it, but for the sake of comparison I keep it simple).
+<br/>
+Despite the higher learning curve, I'd say that the social component of simpy is far more advanced than del.icio.us. <em>One more point for simpy</em>.
+</li>
+</ul>
+
+
+<h3>Simp(l)y not good ...</h3>
+
+<p>Although stated as a core feature and advertised prominently on the <a href="http://www.simpy.com">simpy.com home page</a>, I think the full text search of the bookmarked pages' content either doesn't work, or doesn't work well enough to be usable. The <a href="http://www.simpy.com/simpy/ReleaseLog.do">latest release notes</a> it says, that full text searching was suspended for a while but works again. <br/> Nonetheless I tried several times to find bookmarked pages through searching with meaningful keywords, which existed in the pages' content, but the search never resulted in finding the pages. </p>
+
+<h3>Conclusion</h3>
+
+<p>Apart from the the mentioned caveat and some very minor issues (like the words <em>tag</em> and <em>keyword</em> being used interchangeably or the <em>top keywords</em> not being sorted alphabetically, which is what I would expect of such a listing) simpy is a nice service, which goes beyond the "basic" set of features implemented by del.icio.us. I use it on a daily basis, and will keep doing so, until <a href="http://roosster.org/">roosster</a> is in a more usable state.</p>
+
+<h3>Sidenote</h3>
+
+<p>While surfing around simpy for writing this post I discovered <a href="http://www.spurl.net/">spurl</a>, which seems (again) very similar to simpy and del.icio.us. But I won't look at it further, as my appetite for social bookmarking is satisfied for now. Maybe someone will write a review and tell me about it, or maybe there is already a review, as spurl seems to be around longer than simpy and del.icio.us (not sure about that).</p>]]>
+</content>
+</entry>
+<entry>
+<title>Did Someone Ask for Personal Search</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/11/did_someone_ask_1.html" />
+<modified>2004-11-30T06:52:17Z</modified>
+<issued>2004-11-03T14:54:05Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.40</id>
+<created>2004-11-03T14:54:05Z</created>
+<summary type="text/plain">Simply amazing what Firefox/Mozilla extensions are out there. I just found Scrapbook and it&apos;s almost all my archiving/searching/finding dreams come true. Scrapbook is all about capturing web pages. You can either capture a whole page, or just a selected portion...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[<p>Simply amazing what Firefox/Mozilla extensions are out there. I just found <a href="http://amb.vis.ne.jp/mozilla/scrapbook/index.php">Scrapbook</a> and it's almost all my archiving/searching/finding dreams come true.</p>
+
+<p>Scrapbook is all about capturing web pages. You can either capture a whole page, or just a selected portion of a web page. You can tell Srapbook to capture .mp3, image, movie, sound and archive files with a captured page. Scrapbook can even follow all links on a captured page and save them too. You can attach notes to captured pages (almost a killer feature for me, that I miss in so many applications: Note-taking) and sort captured pages into folders, although folders aren't hierarchical. But since I use <a href="http://bloglines.com">Bloglines</a>, I don't think hierarchical categories are really necessary. </p>
+
+<p>And like that wasn't enough, Scrapbook features a fulltext search over all your captured pages, including the notes attached to the pages. The search result display isn't the nicest thing in the world, but it's fulltext.</p>
+
+<p>Great Product. Go test it!</p>
+
+<p>Via: <a href="http://www.pixelgangster.de/">pixelgangster</a></p>
+
+<p><em>Update</em>: After using it for sometime, it bugs the hell out of me, that the index of captured pages is bound to the local computer. Sad but true, this is a killer argument for me.<br />
+</p>]]>
+
+</content>
+</entry>
+<entry>
+<title>Just Some Notes</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/11/just_some_notes_1.html" />
+<modified>2004-11-30T06:52:17Z</modified>
+<issued>2004-11-03T08:08:29Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.39</id>
+<created>2004-11-03T08:08:29Z</created>
+<summary type="text/plain">Here I am, covered up in work, but I still can&apos;t keep my hands off my newsreader. Because I want to share some ideas and notes, and don&apos;t have the time to write full fledged entries, I&apos;ll post only some...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+Here I am, covered up in work, but I still can&apos;t keep my hands off my newsreader. Because I want to share some ideas and notes, and don&apos;t have the time to write full fledged entries, I&apos;ll post only some short notes for now. Maybe I&apos;ll do a follow up on some of them later:
+<![CDATA[<h2>Need for Roosster</h2>
+Via <a href="http://rss.weblogsinc.com/entry/3587363283872462/">Greg Scher</a> I learned of <a href="http://wetaste.com">wetaste.com</a>. It's interesting to see that I'm not alone with my <a href="http://blog.nur-eine-i.de/archives/2004/10/why_is_desktop_1.html">braindeadness</a>, and other people need some kind of personal web archive too. 
+
+Meanwhile, the second release of Roosster, which will include a web interface via a (optionally embedded) web server, is advancing. Slowly, but it's moving. Maybe I'll find some more time in the next weeks. I'll definitely have more free time then. We'll see if I will spend it on Roosster.
+
+<h2>Not Fat, Not Thick, Just Slim</h2>
+
+<a href="http://bitworking.org/news/Following_the_trail_to_slim_clients">Joe Gregorio</a>, author of the AtomAPI spec, talks about how Gmail and <a href="http://oddpost.com">OddPost</a>  seem to create a new kind of UI category. Both provide an UI, that's far more than just HTML, and still less than the usual ''thick'' clients (like Java Applets).
+
+That in itself is nothing new, but I think the programmer's perspective on this is interesting. I see more and more frameworks (<a href="http://activemq.codehaus.org/">ActiveMQ</a>, <a href="http://pustefix.sf.net">Pustefix</a> just for a start), that provide means to implement this new kind of web UI by using streaming of data and intelligent use of different kinds of <a href="http://www.walterzorn.com/dragdrop/dragdrop_e.htm#demolyr">javascript</a> <a href="http://php.amnuts.com/demos/crop-canvas/index.php">wizardry</a>. 
+
+<h2>Telling your Boss about Blogs </h2>
+<a href="http://jeremy.zawodny.com/blog/archives/002894.html">Jeremy</a> asked an interesting question, and many people responded. I'm interested what Jeremy himself has to say about it. <br/><h2>Google buys Microsoft?</h2><a href="http://ifindkarma.typepad.com/relax/2004/10/google_acquisit.html">Adam Rifkin</a> asks, if Google should buy Microsoft, to finally buy a company, that contributes revenue instead of ''just'' adding to the pile of cool technology owned by Google.]]>
+</content>
+</entry>
+<entry>
+<title>Why is &apos;Desktop Search != Web Search&apos;</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/why_is_desktop_1.html" />
+<modified>2004-11-30T06:52:17Z</modified>
+<issued>2004-10-29T14:54:02Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.38</id>
+<created>2004-10-29T14:54:02Z</created>
+<summary type="text/plain">Reading Kevin Burton&apos;s announcement about a Lucene-based Desktop search application I wondered (for the n-th time), why people who develop Desktop Search applications (be it open source groups or companies) take this separation between Desktop and the Web so serious?...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://blog.nur-eine-i.de</url>
+<email>benjamin@blog.nur-eine-i.de</email>
+</author>
+<dc:subject>roosster</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[<p>Reading <a href="http://www.peerfear.org/rss/permalink/2004/10/28/LotsOfInterestInLuceneDesktop/" class="extlink">Kevin Burton's</a> announcement about a Lucene-based Desktop search application I wondered (for the n-th time), why people who develop Desktop Search applications (be it open source groups or companies) take this separation between Desktop and the Web so serious? </p>
+<p>If you have a search application for indexing, searching you local computer, why not extend this application and let the user add items from the web to the index? </p>
 ]]>
-
-</content>
-</entry>
-<entry>
-<title>Mark is gone</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/mark_is_gone.html"/>
-<modified>2004-10-20T19:55:16Z</modified>
-<issued>2004-10-20T19:37:05Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.33</id>
-<created>2004-10-20T19:37:05Z</created>
-<summary type="text/plain">Mark Pilgrim, of feedparser and feedvalidator fame, has stopped blogging. At least it seems so. His final post is rather short and his site no longer provides any kind of feeds. One could say it's no real surprise, since he...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>blogging</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-<![CDATA[<p><a href="http://diveintomark.org" class="extlink">Mark Pilgrim</a>, of <a href="http://feedparser.org" class="extlink">feedparser</a> and <a href="http://feedvalidator.org" class="extlink">feedvalidator</a> fame, has stopped blogging. </p>
-<p>At least it seems so. His <a href="http://diveintomark.org/archives/2004/10/18/exit" class="extlink">final post</a> is rather short and his site no longer provides any kind of feeds. One could say it's no real surprise, since he made some <a href="http://diveintomark.org/archives/2004/08/06/vacation" class="extlink">hints</a> in the <a href="http://diveintomark.org/archives/2004/10/15/white-lights" class="extlink">past</a>, and his post frequency was rather low in the last months.</p>
-<p>Either way, I think that's rather sad. I really liked his writing style and his views on technical topics were always good for some new perspective and interesting insights.</p>
-<p>I would really like to know, if he just stopped blogging, or if he stepped back from all his computer involvements (his column on <a href="http://www.xml.com" class="extlink">xml.com</a>, feedparser, Atom ...).</p>
-<p>Whatever the case. Have more fun, Mark.</p>
+<![CDATA[<p>Maybe I'm just not good enough at forming Google queries. But I've had several experiences already, where I vaguely remembered something (a post by someone else, a solved problem etc.) and couldn't find it again using Google (or the likes). Sometimes <a href="http://google.com" class="extlink">The Index</a> is too large. For me at least. Searching for some very specific piece of information would certainly be more effective, if the queried index contained only 10.000 or even 100.000 entries instead of 4.285.199.774 or even more.</p>
+<p>Sure, I can save the page and then let the search application index it, but that's only half the picture and wouldn't be very usable in my opinion.</p>
+<p>Diametrically opposed to <a href="http://www.benhammersley.com/weblog/2004/08/31/unleashing_memes_with_context_specific_mirroring.html" class="extlink">Ben's Context Specific Mirroring Idea</a>, I want all the things I somehow publish on the net, not just this blog or the <a href="http://wiki.nur-eine-i.de/?   # The name of the wiki script, for use in urls?action=edit&amp;id=Wiki" class="create">Wiki</a>, to be available in my very own search index, to "come back to me". Why not achieve this using a Desktop Search application? Why not give the application an URL of an RSS/Atom feed and the contained entries? Importing your <a href="http://del.icio.us/" class="extlink">del.icio.us</a> links into your personal knowledge index? Cool, I say.</p>
+<p>In my opinion, Desktop Search Applications, or Personal Search Engines, as I prefer to call them,  should provide you with search capabilities over all the information that's personally relevant to you. Whether this information lives on your local computer's hard drive or somewhere on the web.</p>
+<p>Implementing such a thing into an existing search application wouldn't be hard. I know this, because I'm implementing it right now in <a href="http://wiki.nur-eine-i.de/?   # The name of the wiki script, for use in urls?action=edit&amp;id=Roosster" class="create">Roosster</a>. Until the separation of Desktop and "selective" Web Search has faded from Desktop Search applications, I will have to stick to <a href="http://wiki.nur-eine-i.de/?   # The name of the wiki script, for use in urls?action=edit&amp;id=Roosster" class="create">Roosster</a>.</p>
 ]]>
-
-</content>
-</entry>
-<entry>
-<title>You Never Know ... </title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/you_never_know.html"/>
-<modified>2004-10-20T07:40:14Z</modified>
-<issued>2004-10-20T07:30:36Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.32</id>
-<created>2004-10-20T07:30:36Z</created>
-<summary type="text/plain">... what you're going to get, when reading weblogs! I think I should frame that. To remind me why I'm doing this. Reading so much weblogs (and other "syndicated content"), can be laborious at times. However, the reason I'm writing...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>blogging</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-
-</content>
-</entry>
-<entry>
-<title>I'm Starting To Miss Windows</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/im_starting_to.html"/>
-<modified>2004-10-14T19:19:11Z</modified>
-<issued>2004-10-14T18:59:29Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.31</id>
-<created>2004-10-14T18:59:29Z</created>
-<summary type="text/plain">Well, I never thought I would, but when I read about Google Desktop today, I really thought about using a Windows computer again. For a short time only, I assure you. I just can't believe how cool this is. Having...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>blogging</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-
-</content>
-</entry>
-<entry>
-<title>API Design</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/api_design.html"/>
-<modified>2004-10-13T07:47:30Z</modified>
-<issued>2004-10-13T07:06:30Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.30</id>
-<created>2004-10-13T07:06:30Z</created>
-<summary type="text/plain">
-</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>development</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-
-</content>
-</entry>
-<entry>
-<title>du - Displaying Disk Usage Statistics</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/du_displaying_d_1.html"/>
-<modified>2004-10-09T23:25:32Z</modified>
-<issued>2004-10-09T23:15:19Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.29</id>
-<created>2004-10-09T23:15:19Z</created>
-<summary type="text/plain">While having fun with my iBook, I used du quite extensively, and without it, the whole thing would have taken even more time. That's why I post about du alone, to show other people, what a great help this can...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>mac</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-</content>
-</entry>
-<entry>
-<title>NGTD - Not Getting Things Done</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/ngtd_not_gettin.html"/>
-<modified>2004-10-09T23:05:54Z</modified>
-<issued>2004-10-09T22:43:56Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.28</id>
-<created>2004-10-09T22:43:56Z</created>
-<summary type="text/plain">Computers are great. There's no doubt about it. When I bought my iBook, some 4 months ago, I thought a 30 GB hard drive would be more than enough. How I erred. While ripping some of my CDs this afternoon...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>mac</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-</content>
-</entry>
-<entry>
-<title>Great Music Video</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/great_music_vid.html"/>
-<modified>2004-10-10T00:03:09Z</modified>
-<issued>2004-10-09T21:47:56Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.27</id>
-<created>2004-10-09T21:47:56Z</created>
-<summary type="text/plain">This video is really great. And it's a great song. Go see it. You'll need iTunes to watch it. But trust me the video alone is a reason to download and install iTunes. Via: Tim Bray...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>blogging</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-
-</content>
-</entry>
-<entry>
-<title>Blog Move</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/blog_move.html"/>
-<modified>2004-10-08T09:08:17Z</modified>
-<issued>2004-10-08T08:20:11Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.26</id>
-<created>2004-10-08T08:20:11Z</created>
-<summary type="text/plain">Ok, I did it again. Sorry for making it hard to follow my 'oh so interesting' notes. But this time the switch will last, which means the form of this blog will last. For some time at least. I had...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>blogging</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-
-</content>
-</entry>
-<entry>
-<title>Rojo Review</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/rojo_review.html"/>
-<modified>2004-10-05T12:26:07Z</modified>
-<issued>2004-10-02T20:13:49Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.6</id>
-<created>2004-10-02T20:13:49Z</created>
-<summary type="text/plain">There's a new social-software, feed-reading web application on the block, called Rojo. It's in beta-testing stage right now, and similar to Gmail you can only get an account by receiving an invitation. I have been invited by Kevin Burton, Co-founder...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>webapps</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-</content>
-</entry>
-<entry>
-<title>Developer Braindump</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/09/developer_brain.html"/>
-<modified>2004-10-09T07:34:55Z</modified>
-<issued>2004-09-27T09:59:14Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.5</id>
-<created>2004-09-27T09:59:14Z</created>
-<summary type="text/plain">Please forgive my crude writing style in this post. But, hey, it's a wiki (well, kind of). Just a braindump of the ideas/wishes that formed in my mind during the last days, so I can get on with my life...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-
-</content>
-</entry>
-<entry>
-<title>Interessanter Kunst-Terror</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/09/interessanter_k.html"/>
-<modified>2004-10-05T11:51:40Z</modified>
-<issued>2004-09-25T10:26:42Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.7</id>
-<created>2004-09-25T10:26:42Z</created>
-<summary type="text/plain">Tja, manchmal kann es doch ganz nett sein, Zeitung zu lesen, statt sich immer nur übers Internet zu informieren. Heute morgen hab ich dann etwas sehr interessantes gelesen: Ein Student der Hochschule für Gestaltung Karlsruhe hat am Mittwoch den 22.09....</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>life</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-
-</content>
-</entry>
-<entry>
-<title>iBook TV Cable Mess</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/09/ibook_tv_cable.html"/>
-<modified>2004-10-05T11:50:57Z</modified>
-<issued>2004-09-22T05:49:54Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.8</id>
-<created>2004-09-22T05:49:54Z</created>
-<summary type="text/plain">Just in case anyone of you plans to hook up an iBook (the ones without external reset button; which means the newest at the date of writing this in September 2004) to a TV, there's a small but significant gap...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>mac</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-
-</content>
-</entry>
-<entry>
-<title>Java Feed Parsers</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/09/java_feed_parse.html"/>
-<modified>2004-10-06T12:08:24Z</modified>
-<issued>2004-09-19T11:53:23Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.9</id>
-<created>2004-09-19T11:53:23Z</created>
-<summary type="text/plain">You know, since I learned about the UniversalFeedParser I was always a bit jealous about the Python guys for having such a cool piece of software. But my jealousy seems to come to an end. Enter Rome. Rome is a...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-
-</content>
-</entry>
-<entry>
-<title>Google Labs - Interesting stuff</title>
-<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/09/google_labs_int.html"/>
-<modified>2004-10-05T12:27:48Z</modified>
-<issued>2004-09-19T10:38:47Z</issued>
-<id>tag:blog.nur-eine-i.de,2004://1.10</id>
-<created>2004-09-19T10:38:47Z</created>
-<summary type="text/plain">I've stumbled upon Google Labs recently. They've got some cool stuff running there. Especially the Webquotes feature is really helpful. One of the first things, one should learn, when using the web in some serious manner, is: "Trust no single...</summary>
-<author>
-<name>Benjamin</name>
-<url>http://bloiki.nur-eine-i.de</url>
-<email>benjamin@bloiki.nur-eine-i.de</email>
-</author>
-<dc:subject>webapps</dc:subject>
-<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
-
-
 </content>
 </entry>
 

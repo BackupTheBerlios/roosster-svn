@@ -24,41 +24,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster;
+package org.roosster.output;
 
-import java.util.Map;
+import org.roosster.OperationException;
 
 /**
- * Classes implementing this interface must be thread-safe
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public interface Plugin
+public class InvalidOutputModeException extends OperationException 
 {
+    private String name = null;
 
     /**
-     * This method is called once, at the initilazation stage of the roosster 
-     * application
+     * 
      */
-    public void init(Registry registry) throws InitializeException;
-
-    public boolean isInitialized();
-
-    public void shutdown(Registry registry) throws Exception;
-    
-    
-    /**
-     * This method is called once for every request, just before the actual 
-     * command chain is selected and executed.
-     */
-    public void preProcess(Map requestArgs) throws OperationException;
+    public InvalidOutputModeException(String name) {
+        super("Wrong or No output mode specified! Mode: "+name);
+        this.name = name;
+    }
 
     
     /**
-     * This method is called once for every request, just before the OutputMode
-     * object is selected and called to generate the actual output.<br/>
-     * Could be used to filter out certain entries from output, or to hardcode 
-     * a certain <code>OutputMode</code>.
+     * Returns the value of name.
      */
-    public void postProcess(Map requestArgs, Output output) throws OperationException;
+    public String getName()
+    {
+        return name;
+    }
+    
 }

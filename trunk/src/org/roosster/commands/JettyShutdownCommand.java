@@ -53,11 +53,12 @@ public class JettyShutdownCommand extends AbstractCommand implements Command
         
         if ( "true".equalsIgnoreCase(confArg) || "1".equals(confArg) ) {
             LOG.warning("The server is shutting down NOW !!!");
-          
+            
+            registry.shutdown();
+            
             Server server = (Server) registry.getProperty(ServletMapper.RT_PROP_SERVER);
             server.stop(true); // graceful shutdown
             
-            output.setTemplateName(TMPL);
         } else {
             output.setTemplateName(TMPL);
         }

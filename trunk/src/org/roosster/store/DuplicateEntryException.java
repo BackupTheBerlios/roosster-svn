@@ -24,57 +24,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.output;
+package org.roosster.store;
 
-import java.io.PrintWriter;
-import org.roosster.store.Entry;
-import org.roosster.store.EntryList;
-import org.roosster.Output;
-import org.roosster.OutputMode;
-import org.roosster.OperationException;
-import org.roosster.Registry;
-import org.roosster.xml.AtomFeedGenerator;
-
+import java.net.URL;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: AtomMode.java,v 1.1 2004/12/03 14:30:14 firstbman Exp $
  */
-public class AtomMode implements OutputMode
+public class DuplicateEntryException extends RuntimeException
 {
-    private String contentType = DEF_CONTENT_TYPE;
-
-    /**
-     *
-     */
-    public void output(Registry registry, Output output, PrintWriter stream, EntryList entries)
-                throws OperationException
-    {
-        if ( entries == null )
-            throw new IllegalArgumentException("entries parameter is not allowed to be null");
-
-
-        AtomFeedGenerator generator = new AtomFeedGenerator();
-        generator.createFeed(registry, stream, (Entry[]) entries.toArray(new Entry[0]));
-    }
-
-
-    /**
-     *
-     */
-    public String getContentType() 
-    {
-        return contentType;
-    }
-
-    
-    /**
-     *
-     */
-    public void setContentType(String type)
-    {
-        this.contentType = type;
+    public DuplicateEntryException(URL url) {
+        super("Entry with URL "+url+" is already stored");
     }
 
 }

@@ -35,11 +35,15 @@ import java.util.Properties;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 
 import org.roosster.InitializeException;
+import org.roosster.mappers.CliMapper;
+import org.roosster.mappers.ServletMapper;
 
 /**
  * This class provides static utility methods for <code>Mapper</code>-classes
@@ -47,21 +51,44 @@ import org.roosster.InitializeException;
  * arguments, initializing logging or loading <code>Properties</code>.
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: MapperUtil.java,v 1.1 2004/12/03 14:30:16 firstbman Exp $
  */
 public class MapperUtil
 {
     private static Logger LOG = Logger.getLogger(MapperUtil.class.getName());
     
-    public static final String PROP_FILE_ARG  = "conf";
+    public static final String ARG_CLIMAPPER  = "cli";
+    public static final String ARG_WEBMAPPER  = "web";
+    
 
-    public static final String CP_PROP_FILE     = "/roosster.properties";
-    public static final String DEFAULT_LOG_CONF = "/default_logging.properties";
-    public static final String VERBOSE_LOG_CONF = "/verbose_logging.properties";
-    public static final String DEBUG_LOG_CONF   = "/debug_logging.properties";
+    public static final String ARG_OUTPUTMODE    = "output.mode";
 
-    private static final String DEF_HOMEDIR = ".roosster";
-    private static String homeDir = null;
+    public static final String PROP_FILE_ARG     = "conf";
+
+    public static final String DEFAULT_LOG_CONF  = "/default_logging.properties";
+    public static final String VERBOSE_LOG_CONF  = "/verbose_logging.properties";
+    public static final String DEBUG_LOG_CONF    = "/debug_logging.properties";
+
+    private static final String DEF_HOMEDIR      = ".roosster";
+    private static String homeDir                = null;
+    
+    
+    /**
+     * 
+     */
+    public static void main(String[] args) 
+    {
+        String mapperName = args[0] ;
+        
+        List arguments = Arrays.asList(args);
+        args = (String[]) arguments.subList(1, arguments.size()).toArray(new String[0]);
+     
+        LOG.config("Testing which mapper to use: "+mapperName);
+        
+        if ( ARG_WEBMAPPER.equals(mapperName) )
+            ServletMapper.main(args);
+        else 
+            CliMapper.main(args); // is also default 
+    }
     
     
     /**
@@ -141,15 +168,15 @@ public class MapperUtil
 
 
     /**
-     *
+     * @param fileName name of standard property file name
      */
-    public static Properties loadProperties(Map cmdLine)
+    public static Properties loadProperties(String fileName, Map cmdLine)
                                throws IOException, IllegalArgumentException
     {
-        InputStream propInput = MapperUtil.class.getResourceAsStream(CP_PROP_FILE);
+        InputStream propInput = MapperUtil.class.getResourceAsStream(fileName);
 
         if ( propInput == null )
-            throw new IllegalArgumentException("Can't load default properties file");
+            throw new IllegalArgumentException("Can't load default properties file: "+fileName);
 
         Properties props = new Properties();
         props.load(propInput);
@@ -207,6 +234,10 @@ public class MapperUtil
                 homeDir = DEF_HOMEDIR;
             else
                 homeDir += homeDir.endsWith("/") ? DEF_HOMEDIR : "/"+DEF_HOMEDIR;
+            
+            // check if homeDir exists, if not create it
+            
+            // TODO implement this
         }
 
         return homeDir;

@@ -77,14 +77,16 @@ public class Dispatcher
     /**
      * @param commandName is not allowed to be null
      */
-    public Output run(String commandName, Map arguments) throws IOException,
-                                                                IllegalStateException,
-                                                                IllegalArgumentException,
-                                                                OperationException
+    public Output run(String commandName, Map reqArgs) throws IOException,
+                                                              IllegalStateException,
+                                                              IllegalArgumentException,
+                                                              OperationException
     {
         Configuration conf = registry.getConfiguration();
 
         try {
+            conf.setRequestArguments(reqArgs);
+
             // command chains have precedence over normal command definitions
             List classes = (List) commandChains.get(commandName);
             if ( classes == null )
@@ -94,10 +96,12 @@ public class Dispatcher
                 throw new CommandNotFoundException(commandName);
 
             Output output = new Output(registry);
+            
             for(int i = 0; i < classes.size(); i++) {
                 Command command = (Command) classes.get(i);
                 LOG.fine("Executing Command: "+ command);
-                command.execute(arguments, registry, output);
+                
+                command.execute(reqArgs, registry, output);
             }
 
             return output;

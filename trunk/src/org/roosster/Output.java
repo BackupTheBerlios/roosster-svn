@@ -37,6 +37,8 @@ import java.util.logging.Logger;
 
 import org.roosster.store.Entry;
 import org.roosster.store.EntryList;
+import org.roosster.output.OutputMode;
+import org.roosster.output.InvalidOutputModeException;
 import org.roosster.util.StringUtil;
 
 
@@ -48,8 +50,6 @@ import org.roosster.util.StringUtil;
 public class Output
 {
     private static Logger LOG = Logger.getLogger(Dispatcher.class.getName());
-
-    private static final String[] AVL_MODES = new String[] {"atom", "html", "text"};
 
     private Registry     registry       = null;
     private OutputMode   mode           = null;
@@ -170,19 +170,18 @@ public class Output
     /**
      *
      */
-    public void output(PrintWriter writer)
-                throws OperationException
+    public void output(String outputMode, PrintWriter writer) throws OperationException
     {
-        if ( mode == null )
-            loadOutputMode("", registry);
+        if ( outputMode == null || "".equals(outputMode) )
+            throw new IllegalArgumentException("No outputMode specified or set to null");
 
         try {
-            if ( !truncation ) {
-                Configuration conf = registry.getConfiguration();
-                Map reqArgs = conf.getProperties();
+            loadOutputMode(outputMode, registry);
+          
+            Map reqArgs = registry.getConfiguration().getRequestArguments();
+            
+            if ( !truncation && reqArgs != null ) 
                 reqArgs.put(StringUtil.PROP_TRUNCLENGTH, "-1");
-                conf.setRequestArguments(reqArgs);
-            }
             
             LOG.fine("Running OutputMode "+mode.getClass());
             mode.output(registry, this, writer, entries);
@@ -195,19 +194,17 @@ public class Output
     /**
      *
      */
-    public void output(PrintStream output)
-                throws OperationException
+    public void output(String outputMode, PrintStream output) throws OperationException
     {
-        this.output(new PrintWriter(output));
+        this.output(outputMode, new PrintWriter(output));
     }
 
 
     /**
-     *
      */
-    public void setOutputMode(String modeName) throws OperationException
+    public String getContentType()
     {
-        loadOutputMode(modeName, registry);
+        return mode != null ? mode.getContentType() : null;
     }
 
 
@@ -220,14 +217,6 @@ public class Output
             sb.append(entries.get(i));
         }
         return sb.toString();
-    }
-
-
-    /**
-     */
-    public String getContentType()
-    {
-        return mode != null ? mode.getContentType() : null;
     }
 
 
@@ -244,16 +233,6 @@ public class Output
         LOG.fine("Trying to load OutputMode: "+modeName); 
         
         modeName = modeName.trim();
-        boolean correctMode = false;
-        for(int i = 0; i < AVL_MODES.length; i++) {
-            if ( AVL_MODES[i].equals(modeName) )
-                correctMode = true;
-        }
-
-        if ( !correctMode ) {
-            modeName = OutputMode.DEF_OUTPUT_MODE;
-            LOG.warning("wrong or No output mode specified. Default: "+OutputMode.DEF_OUTPUT_MODE);
-        }
 
         String propName  = "output."+modeName+".class";
         String typeName  = "output."+modeName+".ctype";
@@ -272,6 +251,8 @@ public class Output
             throw new OperationException(ex);
         }
 
+        if ( mode == null )
+            throw new InvalidOutputModeException(modeName);
     }
 
 

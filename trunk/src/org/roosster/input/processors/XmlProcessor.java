@@ -105,23 +105,19 @@ public class XmlProcessor implements ContentTypeProcessor
             List entries = new ArrayList();
             do {
                 currentTag = parser.getName();
-                switch (eventType) {
-                   case XmlPullParser.START_TAG:
-                      if ( ATOM_FEED.equals(currentTag) ) {
-
-                          AtomFeedParser atomParser = new AtomFeedParser(parser);
-                          entries.addAll( Arrays.asList(atomParser.parse()) );
-
-                      } else if ( RSS_FEED.equals(currentTag) || RDF_FEED.equals(currentTag) ) {
-
-                          RssFeedParser rssParser = new RssFeedParser(parser);
-                          entries.addAll( Arrays.asList(rssParser.parse()) );
-
-                      }
-                      break;
-
-                    default:
-
+                
+                if ( eventType == XmlPullParser.START_TAG ) {
+                    LOG.finest("Processing Start-Tag of XML-document: "+currentTag);
+                    
+                    if ( ATOM_FEED.equals(currentTag) ) {
+                        AtomFeedParser atomParser = new AtomFeedParser(parser);
+                        entries.addAll( Arrays.asList(atomParser.parse()) );
+    
+                    } else if ( RSS_FEED.equals(currentTag) || currentTag.indexOf(RDF_FEED) > -1 ) {
+                        RssFeedParser rssParser = new RssFeedParser(parser);
+                        entries.addAll( Arrays.asList(rssParser.parse()) );
+    
+                    }
                 }
 
                 eventType = parser.next();
