@@ -30,7 +30,6 @@ package org.roosster;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: InitializeException.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 public class InitializeException extends Exception
 {

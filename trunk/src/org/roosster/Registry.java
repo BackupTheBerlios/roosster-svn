@@ -39,7 +39,6 @@ import java.util.logging.Level;
  * <b>NOTE:</b> This class must always be thread-safe
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: Registry.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 public class Registry
 {
@@ -96,12 +95,12 @@ public class Registry
      */
     public Plugin getPlugin(String name)
     {
-        if ( name == null ) 
+        if ( name == null )
             throw new IllegalArgumentException("Can't get Plugin with 'null' name");
-            
+
         Plugin plugin = (Plugin) plugins.get(name);
         if ( plugin == null )
-            throw new IllegalStateException("Plugin "+name+" not found"); 
+            throw new IllegalStateException("Plugin "+name+" not found");
 
         return plugin;
     }

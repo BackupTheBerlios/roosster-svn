@@ -38,7 +38,6 @@ import org.apache.lucene.document.Field;
  * TODO make dateformat configurable
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: Entry.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 public class Entry
 {

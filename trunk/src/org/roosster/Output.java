@@ -35,12 +35,12 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
 
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: Output.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 public class Output
 {
@@ -51,12 +51,10 @@ public class Output
     /** if this is set to a value below zero, no output is truncated
      */
     private static final String PROP_TRUNCLENGTH = "output.truncate.length";
-    private static final String PROP_LIMIT       = "output.limit";
-    private static final String PROP_OFFSET      = "output.offset";
 
     private Registry    registry       = null;
     private OutputMode  mode           = null;
-    private List        entries        = new ArrayList();
+    private EntryList   entries        = new EntryList();
     private int         truncateLength = -1;
 
     /**
@@ -79,7 +77,7 @@ public class Output
     public void addEntry(Entry obj)
     {
         if ( obj != null )
-            entries.add(obj);
+            entries.addEntry(obj);
     }
 
 
@@ -88,44 +86,24 @@ public class Output
      */
     public void addEntries(Entry[] entries)
     {
-        if ( entries != null && entries.length > 0 )
-            this.entries.addAll( Arrays.asList(entries) );
+        if ( entries != null && entries.length > 0 ) {
+            for(int i = 0; i < entries.length; i++) {
+                this.entries.addEntry(entries[i]);
+            }
+        }
     }
 
 
     /**
+     *
      */
-    public int getLimit()
+    public void setEntries(EntryList entries)
     {
-        int limit = 10;
-
-        try {
-            String limitStr  = registry.getConfiguration().getProperty(PROP_LIMIT);
-            limit = limitStr != null ?  Integer.valueOf(limitStr).intValue() : limit; 
-        } catch(NumberFormatException ex) { }
-
-        return limit;
-    }
-    
-    
-    /**
-     */
-    public int getOffset()
-    {
-        int offset = 0;
-        try {
-            String offsetStr = registry.getConfiguration().getProperty(PROP_OFFSET);
-
-            offset = offsetStr != null ?  Integer.valueOf(offsetStr).intValue() : offset;
-            if ( offset < 0 ) 
-                offset = 0;
-            
-        } catch(NumberFormatException ex) { }
-
-        return offset;
+        if ( entries != null )
+            this.entries = entries;
     }
 
-    
+
     /**
      *
      */
@@ -134,28 +112,21 @@ public class Output
     {
         if ( mode == null )
             loadOutputMode("", registry);
-            
-        try {
-            int limit  = getLimit();
-            int offset = getOffset();
-            
-            Entry[] outEntries = new Entry[0];
-            if ( entries.size() > offset && entries.size() < offset+limit )
-                outEntries = (Entry[]) entries.subList(offset, entries.size()).toArray(new Entry[0]);
 
-            else if ( entries.size() > offset && entries.size() >= offset+limit ) 
-                outEntries = (Entry[]) entries.subList(offset, offset+limit).toArray(new Entry[0]);
-            
-            LOG.fine("entries "+entries.size() +" out "+outEntries.length);
-            LOG.fine("Running OutputMode "+mode.getClass()+" with offset "+offset+" and limit "+limit);
-            mode.output(registry, this, writer, outEntries); 
-            
+        try {
+            Entry[] outEntries = new Entry[entries.size()];
+            for(int i = 0; i < outEntries.length; i++) {
+                outEntries[i] = entries.getEntry(i);
+            }
+
+            LOG.fine("Running OutputMode "+mode.getClass());
+            mode.output(registry, this, writer, outEntries);
         } finally {
             writer.flush();
         }
     }
 
-    
+
     /**
      *
      */
@@ -174,15 +145,15 @@ public class Output
         loadOutputMode(modeName, registry);
     }
 
-    
+
     /**
      */
     public void setTruncateLength(int truncateLength)
     {
         this.truncateLength= truncateLength;
     }
-    
-    
+
+
     /**
      * OutputMode-classes may opt to ignore the truncation setting
      * completely
@@ -191,8 +162,8 @@ public class Output
     {
         return truncateLength;
     }
-    
-    
+
+
     /**
      */
     public String toString()
@@ -212,7 +183,7 @@ public class Output
         return mode != null ? mode.getContentType() : null;
     }
 
-    
+
     // ============ private Helper methods ============
 
 

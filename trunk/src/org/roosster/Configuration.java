@@ -37,13 +37,12 @@ import java.util.Map;
  * <b>NOTE:</b> This class must always be thread-safe
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: Configuration.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 public class Configuration
 {
     private static final String DEF_HOMEDIR = ".roosster";
     private static ThreadLocal reqArgs = new ThreadLocal();
-    
+
     /**
      */
     private Properties properties = null;
@@ -82,31 +81,31 @@ public class Configuration
         if ( propName != null ) {
 
             Map args = getRequestArguments();
-            if ( args != null ) 
+            if ( args != null )
                 returnStr = (String) args.get(propName);
 
             if ( returnStr == null )
                 returnStr = properties.getProperty(propName, defaultValue);
         }
-        
+
         return returnStr == null ? defaultValue : returnStr;
     }
 
 
     /**
-     * 
+     *
      */
     public String[] getPropertyNames(String prefix)
     {
         Set names = new HashSet();
-        
+
         Enumeration propNames = properties.propertyNames();
         while ( propNames.hasMoreElements() ) {
             String name = (String) propNames.nextElement();
             if ( prefix == null || "".equals(prefix) || name.startsWith(prefix) )
                 names.add(name);
         }
-        
+
         Map args = getRequestArguments();
         if ( args != null ) {
             Iterator keys = args.keySet().iterator();
@@ -118,11 +117,11 @@ public class Configuration
                 names.add(name);
             }
         }
-        
+
         return (String[]) names.toArray(new String[0]);
     }
 
-    
+
     /**
      *
      */
@@ -153,7 +152,7 @@ public class Configuration
      * This method returns the roosster home directory, where the
      * default location for index directory and other settings is.
      * By default this location is <code>$HOME/.roosster</code>. For
-     * determining <code>$HOME</code>, the system property 
+     * determining <code>$HOME</code>, the system property
      * <code>user.home</code> is used. If this is <code>null</code>,
      * the current directory is used.
      * @return a String that never ends with a slash &quot;/&quot;
@@ -161,17 +160,17 @@ public class Configuration
     public String getHomeDir()
     {
         if ( homeDir == null ) {
-            homeDir = System.getProperty("user.home");    
-            if ( homeDir == null ) 
+            homeDir = System.getProperty("user.home");
+            if ( homeDir == null )
                 homeDir = DEF_HOMEDIR;
-            else 
+            else
                 homeDir += homeDir.endsWith("/") ? DEF_HOMEDIR : "/"+DEF_HOMEDIR;
-        } 
-            
+        }
+
         return homeDir;
     }
 
-    
+
     /**
      */
     private Map getRequestArguments()

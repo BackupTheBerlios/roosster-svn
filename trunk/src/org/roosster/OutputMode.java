@@ -32,7 +32,6 @@ import org.roosster.store.Entry;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: OutputMode.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 public interface OutputMode
 {
@@ -43,7 +42,7 @@ public interface OutputMode
     /**
      *
      */
-    public void output(Registry registry, Output output, 
+    public void output(Registry registry, Output output,
                        PrintWriter writer, Entry[] entries)
                 throws OperationException;
 
@@ -51,8 +50,8 @@ public interface OutputMode
      *
      */
     public String getContentType();
-    
-    
+
+
     /**
      *
      */

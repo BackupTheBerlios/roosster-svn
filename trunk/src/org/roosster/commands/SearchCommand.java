@@ -48,8 +48,8 @@ public class SearchCommand extends AbstractCommand implements Command
     {
         validateArguments(arguments, new String[] {ARG_Q});
 
-        EntryStore store = new EntryStore();
-        output.addEntries( store.search( (String) arguments.get(ARG_Q) ) );
+        EntryStore store = (EntryStore) registry.getPlugin("store");
+        output.setEntries( store.search( (String) arguments.get(ARG_Q) ) );
     }
 
 }

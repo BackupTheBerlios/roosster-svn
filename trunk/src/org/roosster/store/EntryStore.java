@@ -53,7 +53,6 @@ import org.roosster.*;
  * TODO better synchronizing
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: EntryStore.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 public class EntryStore implements Plugin
 {
@@ -66,14 +65,18 @@ public class EntryStore implements Plugin
     public static final String PROP_ANALYZER  = "store.analyzerclass";
     public static final String PROP_CREATEIND = "store.createindex";
 
+    public static final String PROP_LIMIT     = "output.limit";
+    public static final String PROP_OFFSET    = "output.offset";
+
     public static final String DEF_INDEXDIR   = "index";
 
     private static final String URLHASH    = "urlhash";
 
-    private static String   indexDir        = null;
-    private static Class    analyzerClass   = null;
-    private static String   createIndexProp = null;
-    private static boolean  initialized     = false;
+    private Registry registry        = null;
+    private String   indexDir        = null;
+    private Class    analyzerClass   = null;
+    private String   createIndexProp = null;
+    private boolean  initialized     = false;
 
 
     /**
@@ -88,6 +91,7 @@ public class EntryStore implements Plugin
      */
     public void init(Registry registry) throws InitializeException
     {
+        this.registry = registry;
         Configuration conf = registry.getConfiguration();
 
         LOG.config("Initializing Plugin "+getClass());
@@ -115,13 +119,13 @@ public class EntryStore implements Plugin
         // determine indexDir and check if it exists
         indexDir = conf.getProperty(PROP_INDEXDIR);
         if ( indexDir == null || "".equals(indexDir) ) {
-            String homeDir = conf.getHomeDir();    
-            if ( homeDir != null ) 
+            String homeDir = conf.getHomeDir();
+            if ( homeDir != null )
                 indexDir = homeDir+"/"+DEF_INDEXDIR;
             else
                 indexDir = DEF_INDEXDIR;
         }
-        
+
         LOG.fine("Directory of index is: "+indexDir);
         LOG.config("Finished initialize of "+getClass());
 
@@ -150,9 +154,42 @@ public class EntryStore implements Plugin
 
 
     /**
-    * @return an array of {@link Entry Entry}-objects that's never <code>null</code>
      */
-    public Entry[] search(String queryStr) throws IOException, ParseException
+    public int getLimit()
+    {
+        int limit = 10;
+
+        try {
+            String limitStr  = registry.getConfiguration().getProperty(PROP_LIMIT);
+            limit = limitStr != null ?  Integer.valueOf(limitStr).intValue() : limit;
+        } catch(NumberFormatException ex) { }
+
+        return limit;
+    }
+
+
+    /**
+     */
+    public int getOffset()
+    {
+        int offset = 0;
+        try {
+            String offsetStr = registry.getConfiguration().getProperty(PROP_OFFSET);
+
+            offset = offsetStr != null ?  Integer.valueOf(offsetStr).intValue() : offset;
+            if ( offset < 0 )
+                offset = 0;
+
+        } catch(NumberFormatException ex) { }
+
+        return offset;
+    }
+
+
+    /**
+    * @return an {@link EntryList EntryList}-objects that's never <code>null</code>
+     */
+    public EntryList search(String queryStr) throws IOException, ParseException
     {
         QueryParser parser = new QueryParser(Entry.ALL, createAnalyzer());
 
@@ -163,15 +200,27 @@ public class EntryStore implements Plugin
         IndexSearcher searcher = new IndexSearcher(indexDir);
         Hits hits = searcher.search(query);
 
+        EntryList entries = new EntryList();
+        entries.setTotalSize(hitsNum);
+
+        int limit  = getLimit();
+        int offset = getOffset();
         int hitsNum = hits.length();
         LOG.info("Found "+hitsNum+" matches for query: <"+query+">");
+        LOG.finest("Offset is : "+offset+" / Limit is: "+limit);
 
-        List entries = new ArrayList();
-        for(int i = 0; i < hitsNum; i++) {
-          entries.add( new Entry(hits.doc(i)) );
+        if ( hitsNum > offset ) {
+            // Hits class throws an IndexOutOfBoundsException just like an
+            // array, when an element is requested, that's outside the
+            // hits index bounds
+            int lastElem = hitsNum >= offset+limit ? offset+limit : hitsNum;
+
+            for(int i = offset; i < lastElem; i++) {
+              entries.add( new Entry(hits.doc(i)) );
+            }
         }
 
-        return (Entry[]) entries.toArray(new Entry[0]);
+        return entries;
     }
 
 
@@ -370,7 +419,7 @@ public class EntryStore implements Plugin
                 doc.add( Field.Keyword(URLHASH, computeHash(entries[i].getUrl().toString())) );
                 writer.addDocument(doc);
             }
-            
+
             writer.optimize(); // TODO should this be delayed in a web env?
 
         } finally {
@@ -393,7 +442,7 @@ public class EntryStore implements Plugin
     private IndexWriter getWriter() throws IOException
     {
         boolean createIndex = false;
-        
+
         if ( createIndexProp == null  ) {
             // if it's not defined, see if an index exists, if not set flag to create one
             createIndex = IndexReader.indexExists(indexDir) ? false : true ;
