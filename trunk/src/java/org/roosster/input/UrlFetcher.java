@@ -56,6 +56,9 @@ public class UrlFetcher implements Plugin, Constants
     public static final String PROP_DEF_ENC    = "default.input.encoding";
     public static final String PROP_PROCESSORS = "fetcher.processors";
 
+    public static final String USER_AGENT_HEADER = "User-Agent";
+    public static final String USER_AGENT        = "Mozilla/5.0 (compatible; roosster - personal search; http://roosster.org/dev)";
+    
     private Registry              registry        = null;
     private String                defaultEncoding = null;
     private Map                   processors      = new Hashtable();
@@ -152,12 +155,16 @@ public class UrlFetcher implements Plugin, Constants
         LOG.debug("Opening connection to URL "+url);
 
         URLConnection con = url.openConnection();
+        con.setRequestProperty(USER_AGENT_HEADER, USER_AGENT);
 
+        
         long modified = con.getLastModified();
 
-        String embeddedContentEnc = null;
         
         String contentType = con.getContentType();
+        
+        // find out if Content-Type String contains encoding information
+        String embeddedContentEnc = null;
         if ( contentType != null && contentType.indexOf(";") > -1 ) {
             LOG.debug("Content-type string ("+contentType+") contains charset; strip it!");
             contentType = contentType.substring(0, contentType.indexOf(";")).trim();
@@ -169,13 +176,10 @@ public class UrlFetcher implements Plugin, Constants
         }
         
         String contentEnc  = con.getContentEncoding();
-        if ( contentEnc == null ) {
-            if ( embeddedContentEnc != null ) 
-                contentEnc = embeddedContentEnc;
-            else 
-                contentEnc = defaultEncoding;
-        }
+        if ( contentEnc == null ) 
+            contentEnc = embeddedContentEnc != null ? embeddedContentEnc : defaultEncoding;
 
+        
         ContentTypeProcessor proc = getProcessor(contentType); 
         LOG.debug("ContentType: '"+contentType+"' - ContentEncoding: '"+contentEnc+"'");
         LOG.debug("Using Processor "+proc);

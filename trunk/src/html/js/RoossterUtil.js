@@ -15,7 +15,7 @@
 // =========================================================================
 
 
-const DEBUG = false;
+const DEBUG = true;
 const DIV_ID_DEBUGOUT = "debug-out";
 
 
@@ -218,16 +218,9 @@ function XmlCreateElement(nodeName) {
 function XmlRemoveAllChildren(node) {
     if ( node == null ) 
         return;
-    
-    var children = node.childNodes;
-    //debugConsole.addMsg("Node "+node.nodeName+" id "+node.id+" has "+children.length+" children");
-    for(var i = children.length-1; i >= 0; i--) {
-        var child = children.item(i);
-        //debugConsole.addMsg("["+i+"] Should I remove Child "+child.nodeName+" id "+child.id+" for Node "+node.nodeName+" id "+node.id);  
-        if ( child.nodeType == 1 || child.nodeType == 3 ) {
-            //debugConsole.addMsg("removing node "+child.nodeName+" id "+child.id);
-            node.removeChild(child);
-        }
+
+    while ( node.firstChild != null ) {
+        node.removeChild(node.firstChild);
     }
 }
 

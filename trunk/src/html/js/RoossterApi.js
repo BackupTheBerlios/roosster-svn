@@ -449,6 +449,10 @@ function Entry(url) {
         node.addedDate.value = displayDate(this.addedDate);
         node.editedDate.value = displayDate(this.editedDate);
         
+        var cachedPageLink = getById(DIV_ID_CACHEDENTRYLINK);
+        XmlRemoveAllChildren(cachedPageLink);
+        cachedPageLink.appendChild( createLink("${baseurl}/cachedentryframeset.html?url="+this.url, "cached page", "_blank")  );
+        
         var linkSpan = getById(DIV_ID_ENTRYURLLINK);
         XmlRemoveAllChildren(linkSpan);
         linkSpan.appendChild(createLink(this.url, "Goto '"+this.title+"'", '_blank'));
@@ -483,26 +487,11 @@ function Entry(url) {
       
         var ulEntryList = XmlCreateElement("ul");
         ulEntryList.className = 'entry';
-        
-        // entry-url table
-        var table = XmlCreateElement('table');
-        table.style.width = '100%';
-        var row = XmlCreateElement('tr');
-        var leftCell = XmlCreateElement('td');
-        var rightCell = XmlCreateElement('td');
-        table.appendChild(row);
-        row.appendChild(leftCell);
-        row.appendChild(rightCell);
-        
-        leftCell.appendChild( createLink(this.url, this.title, "_blank") );
-        leftCell.className = 'entrylist-entry-url';
-        rightCell.appendChild( createLink("javascript:doEdit('"+this.url+"')", 'Edit this Entry') );
-        rightCell.className = 'entrylist-editlink';
 
         // <li class="entry-url">        
         var liEntryUrl = XmlCreateElement("li");
-        liEntryUrl.className = 'entry-url-li';
-        liEntryUrl.appendChild(table);
+        liEntryUrl.className = 'entrylist-entry-url';
+        liEntryUrl.appendChild(createLink(this.url, this.title, "_blank"));
         ulEntryList.appendChild(liEntryUrl);
         
         // <li class="entry-content">        
@@ -527,15 +516,34 @@ function Entry(url) {
         
         // <li class="entry-dates">        
         var liEntryTags = XmlCreateElement("li");
-        liEntryTags.className = 'entry-tags';
-        liEntryTags.appendChild( XmlCreateText(" tags: ") );
+
+        var table = XmlCreateElement('table');
+        //table.style.width = '100%';
+        table.className = 'entry-tags-table';
+        var row = XmlCreateElement('tr');
+        var cell1 = XmlCreateElement('td');
+        var cell2 = XmlCreateElement('td');
+        var cell3 = XmlCreateElement('td');
+        table.appendChild(row);
+        row.appendChild(cell1);
+        row.appendChild(cell2);
+        row.appendChild(cell3);
         
+        cell1.appendChild( XmlCreateText(" tags: ") );
         for (var i = 0; i < this.tags.length; i++) {
-            liEntryTags.appendChild( createLink("javascript:doSearch('tags:"+this.tags[i]+"')", this.tags[i]) );
+            cell1.appendChild( createLink("javascript:doSearch('tags:"+this.tags[i]+"')", this.tags[i]) );
             
             if ( i+1 < this.tags.length )
-                liEntryTags.appendChild( XmlCreateText(" | ") );
+                cell1.appendChild( XmlCreateText(" | ") );
         }
+        
+        cell2.appendChild( createLink("javascript:doEdit('"+this.url+"')", 'Edit this Entry') );
+        cell2.className = 'entrylist-editlink';
+        cell3.appendChild( createLink("javascript:doDelete('"+this.url+"')", 'Delete this Entry') );
+        cell3.className = 'entrylist-deletelink';
+        
+        liEntryTags.className = 'entry-tags';
+        liEntryTags.appendChild(table);
         ulEntryList.appendChild(liEntryTags);
         
         node.appendChild(ulEntryList);

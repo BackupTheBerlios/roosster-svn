@@ -101,6 +101,15 @@ public class Output
     /**
      *
      */
+    public int entriesSize()
+    {
+        return entries.size();
+    }
+    
+    
+    /**
+     *
+     */
     public void addEntry(Entry obj)
     {
         if ( obj != null )

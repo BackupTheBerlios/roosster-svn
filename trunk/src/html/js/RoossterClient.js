@@ -14,11 +14,12 @@
 //
 // =========================================================================
 
-const DIV_ID_OUTPUTMESSAGES = "output-messages";
-const DIV_ID_ENTRIESOUT     = "entries-out";
-const DIV_ID_LOADINGNOTE    = "loading-notification";
-const DIV_ID_ENTRYURLLINK   = "entry-url-link";
-const FORM_ID_ENTRYFORM     = "entryform";
+const DIV_ID_OUTPUTMESSAGES  = "output-messages";
+const DIV_ID_ENTRIESOUT      = "entries-out";
+const DIV_ID_LOADINGNOTE     = "loading-notification";
+const DIV_ID_ENTRYURLLINK    = "entry-url-link";
+const DIV_ID_CACHEDENTRYLINK = 'cachedentrylink';
+const FORM_ID_ENTRYFORM      = "entryform";
 
 const ID_HEADER_QUERYSTRING = 'headerQueryStr';
 const ID_QUERYSTRING        = 'queryStr';
@@ -201,6 +202,41 @@ function toggleDisplay(currId) {
 /**
  * 
  */
+function doDelete(url) {
+    __clearAll();
+        
+    if ( url == null || url == '' ) 
+        return null;
+  
+    toggleDisplay(DIV_ID_LOADINGNOTE);
+    xmlhttp.open("DELETE", API_ENDPOINT + "/delete?url="+ escape(url) , true);     
+    xmlhttp.onreadystatechange = deleteResponseHandler;
+    xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
+    xmlhttp.send(null);
+}
+
+
+/**
+ * 
+ */
+function deleteResponseHandler() {
+    if ( xmlhttp.readyState != 4) 
+        return;
+
+    if ( httpstate.checkHttpState()  ) {
+        __outputMessage("Entry deleted successfully");
+    } else {
+        __outputMessage("Error while executing DELETE! Server said: <"+httpstate.lastExceptionText+">", true);
+    }
+    
+    toggleDisplay(DIV_ID_LOADINGNOTE);
+    debugConsole.show();    
+}
+
+
+/**
+ * 
+ */
 function doSearch(queryStr, offset, limit) {
     __clearAll();
         
@@ -234,37 +270,30 @@ function searchResponseHandler() {
         return;
       
     if ( httpstate.checkHttpState()  ) {
-      
-        entryList = parseEntryList(xmlhttp.responseXML);
         
         var entriesOut = getById(DIV_ID_ENTRIESOUT);
-        
-        if ( entriesOut == null )
-            __exception("Can't find Element '"+DIV_ID_ENTRIESOUT+"' to output entries");
-      
         XmlRemoveAllChildren(entriesOut);
         
-        var entriesFound = false;
-        if ( entryList != null ) {
-            entryList.attachPager(entriesOut);
-            
-            var entries = entryList.getList();
-            
-            var ulEntryList = XmlCreateElement("ul");
-            ulEntryList.id = 'entry-list';
-            entriesOut.appendChild(ulEntryList);
-            
-            for(var url in entries) {
-                entriesFound = true;
-                var li = XmlCreateElement("li");
-                ulEntryList.appendChild(li);
-                
-                entries[url].attachAsList(li);
-            }
-        }
-        
-        if ( !entriesFound ) 
+        if ( httpstate.lastHttpState == 204 ) {
             entriesOut.appendChild( XmlCreateText("No Entries found for this search!") );
+        } else {
+      
+          entryList = parseEntryList(xmlhttp.responseXML);
+
+          entryList.attachPager(entriesOut);
+          
+          var entries = entryList.getList();
+          
+          var ulEntryList = XmlCreateElement("ul");
+          ulEntryList.id = 'entry-list';
+          entriesOut.appendChild(ulEntryList);
+          
+          for(var url in entries) {
+              var li = XmlCreateElement("li");
+              ulEntryList.appendChild(li);
+              entries[url].attachAsList(li);
+          }
+        }
         
         setTab(TAB_SEARCH);    
     } else {
@@ -288,32 +317,44 @@ function doEdit(url, clearOutputMsg) {
         __exception("You must provide an Entry's URL when you want to edit an Entry");   
     
     toggleDisplay(DIV_ID_LOADINGNOTE);
+    currentEntryUrl = url;    
     xmlhttp.open("GET", API_ENDPOINT + "/entry?url="+ escape(url) , true);
-    xmlhttp.onreadystatechange = function() {
-        if ( xmlhttp.readyState != 4) 
-            return;
-          
-        if ( httpstate.checkHttpState()  ) {
-            var list = parseEntryList(xmlhttp.responseXML);
-            
-            debugConsole.addMsg("List returned from /entry?url="+url+" is: "+list);
-            
-            currentEntry = list.get(url);
-            currentEntry.fillIntoEditForm(document.entryform);
-            
-            setTab(TAB_EDIT, clearOutputMsg);
-            
-        } else {
-            __outputMessage("Can't fetch Entry for URL: "+url+
-                            " ! Server said: <"+httpstate.lastExceptionText+">", true);
-        }
-        
-        toggleDisplay(DIV_ID_LOADINGNOTE);
-        debugConsole.show();
-    };
-    
+    xmlhttp.onreadystatechange = getEntryResponseHandler;
     xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
     xmlhttp.send(null);        
+
+    setTab(TAB_EDIT, clearOutputMsg);
+}
+
+
+/**
+ * 
+ */
+function getEntryResponseHandler() {
+    if ( xmlhttp.readyState != 4) 
+        return;
+      
+    if ( httpstate.checkHttpState()  ) {
+      
+        if ( httpstate.lastHttpState == 204 ) { 
+            setTab(TAB_EDIT, true);
+            __clearEntryForm();
+            __outputMessage("Could not find an entry for URL "+currentEntryUrl, true);
+        } else {
+            var list = parseEntryList(xmlhttp.responseXML);
+            currentEntry = list.get(currentEntryUrl);
+            currentEntry.fillIntoEditForm(document.entryform);
+            debugConsole.addMsg("List returned from /entry?url="+currentEntryUrl+" is: "+list);
+        }
+        
+        
+    } else {
+        __outputMessage("Can't fetch Entry for URL: "+currentEntryUrl+
+                        " ! Server said: <"+httpstate.lastExceptionText+">", true);
+    }
+    
+    toggleDisplay(DIV_ID_LOADINGNOTE);
+    debugConsole.show();
 }
 
 
@@ -369,7 +410,7 @@ function doAdd(url) {
     if ( url != null && url != '' ) {
         currentEntryUrl = url;
         toggleDisplay(DIV_ID_LOADINGNOTE);
-        xmlhttp.open("POST", API_ENDPOINT + "/addurl", true);
+        xmlhttp.open("POST", API_ENDPOINT + "/entry", true);
         xmlhttp.onreadystatechange = postResponseHandler;        
         xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
         xmlhttp.send( new Entry(url).asDomDocument() );
@@ -439,6 +480,23 @@ function __clearEntries() {
     entryList = new EntryList();
     currentEntry = null;
     currentEntryUrl = null;
+}
+
+function __clearEntryForm() {
+    document.entryform.url.value = '';
+    document.entryform.title.value = '';
+    document.entryform.type.value = '';
+    document.entryform.tags.value = '';
+    document.entryform.author.value = '';
+    document.entryform.authorEmail.value = '';
+    document.entryform.note.value = '';
+    document.entryform.content.value = '';
+    document.entryform.issuedDate.value =  '';
+    document.entryform.modifiedDate.value = '';
+    document.entryform.addedDate.value = '';
+    document.entryform.editedDate.value = '';
+    XmlRemoveAllChildren(getById(DIV_ID_CACHEDENTRYLINK));
+    XmlRemoveAllChildren(getById(DIV_ID_ENTRYURLLINK));
 }
 
 function __clearAll() {

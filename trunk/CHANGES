@@ -1,4 +1,13 @@
 
+Revision 53 / 2005-03-14 / Benjamin Reitzammer
+
+* added entriesSize() method to Output.class
+* API returns status code 204 when entry list is empty 
+* styled JS interface a bit different
+* added delete capabilities to JS interface
+* added User-Agent string when getting URLs with UrlFetcher
+
+
 Revision 50 / 2005-02-25 / Benjamin Reitzammer
 
 * fixed a bug in org.roosster.input.UrlFetcher that caused wrong 

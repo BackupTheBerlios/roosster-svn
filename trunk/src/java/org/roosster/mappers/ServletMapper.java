@@ -195,16 +195,20 @@ public class ServletMapper extends HttpServlet
             // run commands            
             Output output = dispatcher.run(commandName, getOutputMode(), args);
 
-            // determine content type
-            String contentType = output.getContentType();
-            contentType = contentType == null ? DEF_CONTENT_TYPE : contentType;
-            String contentHeader = contentType+"; charset="+outputEncoding;
-            resp.setContentType(contentHeader);
-            
-            LOG.debug("Set Content-Type Header field to: "+contentHeader);
-
-            // output everything
-            output.output( resp.getWriter() );
+            if ( output.entriesSize() < 1 ) {
+                resp.setStatus(resp.SC_NO_CONTENT);
+            } else {
+                // determine content type
+                String contentType = output.getContentType();
+                contentType = contentType == null ? DEF_CONTENT_TYPE : contentType;
+                String contentHeader = contentType+"; charset="+outputEncoding;
+                resp.setContentType(contentHeader);
+                
+                LOG.debug("Set Content-Type Header field to: "+contentHeader);
+    
+                // output everything
+                output.output( resp.getWriter() );
+            }
             
         } catch (CommandNotFoundException ex) {
           
