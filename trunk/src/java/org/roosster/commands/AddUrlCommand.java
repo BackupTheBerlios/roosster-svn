@@ -36,6 +36,7 @@ import org.roosster.store.EntryStore;
 import org.roosster.store.Entry;
 import org.roosster.input.UrlFetcher;
 import org.roosster.Command;
+import org.roosster.Constants;
 import org.roosster.Registry;
 import org.roosster.Output;
 import org.roosster.util.StringUtil;
@@ -44,15 +45,8 @@ import org.roosster.util.StringUtil;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class AddUrlCommand extends AbstractCommand implements Command
+public class AddUrlCommand extends AbstractCommand implements Command, Constants
 {
-
-    public static final String ARG_URL   = "url";
-    public static final String ARG_FORCE = "force";
-    public static final String ARG_NOTE  = "note";
-    public static final String ARG_TAGS  = "tags";
-    public static final String ARG_TITLE = "title";
-
 
     /**
      *
