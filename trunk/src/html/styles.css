@@ -15,7 +15,8 @@
 #set ($errorColor       = '#EF0E0E')
 #set ($infoColor        = '#FAD163')
 #set ($loadingColor     = '#00FF0B')
-#set ($editLinkColor    = '#FF8F8F')
+#set ($editBgLinkColor  = '#5fff66')
+#set ($editLinkColor    = 'black')
 #set ($textColor        = 'black')
 #set ($bgColor          = 'white')
  
@@ -27,12 +28,12 @@
 .entry-url-li   { margin-left:-30px; }
 .entry-content  {} 
 .entry-dates    { color:$tagDatesColor; font-size:x-small; margin: 3px 3px 3px -30px;}
-.entry-tags     { color:$tagDatesColor; font-size:x-small;  margin:0px 0px 5px -30px; border-bottom:1px solid black; padding-bottom:10px;}
+.entry-tags     { color:$tagDatesColor; font-size:x-small; margin:0px 0px 5px -30px; border-bottom:1px solid black; padding-bottom:10px;}
 
 .entrylist-entry-url        { font-weight:bold; padding-left:0px;}
 .entrylist-editlink         { width:200px; vertical-align:top; }
-.entrylist-editlink a       { font-size:small; display:block; width:100%; text-align:right; padding:5px;}
-.entrylist-editlink a:hover { background-color:$editLinkColor; display:block;}
+.entrylist-editlink a       { font-size:small; display:block; width:100%; text-align:right; padding:5px; color:$editlinkColor;}
+.entrylist-editlink a:hover { background-color:$editBgLinkColor; display:block; font-weight:bold;}
 
 #entrylist-pager {clear:both;}
 
@@ -90,7 +91,7 @@ input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1p
     background-color:$headerColor; 
     padding:1px 10px 10px 0px; 
     margin: 0px 0px 10px 0px;
-    height:50px;
+    height:40px;
 }
 .roossterheading  { font-size:16px; font-weight:900; margin:10px 0px 0px 20px; padding:10px 0px 0px 0px;}
 

@@ -5,7 +5,10 @@ JS Client
 * implement delete functionality (ask before deleting)
 * add select box for selecting sort order
 * add authentication option
+* add redirect parameter to doAdd to which user will be redirected,
+  when action was successful
 * LATER mass delete
+* use qooxdoo for cross browser compatibility
 
 * DONE add link to URL to every view of Entry
 * DONE show small note somewhere on screen, when waiting for server 
@@ -49,6 +52,9 @@ General
 * handle Frames in HTMLProcessor see http://javaboutique.internet.com/tutorials/HTMLParser/article.html
 * implement ContentTypeProcessor chains, should be triggered when certain 
   mime types are encountered
+* implement del.icio.us synchronizer
+* add links: field to documents, that contains all links that were
+  contained in the page
 
 * DONE boost title field, optimize indexing
 * DONE extend Entry so that content field contains only meaningful (no
