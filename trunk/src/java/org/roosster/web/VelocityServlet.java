@@ -89,6 +89,7 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
         String path = getPath(req);
 
         if ( Velocity.resourceExists(path) ) {
+            resp.setContentType( getContentType(req)+"; charset=UTF-8");
             return getTemplate(path);
         }
           

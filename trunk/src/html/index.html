@@ -1,11 +1,21 @@
 <html>
     <head>
       <title>roosster</title>
-     <style type="text/css"> @import url($baseurl/styles.css); </style>
+      <style type="text/css"> @import url($baseurl/styles.css); </style>
+      <script type="text/javascript" src="$baseurl/AtomAPI.js" />
     </head>
-    <body>
+    <body onload="init()">
         <div id="head">
         </div>
+        
+        <form method="get" name="searchform" onsubmit="return doSearch();">
+          <input type="text" name="query" />
+          <input type="submit" value="send" />
+        </form>
+        
+        <div id="output">
+        </div>
+        
         <div id="foot">
           powered by <a href="http://roosster.org/">roosster - personal search</a>
           | TODO <em>index contains num Entries</em>
