@@ -1,1 +1,7 @@
 #foot {font-size:x-small;}
+
+#entry-list     {margin: 20px,10px,10px,20px; list-style-type:none;}
+.entry          {margin: 10px,0px,10px,0px; list-style-type:none;}
+.entry-url      { font-weight:bold; }
+.entry-content  {}
+.entry-info     { color:#acc9ff; font-size:small;}

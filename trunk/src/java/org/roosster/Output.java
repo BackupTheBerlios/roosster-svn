@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.roosster.store.Entry;
 import org.roosster.store.EntryList;
@@ -162,9 +162,9 @@ public class Output
             Map reqArgs = registry.getConfiguration().getRequestArguments();
             
             if ( !truncation && reqArgs != null ) 
-                reqArgs.put(StringUtil.PROP_TRUNCLENGTH, "-1");
+                reqArgs.put(Constants.PROP_TRUNCLENGTH, "-1");
             
-            LOG.fine("Running OutputMode "+mode.getClass());
+            LOG.debug("Running OutputMode "+mode.getClass());
             mode.output(registry, this, writer, entries);
         } finally {
             writer.flush();
@@ -211,7 +211,7 @@ public class Output
     {
         Configuration conf = registry.getConfiguration();
 
-        LOG.fine("Trying to load OutputMode: "+modeName); 
+        LOG.debug("Trying to load OutputMode: "+modeName); 
         
         modeName = modeName.trim();
 

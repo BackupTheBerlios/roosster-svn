@@ -32,63 +32,71 @@ import java.net.URL;
 import java.net.URLConnection;
 import org.apache.commons.io.IOUtils;
 
+import org.apache.log4j.Logger;
+
 import org.roosster.store.EntryStore;
+import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
 import org.roosster.input.UrlFetcher;
 import org.roosster.Command;
 import org.roosster.Constants;
 import org.roosster.Registry;
 import org.roosster.Output;
-import org.roosster.util.StringUtil;
 
 /**
  *
+ * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class AddUrlCommand extends AbstractCommand implements Command, Constants
+public class AddUrlsCommand extends AbstractCommand implements Command, Constants
 {
-
+    private static Logger LOG = Logger.getLogger(AddUrlsCommand.class);
+    
     /**
      *
      */
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        validateArguments(arguments, new String[] {ARG_URL});
+        validateArguments(arguments, new String[] {PARAM_ENTRIES});
 
-        UrlFetcher fetcher = (UrlFetcher) registry.getPlugin("fetcher");
-        Entry[] entries = fetcher.fetch(new URL[] {new URL( (String) arguments.get(ARG_URL) )});
+        EntryList entryList = (EntryList) arguments.get(PARAM_ENTRIES);
         
-        if ( entries.length > 0 ) {
-            // read in and set optional fields
-            String title = (String) arguments.get(ARG_TITLE);
-            if ( title != null && !"".equals(title) ) 
-                for(int i = 0; i < entries.length; i++) { entries[i].setTitle(title); }
-            
-            String note  = (String) arguments.get(ARG_NOTE);
-            String tags  = (String) arguments.get(ARG_TAGS);
-            if ( note != null || tags != null ) {
-                for(int i = 0; i < entries.length; i++) {
-                    if ( note != null )
-                        entries[i].setNote(note);
-                    if ( tags != null ) 
-                        entries[i].setTags( StringUtil.splitString(tags, Entry.TAG_SEPARATOR) );
-                }
-            }
-
+        if ( entryList.size() > 0 ) {
+          
             // shall existing entries get overwritten, or an exception thrown?
             String forceStr = (String) arguments.get(ARG_FORCE);
-            boolean force = false;
-            if ( "1".equals(forceStr) || "true".equalsIgnoreCase(forceStr) )
-                force = true;
+            boolean force = Boolean.valueOf(forceStr == null ? "false" : forceStr ).booleanValue();
 
+            URL[] urls = new URL[entryList.size()];
+            for ( int i = 0; i < entryList.size(); i++ ) {
+                urls[i] = entryList.getEntry(i).getUrl();
+            } 
+            
+            UrlFetcher fetcher = (UrlFetcher) registry.getPlugin("fetcher");
+            Entry[] fetchedEntries = fetcher.fetch(urls);
+            
+            for ( int i = 0; i < fetchedEntries.length; i++ ) {
+                Entry entry = entryList.getEntry(fetchedEntries[i].getUrl());
+                
+                // overwrite the fetched values, if others have been provided (in entryList)
+                if ( entry != null )
+                    fetchedEntries[i].overwrite(entry);
+            } 
+                
             // now finally store entries in index
             EntryStore store = (EntryStore) registry.getPlugin("store");
-            store.addEntries(entries, force);
+            store.addEntries(fetchedEntries, force);
             
-            output.addOutputMessage("Number of added Entries: "+entries.length);
-            output.addEntries(entries);
+            // output informative message to user
+            output.addOutputMessage("Number of added Entries: "+fetchedEntries.length);
+            output.addEntries(fetchedEntries);
+            
+        } else {
+            output.addOutputMessage("Didn't add any Entries, as the list was empty!");
         }
+        
+        
     }
 
 

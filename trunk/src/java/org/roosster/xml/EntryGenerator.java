@@ -26,30 +26,86 @@
  */
 package org.roosster.xml;
 
-import java.net.URI;
-import java.net.URL;
-import java.net.URISyntaxException;
-import java.net.MalformedURLException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 
-import org.roosster.OperationException;
+import org.apache.log4j.Logger;
+import org.jdom.input.DOMBuilder;
+import org.jdom.output.XMLOutputter;
+import org.jdom.output.Format;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
+import org.roosster.xml.EntryTags;
+import org.roosster.util.XmlUtil;
+import org.roosster.util.StringUtil;
+import org.roosster.OperationException;
+import org.roosster.Registry;
+import org.roosster.Constants;
 
 /**
  * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class EntryGenerator 
+public class EntryGenerator implements EntryTags 
 {
-    private static Logger LOG = Logger.getLogger(EntryGenerator.class.getName());
+    private static Logger LOG = Logger.getLogger(EntryGenerator.class);
 
-
+    /**
+     * @param entries
+     */
+    public void createFeed(Registry registry, PrintWriter writer, EntryList entries)
+                    throws OperationException
+    {
+        String truncStr = registry.getConfiguration().getProperty(Constants.PROP_TRUNCLENGTH, "-1");
+        int truncate = Integer.valueOf(truncStr).intValue();
+        
+        try {
+            Document doc = XmlUtil.getDocumentBuilder().newDocument();
+                                       
+            Element root = XmlUtil.createChild(doc, ENTRYLIST);
+            root.setAttribute(TOTAL_ATTR,   String.valueOf(entries.getTotalSize()) );
+            root.setAttribute(OFFSET_ATTR,  String.valueOf(entries.getOffset()) );
+            root.setAttribute(LIMIT_ATTR,   String.valueOf(entries.getLimit()) );
+            
+            for ( int i = 0; i < entries.size(); i++ ) {
+                Entry entry = entries.getEntry(i);
+              
+                Element entryNode = XmlUtil.createChild(root, ENTRY);
+                entryNode.setAttribute(HREF_ATTR, entry.getUrl().toString());
+                
+                
+                Element authorsNode = XmlUtil.createChild(entryNode, AUTHORS);
+                Element authorNode = XmlUtil.createChild(authorsNode, AUTHOR);
+                authorNode.setAttribute(NAME_ATTR, entry.getAuthor());
+                authorNode.setAttribute(EMAIL_ATTR, entry.getAuthorEmail());
+                
+                
+                String[] tags = entry.getTags();
+                Element tagsNode = XmlUtil.createChild(entryNode, TAGS);
+                for ( int k = 0; k < tags.length; k++ ) {
+                    XmlUtil.createTextChild(tagsNode, TAG, tags[k]);
+                }
+                
+                XmlUtil.createTextChild(entryNode, TITLE,   entry.getTitle());
+                XmlUtil.createTextChild(entryNode, TYPE,    entry.getFileType());
+                XmlUtil.createTextChild(entryNode, NOTE,    entry.getNote());
+                XmlUtil.createTextChild(entryNode, CONTENT, StringUtil.truncate(entry.getContent(), truncate));
+                
+                XmlUtil.createTextChild(entryNode, ISSUED,   XmlUtil.formatW3cDate(entry.getIssued()) );
+                XmlUtil.createTextChild(entryNode, MODIFIED, XmlUtil.formatW3cDate(entry.getLastModified()) );
+                XmlUtil.createTextChild(entryNode, FETCHED,  XmlUtil.formatW3cDate(entry.getLastFetched()) );
+            }
+            
+            // now serialize it to the output stream
+            new XMLOutputter(Format.getPrettyFormat() ).output(new DOMBuilder().build(doc), writer);
+            
+        } catch (Exception ex) {
+            throw new OperationException("Error while generating <entrylist>", ex);
+        }
+        
+    }
 }

@@ -28,7 +28,7 @@ package org.roosster.web;
 
 import java.io.*;
 import java.util.Properties;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
@@ -93,12 +93,12 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
           
         InputStream inStream = servletContext.getResourceAsStream(path);
         if ( inStream != null ) {
-            LOG.fine("Evaluating template "+path+" for servletPath "+req.getServletPath());
+            LOG.debug("Evaluating template "+path+" for servletPath "+req.getServletPath());
             
             resp.setContentType( getContentType(req)+"; charset=UTF-8");
             Velocity.evaluate(context, resp.getWriter(), path, new InputStreamReader(inStream));
         } else {
-            LOG.warning("Velocity: Can't load '"+path+"' for request "+
+            LOG.warn("Velocity: Can't load '"+path+"' for request "+
                         req.getRequestURL().append("?").append(req.getQueryString()) );
                         
             resp.sendError(resp.SC_NOT_FOUND, path+" not found");

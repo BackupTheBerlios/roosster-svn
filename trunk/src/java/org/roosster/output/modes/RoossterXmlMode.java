@@ -24,25 +24,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.util;
+package org.roosster.output.modes;
 
-import org.apache.log4j.Logger;
-import javax.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
+import java.util.List;
+import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
+import org.roosster.Output;
+import org.roosster.output.OutputMode;
+import org.roosster.OperationException;
+import org.roosster.Registry;
+import org.roosster.xml.EntryGenerator;
+
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class ServletUtil
+public class RoossterXmlMode extends AbstractOutputMode implements OutputMode
 {
-    private static Logger LOG = Logger.getLogger(ServletUtil.class.getName());
-
 
     /**
-     * 
+     *
      */
-    public static String getBaseUrl(HttpServletRequest req)
+    public void output(Registry registry, Output output, PrintWriter stream, EntryList entries)
+                throws OperationException
     {
-        return "http://"+ req.getServerName() +":"+ req.getServerPort()+ req.getContextPath() ;
-    }    
+        if ( entries == null )
+            throw new IllegalArgumentException("entries parameter is not allowed to be null");
+
+
+        new EntryGenerator().createFeed(registry, stream, entries);
+        
+        List messages = output.getOutputMessages();
+        if ( messages.size() > 0 ) {
+            stream.print("<!--");
+            for(int i = 0; i < messages.size(); i++) {
+                stream.print(messages.get(i));
+            }
+            stream.print("-->");
+        }
+    }
+
 }

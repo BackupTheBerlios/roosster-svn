@@ -24,46 +24,64 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.output.modes;
+package org.roosster.commands;
 
-import java.io.PrintWriter;
-import java.util.List;
-import org.roosster.store.Entry;
+import java.util.Map;
+import java.net.URL;
+
+import org.apache.log4j.Logger;
+
 import org.roosster.store.EntryList;
-import org.roosster.Output;
-import org.roosster.output.OutputMode;
-import org.roosster.OperationException;
+import org.roosster.store.Entry;
+import org.roosster.util.StringUtil;
+import org.roosster.Command;
+import org.roosster.Constants;
 import org.roosster.Registry;
-import org.roosster.xml.AtomFeedGenerator;
-
+import org.roosster.Output;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class AtomMode extends AbstractOutputMode implements OutputMode
+public class AddUrlCliCommand extends AbstractCommand implements Command, Constants
 {
-
+    private static Logger LOG = Logger.getLogger(AddUrlCliCommand.class);
+    
     /**
      *
      */
-    public void output(Registry registry, Output output, PrintWriter stream, EntryList entries)
-                throws OperationException
+    public void execute(Map arguments, Registry registry, Output output)
+                 throws Exception
     {
-        if ( entries == null )
-            throw new IllegalArgumentException("entries parameter is not allowed to be null");
+        validateArguments(arguments, new String[] {ARG_URL});
 
-
-        new AtomFeedGenerator().createFeed(registry, stream, entries);
+        Entry entry = new Entry(new URL( (String) arguments.get(ARG_URL)) );
         
-        List messages = output.getOutputMessages();
-        if ( messages.size() > 0 ) {
-            stream.print("<!--");
-            for(int i = 0; i < messages.size(); i++) {
-                stream.print(messages.get(i));
-            }
-            stream.print("-->");
-        }
+        String title = (String) arguments.get(ARG_TITLE);
+        entry.setTitle( title == null ? "" : title ); 
+        
+        String note  = (String) arguments.get(ARG_NOTE);
+        entry.setNote( note == null ? "" : note );
+
+        String tags  = (String) arguments.get(ARG_TAGS);
+        if ( tags != null )
+            entry.setTags( StringUtil.split(tags, TAG_SEPARATOR) );
+        
+        
+        EntryList list = new EntryList();
+        list.add(entry);
+        
+        LOG.debug("Putting the one entry back into arguments at "+PARAM_ENTRIES);
+        
+        arguments.put(PARAM_ENTRIES, list);           
+    }
+
+
+    /**
+     */
+    public String getName()
+    {
+        return "Add URL (CLI)";
     }
 
 }

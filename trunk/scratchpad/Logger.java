@@ -26,28 +26,58 @@
  */
 package org.roosster.logging;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Formatter;
-import java.util.logging.LogRecord;
 
 import org.roosster.util.StringUtil;
 
 /**
- * Simple Formatter which returns a log message always in the format:<br/>
- * <pre>&lt;TIME&gt;  [&lt;LOG_LEVEL&gt;] &lt;LOG_MESSAGE&gt;</pre>
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class ConsoleFormatter extends Formatter
+public class Logger 
 {
+    public static final String DEF_DATEFORMAT = "EEE MMM dd yyyy HH:mm:ss.SSS";
+  
+    private Class   clazz = null;
+    private Writer  out   = null;
+    private Level   level = null; 
+    
+    /**
+     * 
+     */
+    protected Logger(Class clazz, Writer out, Level level)
+    {
+        if ( clazz == null || out == null || level == null )
+            throw new IllegalArgumentException("Arguments to 'Logger' are not allowed to be null!");
+        
+        this.clazz = clazz;
+        this.out   = out;
+        this.level = level;
+    }
+  
 
     /**
-     *
+     * 
      */
+    public void log(Level level, String message)
+    {
+        
+    }
+
+    
+    /**
+     * 
+     */
+    public void log(Level level, String message, Throwable exception)
+    {
+    }
+
+}
+
+
+/*
     public String format(LogRecord record)
     {
         SimpleDateFormat df = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss.SSS");
@@ -66,5 +96,4 @@ public class ConsoleFormatter extends Formatter
 
         return msg.toString();
     }
-
-}
+ */

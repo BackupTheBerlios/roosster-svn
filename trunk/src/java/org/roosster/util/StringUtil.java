@@ -26,9 +26,9 @@
  */
 package org.roosster.util;
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import java.util.regex.PatternSyntaxException;
+
+import org.apache.log4j.Logger;
 
 import org.roosster.Registry;
 
@@ -39,46 +39,13 @@ import org.roosster.Registry;
  */
 public class StringUtil
 {
-    private static Logger LOG = Logger.getLogger(StringUtil.class.getName());
-
-
-    /** if the value of this property is set to a value below zero, no output is truncated.
-     * Value is: <pre>output.truncate.length</pre>
-     */
-    public static final String PROP_TRUNCLENGTH = "output.truncate.length";
-
-    private Registry registry       = null;
-    private int      truncateLength = -1;
-    
-    
-    /**
-     * 
-     */
-    public StringUtil(Registry registry)
-    {
-        if ( registry == null )
-            throw new IllegalArgumentException("Argument 'registry' cannot be null");
-        
-        this.registry = registry;
-        String truncLength = registry.getConfiguration().getProperty(PROP_TRUNCLENGTH, "-1");
-        truncateLength = Integer.valueOf(truncLength).intValue();
-    }
-    
-    
-    /**
-     * It truncates the specified string to a length specified in the property
-     * {@link PROP_TRUNCLENGTH}. This method is thread safe. 
-     */
-    public String truncate(String str)
-    {
-        return StringUtil.truncate(str, truncateLength);
-    }
+    private static Logger LOG = Logger.getLogger(StringUtil.class);
     
 
     /**
      * @return null if an exception occurred
      */
-    public static String[] splitString(String str, String regex)
+    public static String[] split(String str, String regex)
     {
         try {
             if ( str != null && regex != null ) {
@@ -89,7 +56,7 @@ public class StringUtil
                 return strings;
             }
         } catch (PatternSyntaxException ex) {
-            LOG.log(Level.WARNING, "Exception while splitting string", ex);
+            LOG.warn("Exception while splitting string", ex);
         }
         
         return null;
@@ -99,7 +66,7 @@ public class StringUtil
     /**
      * 
      */
-    public static String joinStrings(String[] strings, String joinStr)
+    public static String join(String[] strings, String joinStr)
     {
         if ( strings == null )
             return null;
@@ -152,28 +119,5 @@ public class StringUtil
         else
             return str.length() > length+1 ? str.substring(0, length) : str;
     }
-    
-    
-    /**
-     */
-    public String join(String[] str, String joinStr)
-    {
-        return StringUtil.joinStrings(str, joinStr);
-    }
-    
-    
-    /**
-     */
-    public String[] split(String str, String regex)
-    {
-        return StringUtil.splitString(str, regex);
-    }
-    
-    
-    /**
-     */
-    public String pad(String str, int length, char c)
-    {
-        return StringUtil.leftPad(str, length, c);
-    }
+
 }

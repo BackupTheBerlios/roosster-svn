@@ -28,9 +28,6 @@ package org.roosster.util;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
 
 import org.roosster.InitializeException;
 
@@ -43,16 +40,8 @@ import org.roosster.InitializeException;
  */
 public class MapperUtil
 {
-    private static Logger LOG = Logger.getLogger(MapperUtil.class.getName());
-    
-
-    public static final String ARG_OUTPUTMODE    = "output.mode";
 
     public static final String PROP_FILE_ARG     = "conf";
-
-    public static final String DEFAULT_LOG_CONF  = "/default_logging.properties";
-    public static final String VERBOSE_LOG_CONF  = "/verbose_logging.properties";
-    public static final String DEBUG_LOG_CONF    = "/debug_logging.properties";
 
     private static final String DEF_HOMEDIR      = ".roosster";
     private static String homeDir                = null;
@@ -113,47 +102,7 @@ public class MapperUtil
             }
         }
 
-        LOG.finest("cliMap "+ retMap);
         return retMap;
-    }
-
-
-    /**
-     *
-     */
-    public static void initLogging(String[] arguments) throws IOException, InitializeException
-    {
-        InputStream stream = null;
-        try {
-
-            String debugConfFileName = null;
-            for(int i = 0; i < arguments.length; i++) {
-                if ( "-v".equals(arguments[i]) ) {
-                    debugConfFileName = VERBOSE_LOG_CONF;
-                    break;
-                } else if ( "-d".equals(arguments[i]) ) {
-                    debugConfFileName = DEBUG_LOG_CONF;
-                    break;
-                }
-            }
-
-            if ( debugConfFileName == null )
-                debugConfFileName = DEFAULT_LOG_CONF;
-
-            System.out.println("LOGGING CONFIG "+debugConfFileName);
-            
-            stream = MapperUtil.class.getResourceAsStream(debugConfFileName);
-            if ( stream == null )
-                throw new InitializeException("File '"+debugConfFileName+"' not on classpath");
-
-            LogManager.getLogManager().readConfiguration(stream);
-
-        } catch (SecurityException ex) {
-            throw new InitializeException("Exception while configuring logging", ex);
-        } finally {
-            if ( stream != null )
-                stream.close();
-        }
     }
 
 
@@ -180,23 +129,21 @@ public class MapperUtil
         File propFile = new File(propFileName);
 
         if ( propFile.exists() && propFile.canRead() ) {
-            LOG.fine("Overriding default setting with user defined settings");
+            System.out.println("Overriding default setting with user defined settings");
             propInput = new FileInputStream(propFile);
             props.load(propInput);
         } else {
-            LOG.config("Can't use secondary configuration file: "+propFileName);
+            System.out.println("Can't use secondary configuration file: "+propFileName);
         }
 
         // now override with commandline parameters
         props.putAll(cmdLine);
 
-        if ( LOG.isLoggable(Level.FINE) ) {
-            LOG.fine("Configuration Properties are: \n");
-
+        if ( props.containsKey("-d") ) {
             Iterator keys = props.keySet().iterator();
             while ( keys.hasNext() ) {
                 Object key = keys.next();
-                LOG.fine(key +" => "+ props.get(key));
+                System.out.println(key +" => "+ props.get(key));
             }
 
         }
@@ -233,7 +180,7 @@ public class MapperUtil
             else
                 homeDir += homeDir.endsWith("/") ? DEF_HOMEDIR : "/"+DEF_HOMEDIR;
             
-            LOG.finest("Checking if "+homeDir+" exists, if not create it");
+            System.out.println("Checking if "+homeDir+" exists, if not create it");
             File dir = new File(homeDir);
 
             if ( dir.exists() ) {
@@ -242,7 +189,7 @@ public class MapperUtil
                                                        homeDir+" is not a directory");
                 }
             } else {
-                LOG.info("Creating Roosster home directory at "+homeDir);
+                System.out.println("Creating Roosster home directory at "+homeDir);
                 dir.mkdir();
                 
                 if ( !dir.exists() && !dir.isDirectory() )
@@ -255,5 +202,4 @@ public class MapperUtil
         return homeDir;
     }
 
-    
 }

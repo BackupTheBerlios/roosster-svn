@@ -34,7 +34,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.roosster.commands.CommandNotFoundException;
 
@@ -97,7 +97,7 @@ public class Dispatcher
             
             for(int i = 0; i < classes.size(); i++) {
                 Command command = (Command) classes.get(i);
-                LOG.fine("Executing Command: "+ command);
+                LOG.debug("Executing Command: "+ command);
                 
                 command.execute(reqArgs, registry, output);
             }
@@ -129,7 +129,7 @@ public class Dispatcher
             String commandName = null;
             try  {
                 
-                LOG.fine("Trying to load command "+names[i]);
+                LOG.debug("Trying to load command "+names[i]);
                         
                 if ( names[i].endsWith(".chain") ) {
                     isChain = true;
@@ -141,13 +141,13 @@ public class Dispatcher
                     StringTokenizer tok = new StringTokenizer(value, " ");
                     while ( tok.hasMoreTokens() ) {
                         String name  = tok.nextToken();
-                        LOG.fine("Trying to load class for chain command "+name);
+                        LOG.debug("Trying to load class for chain command "+name);
                       
                         String className = conf.getProperty("command."+name+".class");
                         if ( className != null )
                             tmp.add( Class.forName(className).newInstance() );
                         else
-                            LOG.severe("No class found for command '"+ name +"' in chain: "+commandName);
+                            LOG.fatal("No class found for command '"+ name +"' in chain: "+commandName);
                     }
 
                 } else {

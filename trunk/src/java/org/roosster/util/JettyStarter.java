@@ -28,8 +28,6 @@ package org.roosster.util;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 
 import org.mortbay.http.SocketListener;
 import org.mortbay.jetty.Server;
@@ -44,18 +42,31 @@ import org.roosster.util.MapperUtil;
  */
 public class JettyStarter
 {
-    private static Logger LOG = Logger.getLogger(JettyStarter.class.getName());
-    
     public static final String DEF_PORT         = "8181";
     public static final String PROP_PORT        = "server.port";
     
-    public static final String DEF_WEBAPP_WAR   = "./roosster.war";
+    /**
+     * The (optional) command line property, which specifies the location of the 
+     * .war file to start.
+     */
     public static final String PROP_WEBAPP_WAR  = "server.webapp";
+
+    /**
+     * the default location, the starter looks for the .war file to start. 
+     */    
+    public static final String DEF_WEBAPP_WAR   = "./roosster.war";
     
     /**
-     * The context path under which the application will be available in the server
+     * The (optional) command line property, which specifies the location of the 
+     * .war file to start.
      */
-    public static final String CONTEXT_PATH     = "/roosster";
+    public static final String PROP_CONTEXT_PATH  = "webapp.context";
+    
+    /**
+     * The default context path under which the application will be available 
+     * in the server, if nothing is specified on the command line.
+     */
+    public static final String DEF_CONTEXT_PATH     = "/roosster";
     
     
     /**
@@ -64,8 +75,6 @@ public class JettyStarter
     public static void main(String[] args) 
     {  
         try {
-            MapperUtil.initLogging(args);
-            
             Map cmdLine = MapperUtil.parseCommandLineArguments(args);
 
             String port = (String) cmdLine.get(PROP_PORT);
@@ -76,11 +85,20 @@ public class JettyStarter
             if ( webapp == null ) 
                 webapp = DEF_WEBAPP_WAR;
             
+            String contextPath = (String) cmdLine.get(PROP_CONTEXT_PATH);
+            if ( contextPath == null ) {
+                contextPath = DEF_CONTEXT_PATH;
+            } else {
+                // make sure the path starts with a /
+                if ( !contextPath.startsWith("/") )
+                    contextPath = "/"+contextPath;
+            }
+            
             File webAppWarFile = new File(webapp);
             if ( !webAppWarFile.exists() && !webAppWarFile.canRead() )
                 throw new FileNotFoundException("Web Application '"+webapp+"' not found");
             
-            LOG.finest("Starting Server with WebApplication "+webapp);
+            System.out.println("Starting Server with WebApplication "+webapp);
             
             Server server = new Server();
 
@@ -88,15 +106,12 @@ public class JettyStarter
             listener.setPort( Integer.valueOf(port).intValue() );
             server.addListener(listener);
            
-            server.addWebApplication(CONTEXT_PATH, webapp);
+            server.addWebApplication(contextPath, webapp);
             
             server.start();
 
         } catch (Exception ex) {
-            if ( LOG.isLoggable(Level.CONFIG) )
-                ex.printStackTrace();
-            else
-                System.out.println("ERROR:  "+ ex.getMessage());
+            ex.printStackTrace();
         }      
     }
 }

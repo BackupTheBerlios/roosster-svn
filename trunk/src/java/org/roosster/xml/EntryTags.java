@@ -32,17 +32,22 @@ package org.roosster.xml;
  */
 public interface EntryTags
 {
+    public static final String TOTAL_ATTR   = "total";
+    public static final String OFFSET_ATTR  = "offset";
+    public static final String LIMIT_ATTR   = "limit";
+    
     public static final String HREF_ATTR    = "href";
     
     public static final String ENTRY        = "entry";
     public static final String ENTRYLIST    = "entrylist";
     
+    public static final String CONTENT      = "content";
     public static final String TAGS         = "tags";
     public static final String TAG          = "tag";
     public static final String NOTE         = "note";
     
     public static final String ISSUED       = "issued";
-    public static final String MODFIED      = "modified";
+    public static final String MODIFIED     = "modified";
     public static final String FETCHED      = "fetched";
     
     public static final String AUTHORS      = "authors";

@@ -26,8 +26,7 @@
  */
 package org.roosster.logging;
 
-import java.util.logging.Logger;
-import java.util.logging.Level;
+import org.apache.log4j.Logger;
 
 import org.apache.velocity.runtime.log.LogSystem;
 import org.apache.velocity.runtime.RuntimeServices;
@@ -56,24 +55,24 @@ public class VelocityLogSystem implements LogSystem
     {
         switch (level) {
             case LogSystem.WARN_ID:
-                LOG.warning(message);
+                LOG.warn(message);
                 break;
                 
             case LogSystem.ERROR_ID:
-                LOG.severe(message);
+                LOG.fatal(message);
                 break;
                 
             case LogSystem.INFO_ID:
-                LOG.config(message);
+                LOG.info(message);
                 break;
                 
             case LogSystem.DEBUG_ID:
-                LOG.finest(message);
+                LOG.debug(message);
                 break;
                 
             default :
-                LOG.warning("PARAMETER 'level' IN VELOCITYLOGSYSTEM contains a not expected value");
-                LOG.config(message);
+                LOG.warn("PARAMETER 'level' IN VELOCITYLOGSYSTEM contains a not expected value");
+                LOG.info(message);
         }
     }
 

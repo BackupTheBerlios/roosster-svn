@@ -2,23 +2,29 @@
     <head>
       <title>roosster</title>
       <style type="text/css"> @import url($baseurl/styles.css); </style>
-      <script type="text/javascript" src="$baseurl/js/AtomAPI.js" />
+      <script type="text/javascript" src="$baseurl/js/XmlUtil.js" />
+      <script type="text/javascript" src="$baseurl/js/roossterCommon.js" />
+      <script type="text/javascript" src="$baseurl/js/roossterClasses.js" />
+      <script type="text/javascript" src="$baseurl/js/roossterClient.js" />
     </head>
     <body onload="init()">
         <div id="head">
         </div>
         
-        <form method="get" name="searchform" onsubmit="return doSearch();">
+        <form method="get" name="searchform" >
           <input type="text" name="query" />
-          <input type="submit" value="send" />
+          <input type="button" value="send" onclick="return doSearch();"/>
         </form>
         
-        <div id="output">
+        <div id="entries-out">
         </div>
         
         <div id="foot">
           powered by <a href="http://roosster.org/">roosster - personal search</a>
           | TODO <em>index contains num Entries</em>
+        </div>
+        
+        <div id="debug-out">
         </div>
     </body>
 </html>

@@ -24,25 +24,34 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.util;
+package org.roosster.output.modes;
 
-import org.apache.log4j.Logger;
-import javax.servlet.http.HttpServletRequest;
+import org.roosster.output.OutputMode;
+
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class ServletUtil
+public abstract class AbstractOutputMode implements OutputMode
 {
-    private static Logger LOG = Logger.getLogger(ServletUtil.class.getName());
-
+    private String contentType = DEF_CONTENT_TYPE;
 
     /**
-     * 
+     *
      */
-    public static String getBaseUrl(HttpServletRequest req)
+    public String getContentType() 
     {
-        return "http://"+ req.getServerName() +":"+ req.getServerPort()+ req.getContextPath() ;
-    }    
+        return contentType;
+    }
+
+    
+    /**
+     *
+     */
+    public void setContentType(String type)
+    {
+        this.contentType = type;
+    }
+
 }

@@ -35,6 +35,7 @@ import org.apache.lucene.document.DateField;
 import org.apache.lucene.document.Field;
 
 import org.roosster.util.StringUtil;
+import org.roosster.Constants;
 
 /**
  * TODO make dateformat configurable
@@ -43,7 +44,7 @@ import org.roosster.util.StringUtil;
  */
 public class Entry
 {
-    public static final String TAG_SEPARATOR= ",";
+    public static final String TAG_SEPARATOR= Constants.TAG_SEPARATOR;
   
     public static final String ALL          = "all";
     public static final String CONTENT      = "content";
@@ -58,6 +59,11 @@ public class Entry
     public static final String NOTE         = "note";
     public static final String TAGS         = "tags";
 
+    /** enumerates the fields, by which result can be sorted
+     */
+    public static final String[] SORT_FIELDS     = new String[]
+    {LAST_MOD, LAST_FETCHED, ISSUED, URL, TITLE, AUTHOR, AUTHOREMAIL, FILETYPE};
+    
 
     private Date         issued	       = null;
     private Date         lastModified	 = null;
@@ -70,6 +76,15 @@ public class Entry
     private StringBuffer content        = new StringBuffer();
     private StringBuffer note           = new StringBuffer();
     private String[]     tags           = new String[0];
+
+
+    /**
+     *
+     */
+    public Entry(URL url)
+    {
+        setUrl(url);
+    }
 
 
     /**
@@ -99,7 +114,7 @@ public class Entry
                 setFileType( doc.getField(FILETYPE).stringValue() );
                 setContent( doc.getField(CONTENT).stringValue() );
                 setNote( doc.getField(NOTE).stringValue() );
-                setTags( StringUtil.splitString(doc.getField(TAGS).stringValue(), TAG_SEPARATOR) );
+                setTags( StringUtil.split(doc.getField(TAGS).stringValue(), TAG_SEPARATOR) );
 
                 setIssued( !"".equals(doc.getField(ISSUED).stringValue())
                            ? DateField.stringToDate(doc.getField(ISSUED).stringValue()) : null );
@@ -123,25 +138,26 @@ public class Entry
      */
     protected Document getDocument()
     {
-        Document doc = new Document();
-        doc.add( Field.Keyword(URL,        url.toString()) );
-        doc.add( Field.Text(TITLE,         title) );
-        doc.add( Field.Text(AUTHOR,        author) );
-        doc.add( Field.Text(AUTHOREMAIL,   authorEmail) );
-        doc.add( Field.Text(FILETYPE,      fileType) );
-        doc.add( Field.Text(CONTENT,       content.toString()) );
-        doc.add( Field.Text(NOTE,          note.toString()) );
-        doc.add( Field.Text(TAGS,          StringUtil.joinStrings(tags, TAG_SEPARATOR)) );
-
         String lastModStr = lastModified != null ? DateField.dateToString(lastModified) : "";
         String lastFetStr = lastFetched != null ? DateField.dateToString(lastFetched) : "";
         String issuedStr  = issued != null ? DateField.dateToString(issued) : "";
-        doc.add( Field.Text(LAST_MOD,      lastModStr) );
-        doc.add( Field.Text(LAST_FETCHED,  lastFetStr) );
-        doc.add( Field.Text(ISSUED,        issuedStr) );
+
+        Document doc = new Document();
+
+        doc.add( Field.Keyword(URL,        url.toString()) );
+        doc.add( Field.Keyword(TITLE,         title) );
+        doc.add( Field.Keyword(AUTHOR,        author) );
+        doc.add( Field.Keyword(AUTHOREMAIL,   authorEmail) );
+        doc.add( Field.Keyword(FILETYPE,      fileType) );
+        doc.add( Field.Keyword(LAST_MOD,      lastModStr) );
+        doc.add( Field.Keyword(LAST_FETCHED,  lastFetStr) );
+        doc.add( Field.Keyword(ISSUED,        issuedStr) );
+        doc.add( Field.Text(CONTENT,          content.toString()) );
+        doc.add( Field.Text(NOTE,             note.toString()) );
+        doc.add( Field.Text(TAGS,             StringUtil.join(tags, TAG_SEPARATOR)) );
 
         doc.add( Field.Text(ALL,  url +" "+ title +" "+ author+" "+authorEmail+" "+
-                                  content +" "+note+" "+StringUtil.joinStrings(tags, TAG_SEPARATOR)) );
+                                  content +" "+note+" "+StringUtil.join(tags, TAG_SEPARATOR)) );
         return doc;
     }
 
@@ -176,6 +192,15 @@ public class Entry
     }
 
 
+    /**
+     *
+     */
+    public void appendContent(char[] str, int offset, int len)
+    {
+        this.content.append(str, offset, len);
+    }
+
+    
     /**
      *
      */
@@ -371,6 +396,59 @@ public class Entry
     public void appendNote(String note)
     {
       this.note.append(note);
+    }
+    
+    /**
+     * 
+     */
+    public void appendNote(char[] str, int offset, int len) 
+    {
+      this.note.append(str, offset, len) ;
+    }
+    
+    
+    /**
+     * Overwrites this Entry with the values of the specified object, but only, 
+     * if they are not null, and not empty
+     * @param that not allowed to be null
+     * @exception IllegalArgumentException if <code>that</code> is null
+     */
+    public void overwrite(Entry that)
+    { 
+        if ( that == null )
+            throw new IllegalArgumentException("that-Entry-object not allowed to be null");
+      
+        String str = that.getTitle();
+        if ( str != null && !"".equals(str) )
+            setTitle(str);
+        
+        str = that.getFileType();
+        if ( str != null && !"".equals(str) )
+            setFileType(str);
+        
+        str = that.getNote();
+        if ( str != null && !"".equals(str) )
+            setNote(str);
+        
+        str = that.getAuthor();
+        if ( str != null && !"".equals(str) )
+            setAuthor(str);
+        
+        str = that.getAuthorEmail();
+        if ( str != null && !"".equals(str) )
+            setAuthorEmail(str);
+        
+        Date date = that.getIssued();
+        if ( date != null )
+            setIssued(date);
+        
+        date = that.getLastModified();
+        if ( date != null )
+            setLastModified(date);
+        
+        String[] tags = that.getTags();
+        if ( tags != null && tags.length > 0 )
+            setTags(tags);
     }
 }
 

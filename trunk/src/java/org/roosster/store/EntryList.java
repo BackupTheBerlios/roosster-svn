@@ -26,6 +26,7 @@
  */
 package org.roosster.store;
 
+import java.net.URL;
 import java.util.Date;
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -37,10 +38,10 @@ import java.util.List;
  */
 public class EntryList extends AbstractList
 {
-    private int totalSize = 0;
-    private int offset	   = 0;
-    private int limit     = 0;
-    private List list = new ArrayList();
+    private int totalSize   = 0;
+    private int offset	     = 0;
+    private int limit       = -1;
+    private List list       = new ArrayList();
 
     
     /**
@@ -135,6 +136,27 @@ public class EntryList extends AbstractList
 
     
     /**
+     * @return null if <code>url</code> is null, or if no Entry with the 
+     * specified URL is contained within this list.
+     */
+    public Entry getEntry(URL url)
+    {
+        Entry entry = null;
+        
+        if ( url != null ) { 
+            for ( int i = 0; i < list.size(); i++ ) {
+                if ( url.equals(getEntry(i).getUrl()) ) {
+                    entry = getEntry(i);
+                    break;
+                }
+            }
+        }
+            
+        return entry;
+    }
+    
+    
+    /**
      * @exception ArrayIndexOutOfBoundsException
      */
     public Entry getEntry(int i)
@@ -148,7 +170,7 @@ public class EntryList extends AbstractList
      */
     public int getOffset()
     {
-      return offset;
+        return offset;
     }
   
     
@@ -158,16 +180,17 @@ public class EntryList extends AbstractList
      */
     public void setOffset(int offset)
     {
-      this.offset = offset;
+        this.offset = offset;
     }
   
     
     /**
-     * Returns the value of limit.
+     * Returns the value of limit. If it was not eplicitly set before, this will
+     * be the value of {@link #size()}.
      */
     public int getLimit()
     {
-      return limit;
+        return limit == -1 ? size() : limit ;
     }
 
     
@@ -177,6 +200,6 @@ public class EntryList extends AbstractList
      */
     public void setLimit(int limit)
     {
-      this.limit = limit;
+        this.limit = limit;
     }
 }

@@ -24,25 +24,69 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.util;
+package org.roosster.logging;
 
-import org.apache.log4j.Logger;
-import javax.servlet.http.HttpServletRequest;
 
 /**
- *
+ * Typesafe enum class
+ * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class ServletUtil
+public class Level implements Comparable
 {
-    private static Logger LOG = Logger.getLogger(ServletUtil.class.getName());
+    public static final Level DEBUG     = new Level("DEBUG", 0);
+    public static final Level INFO      = new Level("INFO", 10);
+    public static final Level WARNING   = new Level("WARNING", 20);
+    public static final Level ERROR     = new Level("ERROR", 30);
+  
+    private String  levelName = null;
+    private int     priority  = 0;
+    
+    /**
+     * 
+     */
+    private Level(String levelName, int priority)
+    { 
+        this.levelName = levelName;
+        this.priority  = priority;
+    }
+  
+    
+    /**
+     * @exception ClassCastException if the provided <code>obj</code> is not 
+     * a <code>Level</code>-instance.
+     */
+    public int compareTo(Object obj)
+    {
+        Level another = (Level) obj;
+        return new Integer(priority).compareTo(new Integer(another.getPriority()));
+    }
+    
+    
+    /**
+     * 
+     */
+    public int getPriority()
+    {
+        return priority;
+    }
+    
+    
+    /**
+     * 
+     */
+    public String toString()
+    {
+        return levelName;
+    }
 
 
     /**
      * 
      */
-    public static String getBaseUrl(HttpServletRequest req)
+    public String getLevelName()
     {
-        return "http://"+ req.getServerName() +":"+ req.getServerPort()+ req.getContextPath() ;
-    }    
+        return levelName;
+    }
 }
+

@@ -1,5 +1,5 @@
-<!-- 
-  date elements http://www.faqs.org/rfcs/rfc3339.html
+<!--
+  date elements must be empty or in the format of http://www.w3.org/TR/NOTE-datetime
 -->
 <entry href="http://example.com/?test">
   <type><!-- MIME-type / will be determined by server, if not set--></type>
@@ -17,7 +17,7 @@
   </tags>
   <note><!-- NO HTML --></note>
   
-  
+  <content><!-- only truncated --></content>
   <issued><!-- date / read only --></issued>
   <modified><!-- date / read only --></modified>
   <fetched><!-- date / read only --></fetched>

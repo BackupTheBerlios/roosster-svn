@@ -26,23 +26,22 @@
  */
 package org.roosster.mappers;
 
-import java.io.PrintWriter;
-import java.io.PrintStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Enumeration; 
-import java.util.logging.Logger;
-import java.util.logging.Level;
 import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
+import org.apache.log4j.Logger;
+
 import org.roosster.util.MapperUtil;
 import org.roosster.util.ServletUtil;
+import org.roosster.util.StringUtil;
 import org.roosster.store.EntryStore;
 import org.roosster.commands.CommandNotFoundException;
 import org.roosster.InitializeException;
@@ -57,7 +56,7 @@ import org.roosster.Constants;
  */
 public class ServletMapper extends HttpServlet
 {
-    private static Logger LOG = Logger.getLogger(ServletMapper.class.getName());
+    private static Logger LOG = Logger.getLogger(ServletMapper.class);
     
     public static final int PUT     = 1;
     public static final int POST    = 2;
@@ -117,7 +116,7 @@ public class ServletMapper extends HttpServlet
             inputEncoding  = registry.getConfiguration().getProperty(PROP_INENC, DEF_ENC);
 
         } catch(Exception ex) {
-            LOG.log(Level.SEVERE, "Exception while initializing "+getClass(), ex);
+            LOG.fatal("Exception while initializing "+getClass(), ex);
             throw new ServletException(ex);
         }
     }
@@ -181,9 +180,9 @@ public class ServletMapper extends HttpServlet
                            throws ServletException, IOException
 
     {
-        if ( LOG.isLoggable(Level.FINEST) ) {
-            LOG.finest("**************************************************");
-            LOG.finest("Processing Request: "+req.getMethod()+" "+req.getPathInfo());
+        if ( LOG.isDebugEnabled() ) {
+            LOG.debug("**************************************************");
+            LOG.debug("Processing Request: "+req.getMethod()+" "+req.getPathInfo());
         }
         
         try {
@@ -203,17 +202,17 @@ public class ServletMapper extends HttpServlet
             
         } catch (CommandNotFoundException ex) {
           
-            LOG.log(Level.WARNING, ex.getMessage(), ex);
+            LOG.warn(ex.getMessage(), ex);
             resp.sendError(resp.SC_NOT_FOUND, ex.getMessage());
             
         } catch (IllegalArgumentException ex) {
           
-            LOG.log(Level.WARNING, ex.getMessage(), ex);
+            LOG.warn(ex.getMessage(), ex);
             resp.sendError(resp.SC_BAD_REQUEST, ex.getMessage());
             
         } catch (Exception ex) {
           
-            LOG.log(Level.WARNING, ex.getMessage(), ex);
+            LOG.warn(ex.getMessage(), ex);
             resp.sendError(resp.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
             
         }
@@ -247,14 +246,13 @@ public class ServletMapper extends HttpServlet
      */
     protected String getOutputMode(Map args)
     {
-        String mode = (String) args.get(MapperUtil.ARG_OUTPUTMODE);
+        String mode = (String) args.get(Constants.PROP_OUTPUTMODE);
         return mode == null || "".equals(mode) ? DEF_OUTPUT_MODE : mode ;
 
     }
     
     
     /**
-     * TODO handle multiple value parameters correctly
      */
     protected Map parseRequestArguments(HttpServletRequest req) throws IOException
     {
@@ -262,11 +260,14 @@ public class ServletMapper extends HttpServlet
 
         Enumeration names = req.getParameterNames();
         while ( names.hasMoreElements() ) {
-            String name  = (String) names.nextElement();
-            String value = req.getParameter(name);
-            args.put(name, value);
+          
+            String   name  = (String) names.nextElement();
+            String[] values = req.getParameterValues(name);
             
-            LOG.fine("RequestParameter: "+name+" => "+value);
+            if ( values == null )
+                args.put(name, "");
+            else
+                args.put(name, StringUtil.join(values, " ") );       
         }
 
         return args;

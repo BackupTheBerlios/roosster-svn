@@ -33,17 +33,40 @@ package org.roosster;
  */
 public interface Constants
 {
+    public static final String TAG_SEPARATOR    = ",";
+  
     public static final String W3C_DATEFORMAT   = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     public static final String APP_URI          = "http://www.roosster.org";
     public static final String APP_NAME         = "roosster search";
     
-    public static final String PARAM_ENTRIES    = "internal.param.entry";
-    
-    
+    // keys for objects that are stored in ServletContext
     public static final String CTX_REGISTRY     = "servletcontext.param.registry";
     public static final String CTX_DISPATCHER   = "servletcontext.param.dispatcher";
 
+    // for internal use only
+    public static final String PARAM_ENTRIES    = "internal.param.entry";
+    
+    // props can be specified in properties or as request parameter
+    public static final String PROP_LIMIT       = "output.limit";
+    public static final String PROP_OFFSET      = "output.offset";
+    public static final String PROP_SORTFIELD   = "output.sortfield";
+    public static final String PROP_OUTPUTMODE  = "output.mode";
+
+    /** if the value of this property is set to a value below zero, no output is truncated.
+     */
+    public static final String PROP_TRUNCLENGTH = "output.truncate.length";
+
+
+    // args are used in commands, and only an a request basis
+    public static final String ARG_URL          = "url";
+    public static final String ARG_FORCE        = "force";
+    public static final String ARG_NOTE         = "note";
+    public static final String ARG_TAGS         = "tags";
+    public static final String ARG_TITLE        = "title";;    
+    public static final String ARG_AUTHOR       = "author";;    
+    public static final String ARG_AUTHOREMAIL  = "email";;    
+    public static final String ARG_FILE         = "file";
     
     
 }

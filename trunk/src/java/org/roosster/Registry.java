@@ -32,7 +32,7 @@ import java.util.Properties;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.sql.Connection;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 import java.util.logging.Level;
 
 import org.roosster.util.MapperUtil;
@@ -186,7 +186,7 @@ public class Registry
                 String pluginClass = conf.getProperty(pluginName+".class");
 
                 if ( pluginClass == null ) {
-                    LOG.warning("No Class property for plugin "+pluginName+
+                    LOG.warn("No Class property for plugin "+pluginName+
                                 "! Check Property "+pluginName+".class");
                     continue;
                 }
@@ -199,8 +199,8 @@ public class Registry
 
                 } catch (ClassCastException ex) {
 
-                    LOG.log(Level.WARNING, "Plugin "+pluginName+" does not implement the "+
-                              Plugin.class+" interface", ex);
+                    LOG.warn("Plugin "+pluginName+" does not implement the "+
+                             Plugin.class+" interface", ex);
                 }
             }
 
@@ -221,7 +221,7 @@ public class Registry
                 plugin.shutdown(this);
                 values.remove();
             } catch (Exception ex) {
-                LOG.log(Level.WARNING, "Error while shutting down plugin "+plugin, ex);
+                LOG.warn("Error while shutting down plugin "+plugin, ex);
             }
 
         }

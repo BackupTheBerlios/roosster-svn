@@ -343,8 +343,6 @@
         <echo>+ Roosster - Run Junit Tests                    +</echo>
         <echo>+ ============================================= +</echo>
 
-        <echo message="${org.xml.sax.driver}" />
-        
         <delete dir="${test.reports}"/>
         <mkdir dir="${test.reports.data}"/>
         <mkdir dir="${test.reports.html}"/>

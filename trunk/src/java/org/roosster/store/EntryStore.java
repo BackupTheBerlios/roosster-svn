@@ -32,8 +32,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.security.*;
+
+import org.apache.log4j.Logger;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -42,6 +43,7 @@ import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.Sort;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.index.Term;
@@ -56,7 +58,7 @@ import org.roosster.*;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class EntryStore implements Plugin
+public class EntryStore implements Plugin, Constants
 {
     private static Logger LOG = Logger.getLogger(EntryStore.class.getName());
 
@@ -66,9 +68,6 @@ public class EntryStore implements Plugin
     public static final String PROP_INDEXDIR  = "store.indexdir";
     public static final String PROP_ANALYZER  = "store.analyzerclass";
     public static final String PROP_CREATEIND = "store.createindex";
-
-    public static final String PROP_LIMIT     = "output.limit";
-    public static final String PROP_OFFSET    = "output.offset";
 
     public static final String DEF_INDEXDIR   = "index";
 
@@ -96,7 +95,7 @@ public class EntryStore implements Plugin
         this.registry = registry;
         Configuration conf = registry.getConfiguration();
 
-        LOG.config("Initializing Plugin "+getClass());
+        LOG.info("Initializing Plugin "+getClass());
 
         String className = null;
         try {
@@ -104,15 +103,17 @@ public class EntryStore implements Plugin
             if ( className == null )
                 throw new InitializeException("No '"+PROP_ANALYZER+"'-argument provided");
 
-            LOG.fine("Trying to load analyzer-class: "+className);
+            LOG.debug("Trying to load analyzer-class: "+className);
             analyzerClass = Class.forName(className);
             Analyzer testInstance = (Analyzer) analyzerClass.newInstance();
 
+            
         } catch (ClassCastException ex) {
             throw new InitializeException("Specified class is not an instance of "+
                                           Analyzer.class+": "+className);
         } catch (ClassNotFoundException ex) {
             throw new InitializeException("Can't load analyzer-class: "+className);
+            
         } catch (Exception ex) {
             throw new InitializeException("Exception occured during database init", ex);
         }
@@ -128,8 +129,8 @@ public class EntryStore implements Plugin
                 indexDir = DEF_INDEXDIR;
         }
 
-        LOG.fine("Directory of index is: "+indexDir);
-        LOG.config("Finished initialize of "+getClass());
+        LOG.debug("Directory of index is: "+indexDir);
+        LOG.info("Finished initialize of "+getClass());
 
         createIndexProp = conf.getProperty(PROP_CREATEIND);
         initialized = true;
@@ -158,6 +159,9 @@ public class EntryStore implements Plugin
      */
     public int getLimit()
     {
+        if ( !isInitialized() )
+            throw new IllegalStateException("Database must be initialized before use!");
+
         int limit = 10;
 
         try {
@@ -173,6 +177,9 @@ public class EntryStore implements Plugin
      */
     public int getOffset()
     {
+        if ( !isInitialized() )
+            throw new IllegalStateException("Database must be initialized before use!");
+
         int offset = 0;
         try {
             String offsetStr = registry.getConfiguration().getProperty(PROP_OFFSET);
@@ -253,14 +260,20 @@ public class EntryStore implements Plugin
      */
     public EntryList search(String queryStr) throws IOException, ParseException
     {
+        if ( !isInitialized() )
+            throw new IllegalStateException("Database must be initialized before use!");
+
         QueryParser parser = new QueryParser(Entry.ALL, createAnalyzer());
 
         Query query = parser.parse(queryStr);
 
-        LOG.config("Executing Query: "+query);
+        LOG.info("Executing Query: "+query);
 
         IndexSearcher searcher = new IndexSearcher(indexDir);
-        Hits hits = searcher.search(query);
+        
+        Sort sort = determineSort();
+        
+        Hits hits = sort == null ? searcher.search(query) : searcher.search(query, sort);
         int hitsNum = hits.length();
 
         EntryList entries = new EntryList(hitsNum);
@@ -268,7 +281,7 @@ public class EntryStore implements Plugin
         int limit  = getLimit();
         int offset = getOffset();
         LOG.info("Found "+hitsNum+" matches for query: <"+query+">");
-        LOG.finest("Offset is : "+offset+" / Limit is: "+limit);
+        LOG.debug("Offset is : "+offset+" / Limit is: "+limit);
 
         entries.setLimit(limit);
         entries.setOffset(offset);
@@ -297,7 +310,7 @@ public class EntryStore implements Plugin
         Entry[] entries = getEntries(url, null);
 
         if ( entries.length > 1 )
-            LOG.warning("More than one Entry found for URL "+url);
+            LOG.warn("More than one Entry found for URL "+url);
 
         return entries.length > 0 ? entries[0] : null;
     }
@@ -383,7 +396,7 @@ public class EntryStore implements Plugin
         boolean closeReader = false;
         TermDocs docs = null;
         try {
-            LOG.fine("Getting Entry with URL: "+url);
+            LOG.debug("Getting Entry with URL: "+url);
 
             if ( reader == null ) {
                 reader = getReader();
@@ -398,7 +411,7 @@ public class EntryStore implements Plugin
                 entries.add( new Entry( reader.document(docs.doc()) ) );
             }
 
-            LOG.fine("Found "+entries.size()+" entries for URL "+url);
+            LOG.debug("Found "+entries.size()+" entries for URL "+url);
 
             return (Entry[]) entries.toArray(new Entry[0]);
 
@@ -426,7 +439,7 @@ public class EntryStore implements Plugin
 
         boolean closeReader = false;
         try {
-            LOG.fine("Deleting Entry with URL: "+url.toString());
+            LOG.debug("Deleting Entry with URL: "+url.toString());
 
             if ( reader == null ) {
                 reader = getReader();
@@ -436,7 +449,7 @@ public class EntryStore implements Plugin
             Term term = new Term( URLHASH, computeHash(url.toString()) );
             int numDeleted = reader.delete(term);
 
-            LOG.config("Deleted "+numDeleted+" Entries");
+            LOG.info("Deleted "+numDeleted+" Entries");
 
             return numDeleted;
 
@@ -477,7 +490,7 @@ public class EntryStore implements Plugin
 
             writer = getWriter();
             for (int i = 0; i < entries.length; i++ ) {
-                LOG.fine("Adding Entry to index: "+ entries[i].getUrl().toString());
+                LOG.debug("Adding Entry to index: "+ entries[i].getUrl().toString());
 
                 Document doc = entries[i].getDocument();
                 doc.add( Field.Keyword(URLHASH, computeHash(entries[i].getUrl().toString())) );
@@ -496,6 +509,35 @@ public class EntryStore implements Plugin
     }
 
 
+    /**
+     * @exception IllegalArgumentException if the provided sort field is not available
+     * for sorting
+     */
+     protected Sort determineSort() 
+     {
+        if ( !isInitialized() )
+            throw new IllegalStateException("Database must be initialized before use!");
+        
+        String sortField = registry.getConfiguration().getProperty(PROP_SORTFIELD);
+        
+        LOG.info("Determining Sort Field: "+sortField);
+            
+        Sort sort = null; 
+        if ( sortField != null && !"".equals(sortField) ) {
+            
+            for ( int i = 0; i < Entry.SORT_FIELDS.length; i++ ) {
+                if ( Entry.SORT_FIELDS[i].equals(sortField) ) {
+                    sort = new Sort(sortField);
+                    break;
+                }
+            }
+          
+            if ( sort == null )
+                throw new IllegalArgumentException("Illegal sort field: "+sortField);
+        } 
+        
+        return sort;
+     }
 
     // ============ private Helper methods ============
 
@@ -585,38 +627,4 @@ public class EntryStore implements Plugin
         }
     }
 
-
-
 }
-
-
-
-/*
-            Query query = QueryParser.parse(computeHash(url.toString()), URLHASH, createAnalyzer());
-
-            LOG.fine("Executing Query: "+query);
-
-            searcher = new IndexSearcher(indexDir);
-            Hits hits = searcher.search(query);
-
-            Entry entry = null;
-            if ( hits.length() == 1 ) {
-
-                entry = new Entry( hits.doc(0) );
-
-            } else if ( hits.length() > 1 ) {
-
-                LOG.warning("More than one document matches URL "+url+"! Returning first!");
-                entry = new Entry( hits.doc(0) );
-
-            }
-
-            if ( entry != null )
-                LOG.fine("Found Entry: "+ entry.getUrl());
-
-            return entry;
-
-
-
-*/
-

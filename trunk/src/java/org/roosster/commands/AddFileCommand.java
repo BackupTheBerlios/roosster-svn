@@ -32,14 +32,14 @@ import java.io.File;
 import org.roosster.Command;
 import org.roosster.Registry;
 import org.roosster.Output;
+import org.roosster.Constants;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class AddFileCommand extends AbstractCommand implements Command
+public class AddFileCommand extends AbstractCommand implements Command, Constants
 {
-    public  static final String ARG_FILE = "file";
 
     /**
      */
@@ -49,7 +49,7 @@ public class AddFileCommand extends AbstractCommand implements Command
         validateArguments(arguments, new String[] {ARG_FILE});
 
         File file   = new File( (String) arguments.get(ARG_FILE) );
-        arguments.put( AddUrlCommand.ARG_URL, file.toURL().toString() );
+        arguments.put( ARG_URL, file.toURL().toString() );
     }
 
 

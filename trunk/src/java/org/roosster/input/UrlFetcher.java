@@ -27,7 +27,7 @@
 package org.roosster.input;
 
 import java.util.*;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 import java.util.logging.Level;
 import java.net.URL;
 import java.net.URLConnection;
@@ -102,7 +102,7 @@ public class UrlFetcher implements Plugin, Constants
                 proc = (ContentTypeProcessor) procIter.next();
                 proc.shutdown(registry);
             } catch (Exception ex) {
-                LOG.log(Level.WARNING, "Error while shutting down "+proc, ex);
+                LOG.warn("Error while shutting down "+proc, ex);
             }
 
         }
@@ -123,15 +123,15 @@ public class UrlFetcher implements Plugin, Constants
             try {
                 entries.addAll( Arrays.asList( fetch(urls[i], true) ) );
             } catch (IOException ex) {
-                LOG.log(Level.WARNING, "I/O Error while fetching URL "+urls[i]+": "+
+                LOG.warn("I/O Error while fetching URL "+urls[i]+": "+
                                        ex.getMessage(), ex);
             } catch (Exception ex) {
-                LOG.warning("Error while processing URL "+urls[i]+": "+ex.getMessage());
+                LOG.warn("Error while processing URL "+urls[i]+": "+ex.getMessage());
             }
 
         }
 
-        LOG.fine("Returning entries "+entries);
+        LOG.debug("Returning entries "+entries);
         
         return (Entry[]) entries.toArray(new Entry[0]);
     }
@@ -146,7 +146,7 @@ public class UrlFetcher implements Plugin, Constants
      */
     private Entry[] fetch(URL url, boolean refetchContent) throws IOException, Exception
     {
-        LOG.finest("Opening connection to URL "+url);
+        LOG.debug("Opening connection to URL "+url);
 
         URLConnection con = url.openConnection();
 
@@ -156,8 +156,8 @@ public class UrlFetcher implements Plugin, Constants
                                                               : defaultEncoding; 
 
         ContentTypeProcessor proc = getProcessor(contentType); 
-        LOG.finest("ContentType: "+contentType+" - ContentEncoding: "+contentEnc);
-        LOG.fine("Using Processor "+proc);
+        LOG.debug("ContentType: "+contentType+" - ContentEncoding: "+contentEnc);
+        LOG.debug("Using Processor "+proc);
 
         Entry[] entries = proc.process(url, con.getInputStream(), contentEnc);
        
@@ -185,7 +185,7 @@ public class UrlFetcher implements Plugin, Constants
                 if ( dotIndex != -1 ) {
                     String type = entryUrl.getPath().substring(dotIndex+1);
                     entries[i].setFileType(type.toLowerCase());
-                    LOG.fine("Filetype is subsequently set to '"+type+"'");
+                    LOG.debug("Filetype is subsequently set to '"+type+"'");
                 }
             }
 
@@ -200,7 +200,7 @@ public class UrlFetcher implements Plugin, Constants
         if ( refetchContent ) {
             for (int i = 0; i < fetchLater.size(); i++) {
                 Entry e = (Entry) fetchLater.get(i);
-                LOG.fine("Refetching URL "+ e.getUrl());
+                LOG.debug("Refetching URL "+ e.getUrl());
                         
                 returnArr.addAll( Arrays.asList( fetch(e.getUrl(), false) ) );
             }
@@ -225,7 +225,7 @@ public class UrlFetcher implements Plugin, Constants
         if ( defProcName == null || "".equals(defProcName) )
             throw new InitializeException("No default processor defined");
 
-        LOG.fine("Default ContentTypeProcessor is: "+defProcName);
+        LOG.debug("Default ContentTypeProcessor is: "+defProcName);
         StringTokenizer tok = new StringTokenizer(procNames.trim(), " ");
         while ( tok.hasMoreTokens() ) {
             String name  = tok.nextToken();
@@ -233,7 +233,7 @@ public class UrlFetcher implements Plugin, Constants
             String typeStr  = conf.getProperty(PROP_PROCESSORS+"."+name+".type");
 
             if ( clazz == null || typeStr == null ) {
-                LOG.warning("No Class or Type property defined for processor '"+name+"'");
+                LOG.warn("No Class or Type property defined for processor '"+name+"'");
                 continue;
             }
 
@@ -246,7 +246,7 @@ public class UrlFetcher implements Plugin, Constants
             }
 
             try {
-                LOG.fine("Trying to load ContentTypeProcessor "+clazz);
+                LOG.debug("Trying to load ContentTypeProcessor "+clazz);
 
                 ContentTypeProcessor proc = (ContentTypeProcessor) Class.forName(clazz)
                                                                         .newInstance();
@@ -260,12 +260,12 @@ public class UrlFetcher implements Plugin, Constants
                     defaultProc = proc;
 
             } catch (ClassCastException ex) {
-                LOG.log(Level.WARNING, "Processor "+name+" does not implement the "+
+                LOG.warn("Processor "+name+" does not implement the "+
                         ContentTypeProcessor.class+" interface", ex);
                 throw new InitializeException(ex);
 
             } catch (Exception ex) {
-                LOG.log(Level.WARNING, "Error while loading processor "+
+                LOG.warn("Error while loading processor "+
                         name+" ; Message: "+ex.getMessage(), ex);
                 
                 throw new InitializeException(ex);

@@ -1,0 +1,17 @@
+
+Revision 45 / 2005-02-11 /  Benjamin Reitzammer
+
+* finished API
+** finished EntrySaxHandler and EntryGenerator
+** implemented RoossterXml output mode
+* cleaned up some scattered constants, and moved them to org.roosster.Constants
+* implemented sorting of result
+* removed unnecessary instance methods from StringUtil
+* added CHANGELOG document to repository
+* fixed some minor bugs, that caused some fields in Entries to get overwritten
+  by wrong values
+* moved logging code to log4j
+* made Put and Add commands work with API and CLI
+* implemented AbstractOutputMode
+* finished basic test suite for API
+* finished first testing of Javascript client

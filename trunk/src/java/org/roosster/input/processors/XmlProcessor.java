@@ -31,7 +31,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import org.roosster.store.Entry;
 import org.roosster.Registry;

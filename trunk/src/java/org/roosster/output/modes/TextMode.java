@@ -35,14 +35,14 @@ import org.roosster.store.Entry;
 import org.roosster.store.EntryList;
 import org.roosster.output.OutputMode;
 import org.roosster.util.StringUtil;
+import org.roosster.Constants;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class TextMode implements OutputMode
+public class TextMode extends AbstractOutputMode implements OutputMode, Constants
 {
-    private String contentType = DEF_CONTENT_TYPE;
 
     /**
      *
@@ -53,7 +53,8 @@ public class TextMode implements OutputMode
         if ( entries == null )
             throw new IllegalArgumentException("entries parameter is not allowed to be null");
 
-        StringUtil util = new StringUtil(registry);
+        String truncStr = registry.getConfiguration().getProperty(PROP_TRUNCLENGTH, "-1");
+        int truncate = Integer.valueOf(truncStr).intValue();
         
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < entries.size(); i++) {
@@ -67,30 +68,13 @@ public class TextMode implements OutputMode
             stream.println("Last-Modified: "+ entry.getLastModified() );
             stream.println("Last-Fetched:  "+ entry.getLastFetched() );
             stream.println("FileType:      "+ entry.getFileType() );
-            stream.println("Tags:          "+ StringUtil.joinStrings(entry.getTags(), Entry.TAG_SEPARATOR) );
-            stream.println("Note:          "+ util.truncate(entry.getNote()) );
+            stream.println("Tags:          "+ StringUtil.join(entry.getTags(), TAG_SEPARATOR) );
+            stream.println("Note:          "+ StringUtil.truncate(entry.getNote(), truncate) );
             stream.println("Content:");
-            stream.println( util.truncate(entry.getContent()) );
+            stream.println( StringUtil.truncate(entry.getContent(), truncate) );
         }
 
         stream.println();
-    }
-
-    /**
-     *
-     */
-    public String getContentType() 
-    {
-        return contentType;
-    }
-
-    
-    /**
-     *
-     */
-    public void setContentType(String type)
-    {
-        this.contentType = type;
     }
 
 }

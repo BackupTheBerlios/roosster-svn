@@ -40,9 +40,8 @@ public class TestApi extends RoossterTestCase
 {
     protected HttpClient client = null;
     
-    protected static final String URL_TO_ADD = "http://blog.nur-eine-i.de/atom.xml";
-    
-    protected StringRequestEntity requestBody = null;
+    protected StringRequestEntity putRequestBody = null;
+    protected StringRequestEntity postRequestBody = null;
     
     /**
      * 
@@ -51,63 +50,93 @@ public class TestApi extends RoossterTestCase
     {
          client = new HttpClient();
          
-         requestBody = new StringRequestEntity(TEST_ENTRYXML, "text/xml", "UTF-8");
+         putRequestBody = new StringRequestEntity(TEST_ENTRYXML, "text/xml", "UTF-8");
+         postRequestBody = new StringRequestEntity(TEST_ENTRYXML_EMPTY, "text/xml", "UTF-8");
     }
   
     
     /**
      * 
      */
-    public void testPost() throws Exception
+    public void testApi() throws Exception
     {
-        System.out.println("Trying to POST '"+URL_TO_ADD+"' as a new entry to "+ API_ENDPOINT);
+        // FIRST ADD URL
+        System.out.println("Trying to POST '"+TEST_URL+"' as a new entry to "+ API_ENDPOINT);
         
-        PostMethod method = new PostMethod(API_ENDPOINT);
-        method.addParameter("url", URL_TO_ADD);
-        method.addParameter("force", "true");
+        PostMethod post = new PostMethod(API_ENDPOINT+"?force=true");
+        post.setRequestEntity(postRequestBody); 
+        
+        int statusCode = client.executeMethod(post);
+        
+        assertEquals("POST to "+TEST_URL+" failed", 200, statusCode);
+        
+        logMethodResponse(post);
+        
+        
+        
+        // ... THEN GET IT
+        System.out.println("Trying to GET '"+TEST_URL+"' as a new entry to "+ API_ENDPOINT);
+        
+        GetMethod get = new GetMethod(API_ENDPOINT+"/entry?url="+TEST_URL);
+        statusCode = client.executeMethod(get);
+        
+        assertEquals("GET from "+TEST_URL+" failed", 200, statusCode);
+        
+        logMethodResponse(get);
+        
+        
+        
+        // ... THEN UPDATE IT
+        System.out.println("Trying to PUT '"+TEST_URL+"' as a new entry to "+ API_ENDPOINT);
+        
+        PutMethod put = new PutMethod(API_ENDPOINT);
+        put.setRequestEntity(putRequestBody); 
+        
+        statusCode = client.executeMethod(put);
+        
+        assertEquals("PUT to "+TEST_URL+" failed", 200, statusCode);
+        
+        logMethodResponse(put);
+        
+        
 
-        method.setRequestEntity(requestBody); 
+        // ... THEN GET IT AGAIN
+        System.out.println("Trying to GET '"+TEST_URL+"' as a new entry to "+ API_ENDPOINT);
         
-        int statusCode = client.executeMethod(method);
+        get = new GetMethod(API_ENDPOINT+"/entry?url="+TEST_URL);
         
-        assertEquals("Adding "+URL_TO_ADD+" failed", 200, statusCode);
+        statusCode = client.executeMethod(get);
         
-        logMethodResponse(method);
-    }
-
-
-    /**
-     * 
-     */
-    public void testPut() throws Exception
-    {
-        System.out.println("Trying to PUT '"+TEST_ENTRYXML+"' as a new entry to "+ API_ENDPOINT);
+        assertEquals("GET from "+TEST_URL+" failed", 200, statusCode);
         
-        PutMethod method = new PutMethod(API_ENDPOINT);
-        method.setRequestEntity(requestBody); 
+        logMethodResponse(get);
         
-        int statusCode = client.executeMethod(method);
         
-        assertEquals("Adding "+URL_TO_ADD+" failed", 200, statusCode);
         
-        logMethodResponse(method);
-    }
-
-    
-    /**
-     * 
-     */
-    public void testGet() throws Exception
-    {
-        System.out.println("Trying to GET '"+URL_TO_ADD+"' as a new entry to "+ API_ENDPOINT);
+        // ... AND DELETE IT AGAIN
+        System.out.println("Trying to DELETE '"+TEST_URL+"' as a new entry to "+ API_ENDPOINT);
         
-        GetMethod method = new GetMethod(API_ENDPOINT);
+        DeleteMethod del = new DeleteMethod(API_ENDPOINT+"?url="+TEST_URL);
         
-        int statusCode = client.executeMethod(method);
+        statusCode = client.executeMethod(del);
         
-        assertEquals("Adding "+URL_TO_ADD+" failed", 200, statusCode);
+        assertEquals("GET from "+TEST_URL+" failed", 200, statusCode);
         
-        logMethodResponse(method);
+        logMethodResponse(get);
+        
+        
+        // ... THEN GET IT AGAIN
+        System.out.println("Trying to GET '"+TEST_URL+"' as a new entry to "+ API_ENDPOINT);
+        
+        get = new GetMethod(API_ENDPOINT+"/entry?url="+TEST_URL);
+        
+        statusCode = client.executeMethod(get);
+        
+        assertEquals("GET from "+TEST_URL+" failed", 200, statusCode);
+        
+        logMethodResponse(get);
+        
+        
     }
     
     

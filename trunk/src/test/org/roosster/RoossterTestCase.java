@@ -37,7 +37,8 @@ import org.apache.commons.httpclient.*;
 public class RoossterTestCase extends TestCase
 {
     public static final String SYSPROP_API_ENDPOINT = "api.endpoint";
-  
+      
+    public static final String TEST_URL      = "http://blog.nur-eine-i.de/";
     
     public static final String TEST_ISSUED   = "2004-03-09T21:32:58-05:00";
     public static final String TEST_MODIFIED = "2005-01-01T21:32:58-05:00";
@@ -56,7 +57,8 @@ public class RoossterTestCase extends TestCase
     
     public static final String TEST_ENTRYXML = 
     "<?xml version=\"1.0\" ?>"+
-    "<entry href='http://example.com/?test'>"+
+    "<entrylist>"+
+    "<entry href='"+ TEST_URL +"'>"+
     "<type>"+ TEST_TYPE +"</type>"+
     "<title>"+ TEST_TITLE +"</title>"+
     "<authors> <author name='"+ TEST_AUTHOR +"' email='"+ TEST_EMAIL +"'/> </authors>"+
@@ -65,7 +67,15 @@ public class RoossterTestCase extends TestCase
     "<issued>"+ TEST_ISSUED +"</issued> "+
     "<modified>"+ TEST_MODIFIED +"</modified>"+
     "<fetched>"+ TEST_FETCHED +"</fetched>"+
-    "</entry>";
+    "</entry>"+
+    "</entrylist>";
+    
+    public static final String TEST_ENTRYXML_EMPTY = 
+    "<?xml version=\"1.0\" ?>"+
+    "<entrylist>"+
+    "<entry href='"+ TEST_URL +"'>"+
+    "</entry>"+
+    "</entrylist>";
     
 
     
@@ -89,7 +99,7 @@ public class RoossterTestCase extends TestCase
         if ( method.isRequestSent() == false ) 
             throw new IllegalArgumentException("FAILED: Tried to log 'not-sent' method");
         
-        System.out.println("++++++++++++++++++++++++ HEADER LOGGING ++++++++++++++++++++++++");
+        System.out.println("++++++++++++++++++++++++ BEGIN HEADER LOGGING ++++++++++++++++++++++++");
         
         StatusLine sline = method.getStatusLine();
         System.out.println("\nStatusLine: "+sline.getHttpVersion() +" "+sline.getStatusCode() +
@@ -104,7 +114,7 @@ public class RoossterTestCase extends TestCase
                            
         System.out.println("\nResponseBody:\n"+ method.getResponseBodyAsString() +"\n\n");        
 
-        System.out.println("++++++++++++++++++++++++ HEADER LOGGING ++++++++++++++++++++++++");
+        System.out.println("++++++++++++++++++++++++ END HEADER LOGGING ++++++++++++++++++++++++\n\n");
     }
     
 }

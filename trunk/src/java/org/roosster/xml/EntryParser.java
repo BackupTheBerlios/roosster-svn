@@ -27,7 +27,7 @@
 package org.roosster.xml;
 
 import java.io.*;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import javax.xml.parsers.*;
 
@@ -81,7 +81,7 @@ public class EntryParser
             InputSource inputSource = new InputSource(source);
             inputSource.setEncoding(encoding);
             
-            LOG.finest("Now parsing xml document with encoding "+encoding);
+            LOG.debug("Now parsing xml document with encoding "+encoding);
             
             parser.parse(inputSource, handler);
             

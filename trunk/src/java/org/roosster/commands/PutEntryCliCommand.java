@@ -43,10 +43,12 @@ import org.roosster.Output;
 import org.roosster.util.StringUtil;
 
 /**
- *
+ * This command is not meant to be executed alone, but rather in a chain, 
+ * as it only prepares the input, without really taking any actions.
+ * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class PutEntriesCommand extends AbstractCommand implements Command, Constants
+public class PutEntryCliCommand extends AbstractCommand implements Command, Constants
 {
 
     /**
@@ -55,43 +57,31 @@ public class PutEntriesCommand extends AbstractCommand implements Command, Const
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        validateArguments(arguments, new String[] {PARAM_ENTRIES});
+        validateArguments(arguments, new String[] {ARG_URL});
 
-        EntryList list = (EntryList) arguments.get(PARAM_ENTRIES);
-        EntryStore store = (EntryStore) registry.getPlugin("store");
+        URL url = new URL((String) arguments.get(ARG_URL));
 
-        if ( list != null ) {
-            LOG.debug("Trying to update "+list.size()+" entries");
+        LOG.debug("Preprocessing Entry in command '"+getName()+"'");
         
-            for (int i = 0; i < list.size(); i++) {
-                Entry entry = list.getEntry(i);
-              
-                Entry storedEntry = store.getEntry(entry.getUrl());
-                
-                LOG.debug("Got Entry "+storedEntry+" to update with Entry "+entry);
-                
-                if ( storedEntry != null ) {
-                  
-                    storedEntry.overwrite(entry);
-                    
-                    LOG.debug("Updated Entry, now trying to store it");
-                    
-                    // now finally update entry in index
-                    store.addEntries(new Entry[] {storedEntry}, true);
-                    
-                    output.addOutputMessage("Entry saved! "+storedEntry.getUrl());
-                    output.addEntry(storedEntry);
-                  
-                } else {
-                    // TODO is this behaviour a bit tame?
-                    output.addOutputMessage("Can't edit unstored entry: "+entry.getUrl());
-                }
-            }
-            
-        } else {
-            // TODO make this an error
-            output.addOutputMessage("Can't update empty entrylist");
-        }
+        Entry entry = new Entry(url);
+        
+        String title = (String) arguments.get(ARG_TITLE);
+        String note  = (String) arguments.get(ARG_NOTE);
+        String tags  = (String) arguments.get(ARG_TAGS);
+        if ( title != null )
+            entry.setTitle(title);
+        if ( note != null )
+            entry.setNote(note);
+        if ( tags != null ) 
+            entry.setTags( StringUtil.split(tags, TAG_SEPARATOR) );
+
+        
+        EntryList list = new EntryList();
+        list.add(entry);
+        
+        LOG.debug("Putting the entryList back into the arguments at "+PARAM_ENTRIES);
+        
+        arguments.put(PARAM_ENTRIES, list);    
     }
 
 
@@ -99,7 +89,7 @@ public class PutEntriesCommand extends AbstractCommand implements Command, Const
      */
     public String getName()
     {
-        return "Put Entries";
+        return "Put Entry";
     }
 
 }

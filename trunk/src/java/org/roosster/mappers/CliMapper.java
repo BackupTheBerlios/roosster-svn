@@ -33,17 +33,17 @@ import java.util.List;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.InputStream;
-import java.util.logging.Logger;
-import java.util.logging.Level;
+import org.apache.log4j.Logger;
 
+import org.roosster.output.OutputMode;
+import org.roosster.util.MapperUtil;
 import org.roosster.OperationException;
 import org.roosster.InitializeException;
 import org.roosster.Dispatcher;
 import org.roosster.Registry;
 import org.roosster.Configuration;
 import org.roosster.Output;
-import org.roosster.output.OutputMode;
-import org.roosster.util.MapperUtil;
+import org.roosster.Constants;
 
 /**
  *
@@ -51,7 +51,7 @@ import org.roosster.util.MapperUtil;
  */
 public class CliMapper
 {
-    private static Logger LOG = Logger.getLogger(CliMapper.class.getName());
+    private static Logger LOG = Logger.getLogger(CliMapper.class);
     
     private static final String PROP_FILE       = "/roosster-cli.properties";
 
@@ -66,11 +66,7 @@ public class CliMapper
         try {
               new CliMapper().run(args, System.out);
         } catch (Exception ex) {
-            if ( LOG.isLoggable(Level.CONFIG) )
-                ex.printStackTrace();
-            else
-                System.out.println("ERROR:  "+ ex.getMessage());
-        
+            ex.printStackTrace();
         } finally {
             System.out.flush();
         }
@@ -89,8 +85,6 @@ public class CliMapper
             return;
         }
 
-        MapperUtil.initLogging(arguments);
-
         String commandName = arguments[0] ;
 
         // remove command name from args list
@@ -102,7 +96,7 @@ public class CliMapper
         InputStream propInput = getClass().getResourceAsStream(PROP_FILE);
         Registry registry = new Registry( MapperUtil.loadProperties(propInput, cmdLine) );
 
-        String outputMode = registry.getConfiguration().getProperty(MapperUtil.ARG_OUTPUTMODE, 
+        String outputMode = registry.getConfiguration().getProperty(Constants.PROP_OUTPUTMODE, 
                                                                     DEF_OUTPUT_MODE);
         
         new Dispatcher(registry).run(commandName, cmdLine).output(outputMode, outputStream);
