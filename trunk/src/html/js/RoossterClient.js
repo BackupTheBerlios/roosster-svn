@@ -14,34 +14,34 @@
 //
 // =========================================================================
 
-const DIV_ID_OUTPUTMESSAGES  = "output-messages";
-const DIV_ID_ENTRIESOUT      = "entries-out";
-const DIV_ID_LOADINGNOTE     = "loading-notification";
-const DIV_ID_ENTRYURLLINK    = "entry-url-link";
-const DIV_ID_CACHEDENTRYLINK = 'cachedentrylink';
-const FORM_ID_ENTRYFORM      = "entryform";
+var DIV_ID_OUTPUTMESSAGES  = "output-messages";
+var DIV_ID_ENTRIESOUT      = "entries-out";
+var DIV_ID_LOADINGNOTE     = "loading-notification";
+var DIV_ID_ENTRYURLLINK    = "entry-url-link";
+var DIV_ID_CACHEDENTRYLINK = 'cachedentrylink';
+var FORM_ID_ENTRYFORM      = "entryform";
 
-const ID_HEADER_QUERYSTRING = 'headerQueryStr';
-const ID_QUERYSTRING        = 'queryStr';
+var ID_HEADER_QUERYSTRING = 'headerQueryStr';
+var ID_QUERYSTRING        = 'queryStr';
 
-const PARAM_JUMP      = "jump";
-const PARAM_ACTION    = "action";
-const PARAM_URL       = "url";
-const PARAM_QUERY     = "query";
+var PARAM_JUMP      = "jump";
+var PARAM_ACTION    = "action";
+var PARAM_URL       = "url";
+var PARAM_QUERY     = "query";
 
-const TAB_SEARCH = 'search-tab';
-const TAB_EDIT   = 'edit-tab';
-const TAB_ADD    = 'add-tab';
-const TAB_TAGS   = 'tags-tab';
-const TAB_TOOLS  = 'tools-tab';
+var TAB_SEARCH = 'search-tab';
+var TAB_EDIT   = 'edit-tab';
+var TAB_ADD    = 'add-tab';
+var TAB_TAGS   = 'tags-tab';
+var TAB_TOOLS  = 'tools-tab';
 
-const TABMENU_SEARCH = 'searchTabMenu';
-const TABMENU_EDIT   = 'editTabMenu';
-const TABMENU_ADD    = 'addTabMenu';
-const TABMENU_TAGS   = 'tagsTabMenu';
-const TABMENU_TOOLS  = 'toolsTabMenu';
+var TABMENU_SEARCH = 'searchTabMenu';
+var TABMENU_EDIT   = 'editTabMenu';
+var TABMENU_ADD    = 'addTabMenu';
+var TABMENU_TAGS   = 'tagsTabMenu';
+var TABMENU_TOOLS  = 'toolsTabMenu';
 
-const DEFAULT_TAB     = TAB_SEARCH;
+var DEFAULT_TAB     = TAB_SEARCH;
 
 //
 var currentTab     = DEFAULT_TAB;

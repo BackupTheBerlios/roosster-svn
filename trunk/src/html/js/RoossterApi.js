@@ -14,33 +14,33 @@
 //
 // =========================================================================
 
-const TAG_ENTRYLIST   = 'entrylist';
-const TAG_ENTRY       = 'entry';
-const TAG_AUTHOR      = 'author';
-const TAG_TAG         = 'tag';
-const TAG_NOTE        = 'note';
-const TAG_CONTENT     = 'content';
+var TAG_ENTRYLIST   = 'entrylist';
+var TAG_ENTRY       = 'entry';
+var TAG_AUTHOR      = 'author';
+var TAG_TAG         = 'tag';
+var TAG_NOTE        = 'note';
+var TAG_CONTENT     = 'content';
 
-const ATTR_TYPE       = 'type';
-const ATTR_TITLE      = 'title';
-const ATTR_ISSUED     = 'issued';
-const ATTR_MODIFIED   = 'modified';
-const ATTR_ADDED      = 'added';
-const ATTR_EDITED     = 'edited';
-const ATTR_HREF       = 'href';
-const ATTR_NAME       = 'name';
-const ATTR_EMAIL      = 'email';
+var ATTR_TYPE       = 'type';
+var ATTR_TITLE      = 'title';
+var ATTR_ISSUED     = 'issued';
+var ATTR_MODIFIED   = 'modified';
+var ATTR_ADDED      = 'added';
+var ATTR_EDITED     = 'edited';
+var ATTR_HREF       = 'href';
+var ATTR_NAME       = 'name';
+var ATTR_EMAIL      = 'email';
 
-const ATTR_TOTAL      = 'total';
-const ATTR_LIMIT      = 'limit';
-const ATTR_OFFSET     = 'offset';
+var ATTR_TOTAL      = 'total';
+var ATTR_LIMIT      = 'limit';
+var ATTR_OFFSET     = 'offset';
 
-const EXC_DUPLICATE   = "org.roosster.store.DuplicateEntryException";
+var EXC_DUPLICATE   = "org.roosster.store.DuplicateEntryException";
 
-const ROOSSTER_EXCEPTION = "RoossterException: ";
+var ROOSSTER_EXCEPTION = "RoossterException: ";
 
-const API_CTYPE    = "text/xml";
-const API_ENDPOINT = '$baseurl/api';
+var API_CTYPE    = "text/xml";
+var API_ENDPOINT = '$baseurl/api';
 
 
 // =========================================================================
