@@ -34,13 +34,44 @@ import junit.framework.TestCase;
  */
 public class RoossterTestCase extends TestCase
 {
-    public static final String SYSPROP_ATOM_API_ENDPOINT = "atomapi.endpoint";
+    public static final String SYSPROP_API_ENDPOINT = "api.endpoint";
   
-    protected String ATOM_API_ENDPOINT = null;
+    
+    public static final String TEST_ISSUED   = "2004-03-09T21:32:58-05:00";
+    public static final String TEST_MODIFIED = "2005-01-01T21:32:58-05:00";
+    public static final String TEST_FETCHED  = "2005-01-09T21:32:58-05:00";
+    
+    public static final String TEST_TYPE  = "text/html";
+    public static final String TEST_TITLE = "this is a test title";
+    
+    public static final String TEST_AUTHOR = "test author";
+    public static final String TEST_EMAIL = "test email";
+    
+    public static final String TEST_NOTE = "test NOTE";
+    public static final String TEST_TAG1 = "cat";
+    public static final String TEST_TAG2 = "dog";
+    public static final String TEST_TAG3 = "test";
+    
+    public static final String TEST_ENTRYXML = 
+    "<entry href='http://example.com/?test'>"+
+    "<type>"+ TEST_TYPE +"</type>"+
+    "<title>"+ TEST_TITLE +"</title>"+
+    "<authors> <author name='"+ TEST_AUTHOR +"' email='"+ TEST_EMAIL +"'/> </authors>"+
+    "<tags> <tag>"+TEST_TAG1 +"</tag> <tag>"+TEST_TAG2 +"</tag> tag>"+ TEST_TAG3+"</tag> </tags>"+
+    "<note>"+ TEST_NOTE +"</note>"+
+    "<issued>"+ TEST_ISSUED +"</issued> "+
+    "<modified>"+ TEST_MODIFIED +"</modified>"+
+    "<fetched>"+ TEST_FETCHED +"</fetched>"+
+    "</entry>"
+    
+
+    
+    
+    protected String API_ENDPOINT = null;
     
     public RoossterTestCase() 
     {
-        ATOM_API_ENDPOINT = System.getProperty(SYSPROP_ATOM_API_ENDPOINT);
+        API_ENDPOINT = System.getProperty(SYSPROP_API_ENDPOINT);
     }
     
 }
