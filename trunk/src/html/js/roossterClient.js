@@ -35,7 +35,9 @@ if ( !xmlhttp ) {
 /*
  *
  */
-function init() { showTab(currentTab); }
+function init() { 
+    showTab(currentTab); 
+}
 
 
 /**
@@ -86,9 +88,9 @@ function doSearch(queryString) {
     if ( queryString == null || queryString == '' ) 
         queryString = document.searchform.query.value;
   
-		xmlhttp.open("GET", API_ENDPOINT + "/search?query="+ escape(queryString) , false);
-		xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
-		xmlhttp.send(null);
+    xmlhttp.open("GET", API_ENDPOINT + "/search?query="+ escape(queryString) , false);
+    xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
+    xmlhttp.send(null);
     
     _parseEntries();
 
@@ -139,6 +141,16 @@ function doEdit(url) {
 // private funciton
 //
 // ***********************************************************************
+
+/*
+ * @return an associative array that maps the request parameters
+ */
+function _parseQueryString() {
+    var expression = /?(\w+=\w)*/;
+    var result = expression.match(window.location.search);
+    alert(result);
+}
+
 
 /*
  *

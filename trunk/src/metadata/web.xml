@@ -2,18 +2,17 @@
 
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
+    <!--
     <servlet>
         <servlet-name>roosster</servlet-name>
         <servlet-class>org.roosster.mappers.ServletMapper</servlet-class>
-        <!-- <init-param>
            <param-name>roosster.properties</param-name>
            <param-value>/WEB-INF/roosster.properties</param-value>
-        </init-param> -->
-        
-        <!-- this servlet has to be loaded before everything else-->
+        </init-param> >
         <load-on-startup>1</load-on-startup> 
     </servlet>    
-    
+    -->
+
     <servlet>
         <servlet-name>api</servlet-name>
         <servlet-class>org.roosster.mappers.ApiServletMapper</servlet-class>

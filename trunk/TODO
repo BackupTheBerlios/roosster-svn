@@ -3,9 +3,9 @@ JS Client
 * finish Entry Parser, handle empty lists
 * find a way to strip HTML from content-tag; implement cachedentry command to return
   only the cached entry
-* implement tabbed display (search,add,edit,tags)
-* implement Entry.attachAsEditForm() and Entry.asRoossteNode()
-* add a selected entry variable, edit-tab displays always selected entry
+* implement tabbed display (search,add,edit,tags) DONE
+* implement Entry.attachAsEditForm() DONE and Entry.asRoossteNode()
+* add a selected entry variable, edit-tab displays always selected entry DONE
 * if selected entry is edited, send to server, parse response into Entry, and 
   put it back into cached list
 * format entry list as table not unordered list
@@ -13,6 +13,9 @@ JS Client
 * make bookmarklet, to add a url (server fetches content and stores
   it), then jump directly to edit tab
 * place only url text input field onto add-tab
+* refactor API connecting code into standalone-lib
+* catch pressing enter keys in form to not esnd page
+* catch pressing enter keys in form to not esnd page
 
 
 API
