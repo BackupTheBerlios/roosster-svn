@@ -75,7 +75,7 @@ public class TextProcessor implements ContentTypeProcessor
         Entry entry = new Entry(url);
         entry.setContent(IOUtils.toString(stream, encoding));
         entry.setFileType(FILE_TYPE);
-        entry.setLastFetched(new Date());
+        entry.setAdded(new Date());
         return new Entry[] { entry };
     }
 

@@ -65,13 +65,24 @@ public class PutEntryCliCommand extends AbstractCommand implements Command, Cons
         
         Entry entry = new Entry(url);
         
-        String title = (String) arguments.get(ARG_TITLE);
-        String note  = (String) arguments.get(ARG_NOTE);
-        String tags  = (String) arguments.get(ARG_TAGS);
+        //
+        // TODO give meaningful error message if date parsing fails 
+        // (if date string is not null && not empty but parse method returns null
+        //
+        
+        String title    = (String) arguments.get(ARG_TITLE);
+        String note     = (String) arguments.get(ARG_NOTE);
+        String tags     = (String) arguments.get(ARG_TAGS);
+        String issued   = (String) arguments.get(ARG_ISSUED);
+        String modified = (String) arguments.get(ARG_MODIFIED);
         if ( title != null )
             entry.setTitle(title);
         if ( note != null )
             entry.setNote(note);
+        if ( issued != null )
+            entry.setIssued(StringUtil.parseEntryDate(issued));
+        if ( modified != null )
+            entry.setModified(StringUtil.parseEntryDate(modified));
         if ( tags != null ) 
             entry.setTags( StringUtil.split(tags, TAG_SEPARATOR) );
 

@@ -174,10 +174,10 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
             currentEntry.setFileType( atts.getValue(TYPE_ATTR) );
             
             currentEntry.setIssued( parseDate(atts.getValue(ISSUED_ATTR)) );
-            currentEntry.setLastModified( parseDate(atts.getValue(MODIFIED_ATTR)) );
+            currentEntry.setModified( parseDate(atts.getValue(MODIFIED_ATTR)) );
         
         } catch(java.net.MalformedURLException ex) {
-            throwException("Not a valid URL in "+ENTRY, ex);
+            throwException("Not a valid URL in attribute '"+HREF_ATTR+"' tag <"+ENTRY+">", ex);
         }
     }
     

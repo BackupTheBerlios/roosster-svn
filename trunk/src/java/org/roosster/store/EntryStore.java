@@ -45,6 +45,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.index.Term;
@@ -61,7 +62,7 @@ import org.roosster.*;
  */
 public class EntryStore implements Plugin, Constants
 {
-    private static Logger LOG = Logger.getLogger(EntryStore.class.getName());
+    private static Logger LOG = Logger.getLogger(EntryStore.class);
 
 
     /**
@@ -241,7 +242,7 @@ public class EntryStore implements Plugin, Constants
 
                 for (int i = offset; i < lastElem; i++) {
                     if ( !reader.isDeleted(i) ) 
-                        entries.add( new Entry(reader.document(i)) );
+                        entries.add( new Entry(reader.document(i), 0) );
                 }
                 
                 LOG.info("Showing Entries "+offset+" to "+ lastElem);      
@@ -265,7 +266,7 @@ public class EntryStore implements Plugin, Constants
             throw new IllegalStateException("Database must be initialized before use!");
 
         QueryParser parser = new QueryParser(Entry.ALL, createAnalyzer());
-
+        parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
         Query query = parser.parse(queryStr);
 
         LOG.info("Executing Query: "+query);
@@ -273,8 +274,9 @@ public class EntryStore implements Plugin, Constants
         IndexSearcher searcher = new IndexSearcher(indexDir);
         
         Sort sort = determineSort();
+        LOG.debug("Sort Instance: "+sort);
         
-        Hits hits = sort == null ? searcher.search(query) : searcher.search(query, sort);
+        Hits hits = searcher.search(query, sort);
         int hitsNum = hits.length();
 
         EntryList entries = new EntryList(hitsNum);
@@ -294,7 +296,7 @@ public class EntryStore implements Plugin, Constants
             int lastElem = hitsNum >= offset+limit ? offset+limit : hitsNum;
 
             for(int i = offset; i < lastElem; i++) {
-                entries.add( new Entry(hits.doc(i)) );
+                entries.add( new Entry(hits.doc(i), hits.score(i)) );
             }
         }
 
@@ -409,7 +411,7 @@ public class EntryStore implements Plugin, Constants
 
             List entries = new ArrayList();
             while ( docs.next() ) {
-                entries.add( new Entry( reader.document(docs.doc()) ) );
+                entries.add( new Entry( reader.document(docs.doc()), 0) );
             }
 
             LOG.debug("Found "+entries.size()+" entries for URL "+url);
@@ -495,7 +497,7 @@ public class EntryStore implements Plugin, Constants
             for (int i = 0; i < entries.length; i++ ) {
                 LOG.debug("Adding Entry to index: "+ entries[i].getUrl().toString());
 
-                entries[i].setLastEdited(now);
+                entries[i].setEdited(now);
                 
                 Document doc = entries[i].getDocument();
                 doc.add( Field.Keyword(URLHASH, computeHash(entries[i].getUrl().toString())) );
@@ -525,16 +527,19 @@ public class EntryStore implements Plugin, Constants
         
         String sortField = registry.getConfiguration().getProperty(PROP_SORTFIELD);
         
-        LOG.info("Determining Sort Field: "+sortField);
+        LOG.info("Specified Sort Field: "+sortField);
             
-        Sort sort = null; 
+        Sort sort = Sort.RELEVANCE; 
         if ( sortField != null && !"".equals(sortField) ) {
             
-            for ( int i = 0; i < Entry.SORT_FIELDS.length; i++ ) {
-                if ( Entry.SORT_FIELDS[i].equals(sortField) ) {
-                    sort = new Sort(sortField);
-                    break;
-                }
+            for ( int i = 0; i < Entry.STRING_SORT_FIELDS.length; i++ ) {
+                if ( Entry.STRING_SORT_FIELDS[i].equals(sortField) ) 
+                    return new Sort( new SortField(sortField, SortField.STRING) );
+            }
+          
+            for ( int i = 0; i < Entry.INTEGER_SORT_FIELDS.length; i++ ) {
+                if ( Entry.INTEGER_SORT_FIELDS[i].equals(sortField) ) 
+                    return new Sort( new SortField(sortField, SortField.INT) );
             }
           
             if ( sort == null )

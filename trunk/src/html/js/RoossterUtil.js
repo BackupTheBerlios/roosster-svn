@@ -15,8 +15,7 @@
 // =========================================================================
 
 
-const DEBUG = true;
-
+const DEBUG = false;
 const DIV_ID_DEBUGOUT = "debug-out";
 
 
@@ -73,16 +72,18 @@ function Debug() {
      * 
      */
     this.addException = function(message) {
-        var listElem = XmlCreateElement('li');
-        var bElem = XmlCreateElement('b');
-        bElem.appendChild( XmlCreateText( this.getTimeString() +" - EXCEPTION - ") );
-        
-        listElem.appendChild(bElem);
-        listElem.appendChild( XmlCreateText(message) );
-        
-        this.messagesElement.appendChild(listElem);
-        
-        this.messageString += message +"\n";
+        if ( DEBUG ) {
+            var listElem = XmlCreateElement('li');
+            var bElem = XmlCreateElement('b');
+            bElem.appendChild( XmlCreateText( this.getTimeString() +" - EXCEPTION - ") );
+            
+            listElem.appendChild(bElem);
+            listElem.appendChild( XmlCreateText(message) );
+            
+            this.messagesElement.appendChild(listElem);
+            
+            this.messageString += message +"\n";
+        }
     }
     
     
@@ -90,12 +91,14 @@ function Debug() {
      * 
      */
     this.addMsg = function(message) {
-        var listElem = XmlCreateElement('li');
-        listElem.appendChild( XmlCreateText( this.getTimeString() ) );
-        listElem.appendChild( XmlCreateText(message) );
-        this.messagesElement.appendChild(listElem);
-        
-        this.messageString += message +"\n";
+        if ( DEBUG ) {
+            var listElem = XmlCreateElement('li');
+            listElem.appendChild( XmlCreateText( this.getTimeString() ) );
+            listElem.appendChild( XmlCreateText(message) );
+            this.messagesElement.appendChild(listElem);
+            
+            this.messageString += message +"\n";
+        }
     }
 
     
@@ -170,9 +173,10 @@ function startsWith(testStr, startStr) {
 /**
  *  @return an Element object that represents a html link (<a href="targetUrl">text</a>)
  */
-function createLink(targetUrl, text) {
+function createLink(targetUrl, text, target) {
     var aHref = XmlCreateElement('a');
     aHref.href = targetUrl;
+    if ( target ) aHref.target = target;
     aHref.appendChild( XmlCreateText(text) );
     return aHref;
 }
@@ -216,9 +220,13 @@ function XmlRemoveAllChildren(node) {
         return;
     
     var children = node.childNodes;
-    if ( children != null ) {
-        for(var i = 0; i < children.length; i++) {
-            node.removeChild( children.item(i) );
+    //debugConsole.addMsg("Node "+node.nodeName+" id "+node.id+" has "+children.length+" children");
+    for(var i = children.length-1; i >= 0; i--) {
+        var child = children.item(i);
+        //debugConsole.addMsg("["+i+"] Should I remove Child "+child.nodeName+" id "+child.id+" for Node "+node.nodeName+" id "+node.id);  
+        if ( child.nodeType == 1 || child.nodeType == 3 ) {
+            //debugConsole.addMsg("removing node "+child.nodeName+" id "+child.id);
+            node.removeChild(child);
         }
     }
 }

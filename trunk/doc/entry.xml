@@ -5,7 +5,7 @@
   <entry href="http://example.com/?test" 
          issued="...w3cdate..."
          modified="...w3cdate..."
-         fetched="...w3cdate..." 
+         added="...w3cdate..." 
          edited="...w3cdate..."
          type=".."  
          title="...">
@@ -32,7 +32,7 @@
   type = MIME-type / will be determined by server, if not set
   issued = date
   modified = date
-  fetched = date
+  added = date
   edited = date, read only
   title = if not set, or server can't determine one URL is used
   author = on entry can have multiple authors, though the app will currently only 

@@ -60,12 +60,13 @@ public class Output
     /**
      *
      */
-    public Output(Registry registry)  throws OperationException
+    public Output(Registry registry, String outputMode)  throws OperationException
     {
         if ( registry == null )
             throw new IllegalArgumentException("Output-object needs non-null Registry object ");
 
         this.registry = registry;
+        loadOutputMode(outputMode, registry);
     }
 
 
@@ -151,21 +152,16 @@ public class Output
     /**
      *
      */
-    public void output(String outputMode, PrintWriter writer) throws OperationException
+    public void output(PrintWriter writer) throws OperationException
     {
-        if ( outputMode == null || "".equals(outputMode) )
-            throw new IllegalArgumentException("No outputMode specified or set to null");
-
         try {
-            loadOutputMode(outputMode, registry);
-          
             Map reqArgs = registry.getConfiguration().getRequestArguments();
             
             if ( !truncation && reqArgs != null ) 
                 reqArgs.put(Constants.PROP_TRUNCLENGTH, "-1");
             
             LOG.debug("Running OutputMode "+mode.getClass());
-            mode.output(registry, this, writer, entries);
+            mode.output(this, writer, entries);
         } finally {
             writer.flush();
         }
@@ -175,9 +171,9 @@ public class Output
     /**
      *
      */
-    public void output(String outputMode, PrintStream output) throws OperationException
+    public void output(PrintStream output) throws OperationException
     {
-        this.output(outputMode, new PrintWriter(output));
+        this.output(new PrintWriter(output));
     }
 
 
@@ -185,7 +181,7 @@ public class Output
      */
     public String getContentType()
     {
-        return mode != null ? mode.getContentType() : null;
+        return mode != null ? mode.getContentType(entries) : null;
     }
 
 
@@ -225,7 +221,12 @@ public class Output
 
             mode = (OutputMode) Class.forName(modeClass).newInstance();
             mode.setContentType( conf.getProperty(typeName) );
-
+            
+            LOG.debug("Loaded OutputMode "+mode+" with class "+modeClass+
+                      " and set Content-Type to "+conf.getProperty(typeName));
+            
+            mode.setRegistry(registry);
+            
         } catch (ClassCastException ex) {
             throw new OperationException("Class "+modeClass+" doesn't implement "+OutputMode.class, ex);
         } catch (Exception ex) {

@@ -125,12 +125,11 @@ public class UrlFetcher implements Plugin, Constants
         for(int i = 0; i < urls.length; i++) {
 
             try {
-                entries.addAll( Arrays.asList( fetch(urls[i], true) ) );
+                entries.addAll( Arrays.asList( fetch(urls[i]) ) );
             } catch (IOException ex) {
-                LOG.warn("I/O Error while fetching URL "+urls[i]+": "+
-                                       ex.getMessage(), ex);
+                LOG.warn("I/O Error while fetching URL "+urls[i]+": "+ex.getMessage(), ex);
             } catch (Exception ex) {
-                LOG.warn("Error while processing URL "+urls[i]+": "+ex.getMessage());
+                LOG.warn("Error while processing URL "+urls[i]+": "+ex.getMessage(), ex);
             }
 
         }
@@ -148,48 +147,64 @@ public class UrlFetcher implements Plugin, Constants
      * URLs will be fetched a second time, if the entry's lastFetched
      * object is <code>null</code>, when processed the first time.
      */
-    private Entry[] fetch(URL url, boolean refetchContent) throws IOException, Exception
+    private Entry[] fetch(URL url) throws IOException, Exception
     {
         LOG.debug("Opening connection to URL "+url);
 
         URLConnection con = url.openConnection();
 
         long modified = con.getLastModified();
+
+        String embeddedContentEnc = null;
+        
         String contentType = con.getContentType();
         if ( contentType != null && contentType.indexOf(";") > -1 ) {
             LOG.debug("Content-type string ("+contentType+") contains charset; strip it!");
             contentType = contentType.substring(0, contentType.indexOf(";")).trim();
+            
+            String cType = con.getContentType();
+            if ( cType.indexOf("=") > -1 ) {
+                embeddedContentEnc = cType.substring(cType.indexOf("=")+1).trim();
+            }
         }
         
-        String contentEnc  = con.getContentEncoding() != null ?  con.getContentEncoding() 
-                                                              : defaultEncoding; 
+        String contentEnc  = con.getContentEncoding();
+        if ( contentEnc == null ) {
+            if ( embeddedContentEnc != null ) 
+                contentEnc = embeddedContentEnc;
+            else 
+                contentEnc = defaultEncoding;
+        }
 
         ContentTypeProcessor proc = getProcessor(contentType); 
-        LOG.debug("ContentType: '"+contentType+"' - ContentEncoding: "+contentEnc);
+        LOG.debug("ContentType: '"+contentType+"' - ContentEncoding: '"+contentEnc+"'");
         LOG.debug("Using Processor "+proc);
 
         Entry[] entries = proc.process(url, con.getInputStream(), contentEnc);
        
+        Date modDate = new Date(modified);
+        Date now = new Date();
+        
         List returnArr  = new ArrayList();
-        List fetchLater = new ArrayList();
         for (int i = 0; i < entries.length; i++) {
             if ( entries[i] == null ) 
                 continue;
 
-            if ( refetchContent && entries[i].getLastFetched() == null ) {
-                fetchLater.add(entries[i]);
-                continue;
-            }
-
-            Date modDate = new Date(modified);
-            if ( entries[i].getLastModified() == null )
-                entries[i].setLastModified(modDate);
+            URL entryUrl = entries[i].getUrl();
+            
+            String title = entries[i].getTitle();
+            if ( title == null || "".equals(title) ) 
+                entries[i].setTitle(entryUrl.toString());
+            
+            if ( entries[i].getModified() == null )
+                entries[i].setModified(modDate);
             
             if ( entries[i].getIssued() == null ) 
                 entries[i].setIssued(modDate);
 
-            URL entryUrl = entries[i].getUrl();
-            
+            if ( entries[i].getAdded() == null ) 
+                entries[i].setAdded(now);
+
             String fileType = entries[i].getFileType();
             if ( fileType == null || "".equals(fileType) ) {
               
@@ -202,21 +217,8 @@ public class UrlFetcher implements Plugin, Constants
                 
             }
 
-            String title = entries[i].getTitle();
-            if ( title == null || "".equals(title) ) 
-                entries[i].setTitle(entryUrl.toString());
-            
             returnArr.add(entries[i]);
             entries[i] = null;
-        }
-
-        if ( refetchContent ) {
-            for (int i = 0; i < fetchLater.size(); i++) {
-                Entry e = (Entry) fetchLater.get(i);
-                LOG.debug("Refetching URL "+ e.getUrl());
-                        
-                returnArr.addAll( Arrays.asList( fetch(e.getUrl(), false) ) );
-            }
         }
 
         return (Entry[]) returnArr.toArray(new Entry[0]);

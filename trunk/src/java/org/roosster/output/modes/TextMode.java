@@ -47,7 +47,7 @@ public class TextMode extends AbstractOutputMode implements OutputMode, Constant
     /**
      *
      */
-    public void output(Registry registry, Output output, PrintWriter stream, EntryList entries)
+    public void output(Output output, PrintWriter stream, EntryList entries)
                 throws OperationException
     {
         if ( entries == null )
@@ -65,9 +65,9 @@ public class TextMode extends AbstractOutputMode implements OutputMode, Constant
             stream.print("Author:        "+ entry.getAuthor() );
             stream.println( "".equals(entry.getAuthorEmail()) ? "" : " <"+entry.getAuthorEmail()+">");
             stream.println("Issued:        "+ entry.getIssued() );
-            stream.println("Last-Modified: "+ entry.getLastModified() );
-            stream.println("Last-Fetched:  "+ entry.getLastFetched() );
-            stream.println("Last-Edited:   "+ entry.getLastEdited() );
+            stream.println("Modified:      "+ entry.getModified() );
+            stream.println("Added:         "+ entry.getAdded() );
+            stream.println("Edited:        "+ entry.getEdited() );
             stream.println("FileType:      "+ entry.getFileType() );
             stream.println("Tags:          "+ StringUtil.join(entry.getTags(), TAG_SEPARATOR) );
             stream.println("Note:          "+ StringUtil.truncate(entry.getNote(), truncate) );

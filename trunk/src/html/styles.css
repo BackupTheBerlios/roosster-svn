@@ -1,42 +1,148 @@
-#foot           { font-size:x-small; margin-top:20px;}
+/*
+ * This file is part of ROOSSTER.
+ * Copyright 2004, Benjamin Reitzammer <benjamin@roosster.org>
+ * All rights reserved.
+ *
+ * ROOSSTER is free software; you can redistribute it and/or modify
+ * it under the terms of the Artistic License. 
+ * See http://www.opensource.org/licenses/artistic-license.php for details
+ */
+## velocity helper definitions
+#set ($linkColor        = '#5F86FF')
+#set ($headerColor      = '#8FABFF')
+#set ($tagDatesColor    = '#0050CF')
+#set ($inputFocusColor  = '#EFEFEF')
+#set ($errorColor       = '#EF0E0E')
+#set ($infoColor        = '#FAD163')
+#set ($loadingColor     = '#00FF0B')
+#set ($editLinkColor    = '#FF8F8F')
+#set ($textColor        = 'black')
+#set ($bgColor          = 'white')
+ 
+/*
+ * Search Tab
+ */ 
+#entry-list     {  margin: 0px,10px,10px,20px; list-style-type:none;}
+.entry          { list-style-type:none; }
+.entry-url-li   { margin-left:-30px; }
+.entry-content  {} 
+.entry-dates    { color:$tagDatesColor; font-size:x-small; margin: 3px 3px 3px -30px;}
+.entry-tags     { color:$tagDatesColor; font-size:x-small;  margin:0px 0px 5px -30px; border-bottom:1px solid black; padding-bottom:10px;}
 
-#entry-list     {margin: 20px,10px,10px,20px; list-style-type:none;}
-.entry          {margin: 10px,0px,10px,-30px;   list-style-type:none; padding-left:-50px;}
-.entry-url      { font-weight:bold; }
-.entry-content  {}
-.entry-info     { color:#acc9ff; font-size:small; }
+.entrylist-entry-url        { font-weight:bold; padding-left:0px;}
+.entrylist-editlink         { width:200px; vertical-align:top; }
+.entrylist-editlink a       { font-size:small; display:block; width:100%; text-align:right; padding:5px;}
+.entrylist-editlink a:hover { background-color:$editLinkColor; display:block;}
 
+#entrylist-pager {clear:both;}
+
+.inactive-link { color:$textColor; }
+.inactive-link:hover { text-decoration:none; background-color:$bgColor;}
+
+.tdalignleft { text-align:left; }
+.tdalignright { text-align:right;}
+
+/*
+ * Edit Tab
+ */
+ 
 #entry-form     {}
 #entry-form textarea     { height:100px; }
 
+#indexedcontent { display:none; overflow:auto; border:1px solid $tagDatesColor; width:500px; height:130px;}
+
+
+/*
+ * General Elements 
+ */
+a       { color:$linkColor; text-decoration:none; }
+a:hover { background-color:$inputFocusColor; }
+dfn     { border-bottom:dotted 1px black; font-style:normal;}
+body    { margin:0pt;padding:0pt; }
+
 input[type=text]              { width:250px; }
+input[readonly=readonly]      { border-width:0px; }
 textarea                      { width:350px; }
-input:focus, textarea:focus   { background-color:#EFEFEF; }
-input,textarea                {  margin: 0px 5px 5px 5px;  border:1px solid black; }
+input:focus, textarea:focus   { background-color:$inputFocusColor; }
+input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1px solid black; }
 
-.tab            { display: none; }
+ 
+.tab      { display: none; }
+#tabarea  { padding:10px; }
 
-.tab, #tablist  { width: 700px; margin:auto;}
+#output-messages {
+    font-size:small;
+    font-weight:900;
+    width:700px; /* same as in .tab */
+    text-align:center;
+    margin:auto;
+}
 
-#tabarea        { overflow:auto; height:450px; padding:10px;  }
+.error-messages { background-color:$errorColor; color:$bgColor; padding:5px; }
+.output-messages {  background-color:$infoColor;  padding:5px; }
 
-#output-messages {}
 
-#tablist        { margin: 0 auto; padding: 0 0 2em 0; }
+/* 
+ * page header
+ *
+ */
+#roosster { 
+    background-color:$headerColor; 
+    padding:1px 10px 10px 0px; 
+    margin: 0px 0px 10px 0px;
+    height:50px;
+}
+.roossterheading  { font-size:16px; font-weight:900; margin:10px 0px 0px 20px; padding:10px 0px 0px 0px;}
 
 #tablist li {
     list-style-type: none;
     float: left;
-    width: 24%;
-    border: 1px solid Black;
-    border-bottom: 2px solid Black;
-    padding: 0;
-    margin: 0 2px 0 0;
     text-align: center;
+    padding-top:5px; 
+    margin-top:-5px;
+}
+#tablist li a { 
+    color:$bgColor; 
+    width:80px; 
+    height:30px; 
+    font-weight:600; 
+    display:block; 
+    padding-top:5px; 
+    margin:-5px 0px -5px 0px;
+}
+#tablist li a:hover { background-color:$bgColor; color:$linkColor; font-weight:900;}
+
+#tablist li[class=active] { background-color:$bgColor; }
+#tablist li[class=active] a {color:$headerColor;}
+#tablist li[class=active] a:hover {color:$headerColor;}
+
+#headernote { font-size:x-small; float:right; text-align:right; margin:5px;}
+#headernote a { color:$textColor; text-decoration:underline;  }
+#headernote input { padding:2px; margin:0px;  border:none;}
+#headernote form { padding:0px; margin-top:5px;  }
+
+/*
+ * Loading notification 
+ */
+
+#loading-notification {
+    display:none;
+    background-color:$loadingColor;
+    font-weight:bold;
+    color:$bgColor;
+    position:absolute;
+    float:right;
+    padding:5px;
+    top:60px;
+    right:10px;
 }
 
-
-a               { color:#5F86FF; text-decoration:none; }
-a:hover         {}
-
+/* 
+ * cached pages 
+ *
+ */
+#cachenotice { padding:5px;background-color:$headerColor; color:$bgColor; font-weight:800; font-size:x-small;}
+#cachenotice a{ color:black; text-decoration:none;}
+#cachenotice a:hover { text-decoration:underline; color:black; }
+#cachenotice p {font-size:larger;border:1px solid $bgColor;margin:2px 10px 2px 10px;padding:2px 10px 2px 10px; }
 

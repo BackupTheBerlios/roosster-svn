@@ -25,7 +25,7 @@ const ATTR_TYPE       = 'type';
 const ATTR_TITLE      = 'title';
 const ATTR_ISSUED     = 'issued';
 const ATTR_MODIFIED   = 'modified';
-const ATTR_FETCHED    = 'fetched';
+const ATTR_ADDED      = 'added';
 const ATTR_EDITED     = 'edited';
 const ATTR_HREF       = 'href';
 const ATTR_NAME       = 'name';
@@ -91,10 +91,10 @@ function __buildSingleEntry(entryElem) {
         entry.type        = entryElem.getAttribute(ATTR_TYPE) || "";
 
         // TODO make real dates here 
-        entry.issuedDate    = entryElem.getAttribute(ATTR_ISSUED);
-        entry.modifiedDate  = entryElem.getAttribute(ATTR_MODIFIED);
-        entry.fetchedDate   = entryElem.getAttribute(ATTR_FETCHED);
-        entry.editedDate    = entryElem.getAttribute(ATTR_EDITED);
+        entry.issuedDate    = parseW3cDate(entryElem.getAttribute(ATTR_ISSUED));
+        entry.modifiedDate  = parseW3cDate(entryElem.getAttribute(ATTR_MODIFIED));
+        entry.addedDate     = parseW3cDate(entryElem.getAttribute(ATTR_ADDED));
+        entry.editedDate    = parseW3cDate(entryElem.getAttribute(ATTR_EDITED));
         
         // <content> and <note>
         entry.content     = XmlGetChildsText(entryElem, TAG_CONTENT) || "";
@@ -127,10 +127,41 @@ function __buildSingleEntry(entryElem) {
 
 
 /**
- * 
+ * parses Dates in the format '2005-02-23T00:00:00+01:00'
+ * omits timezones
  */
-function parseInputDate(date) {
-    // TODO implement this
+function parseW3cDate(dateStr) {
+    
+    if ( dateStr == null || dateStr == '' )
+        return null;
+    
+    var date = null;
+    
+    var dateAndTime = dateStr.split("T");
+    if ( dateAndTime.length == 2 ) {
+        var date = new Date();
+        var ymd = dateAndTime[0].split("-"); // year,month,day
+        if ( ymd.length == 3 ) {
+            date.setFullYear(ymd[0]);
+            date.setMonth(parseInt(ymd[1]));
+            date.setDate(ymd[2]);
+        } else {
+            date = null;
+        }
+        
+        var hms = dateAndTime[1].split(":"); // hour,minute,second
+        if ( hms.length < 3 ) {
+            date.setHours(hms[0]);
+            date.setMinutes(hms[1]);
+            date.setSeconds(hms[2]);
+        } else {
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+        }
+        date.setMilliseconds(0);
+    } 
+
     return date;
 }
 
@@ -138,16 +169,7 @@ function parseInputDate(date) {
 /**
  * 
  */
-function parseW3cDate(date) {
-    // TODO implement this
-    return date;
-}
-
-
-/**
- * 
- */
-function formatW3cDate(date) {
+function formatAsW3cDate(date) {
     var date = new Date();
     
     var day = new String(date.getUTCDate());
@@ -192,13 +214,13 @@ function RoossterHttpState() {
     
     /**
      * analogous to this.lastHttpStatusLine, contains the Exception text of last 
-     * HTTP request made to API or null0
+     * HTTP request made to API or null
      */
     this.lastExceptionText = null;    
     
     /**
      * analogous to this.lastHttpStatusLine, contains the Exception classname of last 
-     * HTTP request made to API or null0
+     * HTTP request made to API or null
      */
     this.lastException = null;  
 
@@ -253,7 +275,7 @@ function RoossterHttpState() {
       
         // would like to but can't use variable extrapolation here, then
         // I could use the constant ROOSSTER_EXCEPTION 
-        exceptionString.match(/RoossterException:\s<([\w\.]*)>\s.*/);
+        exceptionString.match(/RoossterException:\s<([\w\.]*)>\s(.*)/);
         
         this.lastException =  RegExp.$1;
         this.lastExceptionText =  RegExp.$2;
@@ -295,15 +317,22 @@ function RoossterHttpState() {
  */
 function EntryList(total, limit, offset) {
     
-    this.total  = total || -1;
-    this.limit  = limit || -1;
-    this.offset = offset || -1;
+    this.total  = parseInt(total) || -1;
+    this.limit  = parseInt(limit) || -1;
+    this.offset = parseInt(offset) || -1;
   
+    this.__listCount = 0;
+    
     this.list = {};
 
     /**
+     */
+    this.length = function() { return this.__listCount; }
+    
+    
+    /**
      */  
-    this.put = function(key, value) { this.list[key] = value; }
+    this.put = function(key, value) { this.list[key] = value; this.__listCount++; }
     
     
     /**
@@ -314,6 +343,62 @@ function EntryList(total, limit, offset) {
     /**
      */
     this.getList = function() { return this.list; }
+    
+    /**
+     */
+    this.attachPager = function(node) {
+        if ( node == null )
+            exception("Parameter 'node' to method EntryList.attachPager() must be 'not null'");
+      
+        var offset = this.offset <= 0 ? 0 : this.offset;
+        var limit = this.limit <= 0 ? 0 : this.limit;
+        
+        var nextOffset = offset+limit;
+        var prevOffset = offset-limit < 0 ? 0 : offset-limit;
+        
+        debugConsole.addMsg(" offset "+offset+" limit "+limit+" total "+this.total+" next "+ nextOffset +" prev "+prevOffset);
+        
+        var divPager = XmlCreateElement("div");
+        divPager.id = 'entrylist-pager';
+    
+        var leftChild = XmlCreateElement('td');
+        leftChild.className = 'tdalignleft';
+        leftChild.appendChild( XmlCreateText("Showing results "+offset+"-"+
+                                             (nextOffset > this.total ? this.total : nextOffset)+
+                                             " of "+this.total) );
+        
+        var rightChild = XmlCreateElement('td');
+        rightChild.className = 'tdalignright';
+        
+        if ( this.length() < this.total ) {
+            var prevLink = createLink("javascript:doSearch(null,"+prevOffset+","+limit+");", "previous");
+            var nextLink = createLink("javascript:doSearch(null,"+nextOffset+","+limit+");", "next");
+            
+            if ( offset < 1 ) { 
+                prevLink.href = '#';
+                prevLink.className = 'inactive-link';
+            }
+            if ( nextOffset > this.total ) {
+                nextLink.href = '#';
+                nextLink.className = 'inactive-link';
+            }
+            
+            rightChild.appendChild(prevLink);
+            rightChild.appendChild( XmlCreateText(" | ") );
+            rightChild.appendChild(nextLink);
+            
+        }
+        
+        var table = XmlCreateElement('table');
+        table.style.width = '100%';
+        var row = XmlCreateElement('tr');
+        table.appendChild(row);
+        row.appendChild(leftChild);
+        row.appendChild(rightChild);
+        
+        divPager.appendChild(table);
+        node.appendChild(divPager);
+    }
 }
 
 
@@ -336,7 +421,7 @@ function Entry(url) {
     this.authorEmail  = '';
     this.issuedDate   = null;
     this.modifiedDate = null;
-    this.fetchedDate  = null;
+    this.addedDate    = null;
     this.editedDate   = null;
     
     /**
@@ -358,10 +443,15 @@ function Entry(url) {
         node.author.value = this.author;
         node.authorEmail.value = this.authorEmail;
         node.note.value = this.note;
+        node.content.value = this.content;
         node.issuedDate.value =  displayDate(this.issuedDate);
         node.modifiedDate.value = displayDate(this.modifiedDate);
-        node.fetchedDate.value = displayDate(this.fetchedDate);
+        node.addedDate.value = displayDate(this.addedDate);
         node.editedDate.value = displayDate(this.editedDate);
+        
+        var linkSpan = getById(DIV_ID_ENTRYURLLINK);
+        XmlRemoveAllChildren(linkSpan);
+        linkSpan.appendChild(createLink(this.url, "Goto '"+this.title+"'", '_blank'));
     }    
     
     
@@ -375,9 +465,6 @@ function Entry(url) {
         this.author = nullOrEmpty(node.author.value) ? this.author : node.author.value;
         this.authorEmail = nullOrEmpty(node.authorEmail.value) ? this.authorEmail : node.authorEmail.value;
         this.note = nullOrEmpty(node.note.value) ? this.note : node.note.value;
-        // implement this
-        //this.issuedDate = nullOrEmpty(node.issuedDate.value) ? this.issuedDate : parseInputDate(node.issuedDate.value);
-        //this.modifiedDate = nullOrEmpty(node.modifiedDate.value) ? this.modifiedDate : parseInputDate(node.modifiedDate.value);
     }
     
     
@@ -397,37 +484,59 @@ function Entry(url) {
         var ulEntryList = XmlCreateElement("ul");
         ulEntryList.className = 'entry';
         
+        // entry-url table
+        var table = XmlCreateElement('table');
+        table.style.width = '100%';
+        var row = XmlCreateElement('tr');
+        var leftCell = XmlCreateElement('td');
+        var rightCell = XmlCreateElement('td');
+        table.appendChild(row);
+        row.appendChild(leftCell);
+        row.appendChild(rightCell);
+        
+        leftCell.appendChild( createLink(this.url, this.title, "_blank") );
+        leftCell.className = 'entrylist-entry-url';
+        rightCell.appendChild( createLink("javascript:doEdit('"+this.url+"')", 'Edit this Entry') );
+        rightCell.className = 'entrylist-editlink';
+
         // <li class="entry-url">        
         var liEntryUrl = XmlCreateElement("li");
-        liEntryUrl.className = 'entry-url';
-        liEntryUrl.appendChild( createLink("javascript:doEdit('"+this.url+"')", this.title) );
+        liEntryUrl.className = 'entry-url-li';
+        liEntryUrl.appendChild(table);
         ulEntryList.appendChild(liEntryUrl);
         
         // <li class="entry-content">        
         var liEntryContent = XmlCreateElement("li");
         liEntryContent.className = 'entry-content';
         liEntryContent.appendChild( XmlCreateText(this.content) );
+        liEntryContent.appendChild( createLink("${baseurl}/cachedentryframeset.html?url="+this.url, " (cached page)", "_blank") );
         ulEntryList.appendChild(liEntryContent);
 
-        // <li class="entry-info">        
-        var liEntryInfo = XmlCreateElement("li");
-        liEntryInfo.className = 'entry-info';
+        // <li class="entry-dates">        
+        var liEntryDates = XmlCreateElement("li");
+        liEntryDates.className = 'entry-dates';
+        liEntryDates.appendChild( XmlCreateText("MODIFIED: ") );
+        liEntryDates.appendChild( createLink("javascript:doSearch('modified:"+this.searchableDate(this.modifiedDate)+"')", displayDate(this.modifiedDate)) );
+        liEntryDates.appendChild( XmlCreateText("-- ISSUED: ") );
+        liEntryDates.appendChild( createLink("javascript:doSearch('issued:"+this.searchableDate(this.issuedDate)+"')", displayDate(this.issuedDate)) );
+        liEntryDates.appendChild( XmlCreateText("-- ADDED: ") );
+        liEntryDates.appendChild( createLink("javascript:doSearch('added:"+this.searchableDate(this.addedDate)+"')", displayDate(this.addedDate)) );
+        liEntryDates.appendChild( XmlCreateText("-- EDITED: ") );
+        liEntryDates.appendChild( createLink("javascript:doSearch('edited:"+this.searchableDate(this.editedDate)+"')", displayDate(this.editedDate)) );
+        ulEntryList.appendChild(liEntryDates);
         
-        var infoLine = XmlCreateElement('span');
-        infoLine.appendChild( 
-                      XmlCreateText((this.modifiedDate ? displayDate(this.modifiedDate) 
-                                                            : "(no modified date)")
-                                         +" tags: ")
-                            );
+        // <li class="entry-dates">        
+        var liEntryTags = XmlCreateElement("li");
+        liEntryTags.className = 'entry-tags';
+        liEntryTags.appendChild( XmlCreateText(" tags: ") );
         
         for (var i = 0; i < this.tags.length; i++) {
-            infoLine.appendChild( createLink("javascript:doSearch('tags:"+this.tags[i]+"')", this.tags[i]) );
+            liEntryTags.appendChild( createLink("javascript:doSearch('tags:"+this.tags[i]+"')", this.tags[i]) );
             
             if ( i+1 < this.tags.length )
-                infoLine.appendChild( XmlCreateText(" | ") );
+                liEntryTags.appendChild( XmlCreateText(" | ") );
         }
-        liEntryInfo.appendChild(infoLine);
-        ulEntryList.appendChild(liEntryInfo);
+        ulEntryList.appendChild(liEntryTags);
         
         node.appendChild(ulEntryList);
     }
@@ -446,9 +555,6 @@ function Entry(url) {
         elemEntry.setAttribute(ATTR_HREF, this.url);
         elemEntry.setAttribute(ATTR_TITLE, this.title);
         elemEntry.setAttribute(ATTR_TYPE, this.type);
-        // TODO implement this
-        //elemEntry.setAttribute(ATTR_ISSUED, this.issuedDate);
-        //elemEntry.setAttribute(ATTR_MODIFIED, this.modifiedDate);
         elemEntryList.appendChild(elemEntry);
         
         var elemAuthor = xmlDoc.createElement(TAG_AUTHOR);
@@ -469,5 +575,22 @@ function Entry(url) {
         return xmlDoc;
     }
     
+    /**
+     * 
+     */
+    this.searchableDate = function(date) {
+        if ( date instanceof Date ) {
+            var day = new String(date.getDate());
+            day = day.length > 1 ? day : "0"+day;
+            
+            var month = new String(date.getMonth());
+            month = month.length > 1 ? month : "0" + month;
+            
+            return date.getFullYear()+month+day;
+            
+        } else {
+            return "";
+        }        
+    }
 }
 

@@ -26,46 +26,51 @@
  */
 package org.roosster.output.modes;
 
-import org.roosster.output.OutputMode;
+import java.io.PrintWriter;
+import org.roosster.store.Entry;
 import org.roosster.store.EntryList;
+import org.roosster.Output;
+import org.roosster.output.OutputMode;
+import org.roosster.OperationException;
 import org.roosster.Registry;
+import org.roosster.xml.EntryGenerator;
 
 
 /**
  *
+ * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public abstract class AbstractOutputMode implements OutputMode
+public class RawMode extends AbstractOutputMode implements OutputMode
 {
-    private String contentType = DEF_CONTENT_TYPE;
 
-    protected Registry registry = null;
-    
+    /**
+     *
+     */
+    public void output(Output output, PrintWriter stream, EntryList entries)
+                throws OperationException
+    {
+        if ( entries == null )
+            throw new IllegalArgumentException("entries parameter is not allowed to be null");
+
+        if ( entries.size() > 0 ) {
+            Entry entry = entries.getEntry(0);
+            stream.print(entry.getRaw());            
+        }   
+    }
+
+
     /**
      *
      */
     public String getContentType(EntryList entries) 
     {
-        return contentType;
-    }
-
+        if ( entries.size() > 0 ) {
+            Entry entry = entries.getEntry(0);
+            return entry.getFileType() != null ? entry.getFileType() : super.getContentType(entries);
+        } else {
+            return null;
+        }
+    }   
     
-    /**
-     *
-     */
-    public void setContentType(String type)
-    {
-        this.contentType = type;
-    }
-    
-    
-    
-    /**
-     *
-     */
-    public void setRegistry(Registry registry)
-    {
-        this.registry = registry;
-    }
-
 }

@@ -47,7 +47,7 @@ public class RoossterXmlMode extends AbstractOutputMode implements OutputMode
     /**
      *
      */
-    public void output(Registry registry, Output output, PrintWriter stream, EntryList entries)
+    public void output(Output output, PrintWriter stream, EntryList entries)
                 throws OperationException
     {
         if ( entries == null )

@@ -33,8 +33,10 @@ import java.net.MalformedURLException;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.DateField;
 import org.apache.lucene.document.Field;
+import org.apache.log4j.Logger;
 
 import org.roosster.util.StringUtil;
+import org.roosster.util.XmlUtil;
 import org.roosster.Constants;
 
 /**
@@ -44,13 +46,15 @@ import org.roosster.Constants;
  */
 public class Entry
 {
+    private static Logger LOG = Logger.getLogger(Entry.class);
+
     public static final String TAG_SEPARATOR= Constants.TAG_SEPARATOR;
   
     public static final String ALL          = "all";
     public static final String CONTENT      = "content";
-    public static final String LAST_MOD     = "lastmod";
-    public static final String LAST_FETCHED = "lastfetch";
-    public static final String LAST_EDITED  = "lastedit";
+    public static final String MODIFIED     = "modified";
+    public static final String ADDED        = "added";
+    public static final String EDITED       = "edited";
     public static final String ISSUED       = "issued";
     public static final String URL          = "url";
     public static final String TITLE        = "title";
@@ -61,16 +65,23 @@ public class Entry
     public static final String TAGS         = "tags";
     public static final String RAW          = "raw";
 
-    /** enumerates the fields, by which result can be sorted
-     */
-    public static final String[] SORT_FIELDS     = new String[]
-    {LAST_MOD, LAST_FETCHED, ISSUED, URL, TITLE, AUTHOR, AUTHOREMAIL, FILETYPE};
+    public static final float  TITLE_BOOST  = 100;
+    public static final float  TAG_BOOST    = 5;
+    public static final float  NOTE_BOOST   = 5;
     
-
+    // enumerate the fields, by which result can be sorted
+    public static final String[] STRING_SORT_FIELDS     = new String[]
+    {URL, TITLE, AUTHOR, AUTHOREMAIL, FILETYPE};
+    
+    public static final String[] INTEGER_SORT_FIELDS     = new String[]
+    {MODIFIED, ADDED, ISSUED};
+    
+    private float score = 0;
+    
     private Date         issued	       = null;
-    private Date         lastModified	 = null;
-    private Date         lastFetched	   = null;
-    private Date         lastEdited     = null;
+    private Date         modified     	 = null;
+    private Date         added	         = null;
+    private Date         edited         = null;
     private URL          url            = null;
     private String       title          = "";
     private String       author         = "";
@@ -94,40 +105,28 @@ public class Entry
     /**
      *
      */
-    protected Entry(Document doc)
+    protected Entry(Document doc, float score)
     {
-        String urlStr = null;
+        this.score = score;
         try {
-
             if ( doc != null ) {
-                urlStr = doc.getField(URL).stringValue();
-                setUrl( new URL(urlStr) );
-                setTitle( doc.getField(TITLE).stringValue() );
-                setAuthor( doc.getField(AUTHOR).stringValue() );
-                setAuthorEmail( doc.getField(AUTHOREMAIL).stringValue() );
-                setFileType( doc.getField(FILETYPE).stringValue() );
-                setContent( doc.getField(CONTENT).stringValue() );
-                setRaw( doc.getField(RAW).stringValue() );
-                setNote( doc.getField(NOTE).stringValue() );
-                setTags( StringUtil.split(doc.getField(TAGS).stringValue(), TAG_SEPARATOR) );
-
-                setIssued( !"".equals(doc.getField(ISSUED).stringValue())
-                           ? DateField.stringToDate(doc.getField(ISSUED).stringValue()) : null );
-
-                setLastModified( !"".equals(doc.getField(LAST_MOD).stringValue())
-                                 ? DateField.stringToDate(doc.getField(LAST_MOD).stringValue()) : null );
-
-                setLastFetched( !"".equals(doc.getField(LAST_FETCHED).stringValue())
-                                 ? DateField.stringToDate(doc.getField(LAST_FETCHED).stringValue()) : null );
-                                 
-                setLastEdited( !"".equals(doc.getField(LAST_EDITED).stringValue())
-                                 ? DateField.stringToDate(doc.getField(LAST_EDITED).stringValue()) : null );
+                setUrl(           new URL(doc.get(URL)) );
+                setTitle(         doc.get(TITLE) );
+                setAuthor(        doc.get(AUTHOR) );
+                setAuthorEmail(   doc.get(AUTHOREMAIL) );
+                setFileType(      doc.get(FILETYPE) );
+                setContent(       doc.get(CONTENT) );
+                setRaw(           doc.get(RAW) );
+                setNote(          doc.get(NOTE) );
+                setTags(          StringUtil.split(doc.get(TAGS), TAG_SEPARATOR) );
+                setIssued(        StringUtil.parseEntryDate( doc.get(ISSUED) ) );
+                setModified(      StringUtil.parseEntryDate( doc.get(MODIFIED) ) );
+                setAdded(         StringUtil.parseEntryDate( doc.get(ADDED) ) );
+                setEdited(        StringUtil.parseEntryDate( doc.get(EDITED) ) );
             }
-
         } catch (MalformedURLException ex) {
-            throw new IllegalStateException("URL '"+urlStr+"' is not a valid URL: "+ex.getMessage());
+            throw new IllegalStateException("URL '"+doc.get(URL)+"' is not a valid URL: "+ex.getMessage());
         }
-
     }
 
 
@@ -136,30 +135,33 @@ public class Entry
      */
     protected Document getDocument()
     {
-        String lastModStr  = lastModified != null ? DateField.dateToString(lastModified) : "";
-        String lastFetStr  = lastFetched != null ? DateField.dateToString(lastFetched) : "";
-        String lastEditStr = lastEdited != null ? DateField.dateToString(lastEdited) : "";
-        String issuedStr   = issued != null ? DateField.dateToString(issued) : "";
-
         Document doc = new Document();
 
-        doc.add( Field.Keyword(URL,        url.toString()) );
-        doc.add( Field.Keyword(TITLE,         title) );
+        doc.add( Field.Keyword(URL,           url.toString()) );
         doc.add( Field.Keyword(AUTHOR,        author) );
         doc.add( Field.Keyword(AUTHOREMAIL,   authorEmail) );
         doc.add( Field.Keyword(FILETYPE,      fileType) );
-        doc.add( Field.Keyword(LAST_MOD,      lastModStr) );
-        doc.add( Field.Keyword(LAST_FETCHED,  lastFetStr) );
-        doc.add( Field.Keyword(LAST_EDITED,   lastEditStr) );
-        doc.add( Field.Keyword(ISSUED,        issuedStr) );
+        doc.add( Field.Keyword(MODIFIED,      StringUtil.formatEntryDate(modified)) );
+        doc.add( Field.Keyword(ADDED,         StringUtil.formatEntryDate(added)) );
+        doc.add( Field.Keyword(EDITED,        StringUtil.formatEntryDate(edited)) );
+        doc.add( Field.Keyword(ISSUED,        StringUtil.formatEntryDate(issued)) );
         doc.add( Field.Text(CONTENT,          content.toString()) );
-        doc.add( Field.Text(NOTE,             note.toString()) );
-        doc.add( Field.Text(TAGS,             StringUtil.join(tags, TAG_SEPARATOR)) );
+        
+        Field titleField =  Field.Keyword(TITLE, title);
+        titleField.setBoost(TITLE_BOOST); 
+        doc.add(titleField);
+        
+        Field noteField = Field.Text(NOTE, note.toString());
+        noteField.setBoost(NOTE_BOOST);
+        doc.add(noteField);
+        
+        Field tagField = Field.Text(TAGS, StringUtil.join(tags, TAG_SEPARATOR));
+        tagField.setBoost(TAG_BOOST);
+        doc.add(tagField);
         
         doc.add( Field.UnIndexed(RAW, getRaw()) );
-
-        doc.add( Field.Text(ALL,  url +" "+ title +" "+ author+" "+authorEmail+" "+
-                                  content +" "+note+" "+StringUtil.join(tags, TAG_SEPARATOR)) );
+        doc.add( Field.UnStored(ALL,  title +" "+ author+" "+authorEmail+" "+
+                                      content +" "+note+" "+StringUtil.join(tags, " ")) );
         return doc;
     }
 
@@ -173,6 +175,14 @@ public class Entry
     }
 
 
+    /**
+     * 
+     */
+    protected float score()
+    {
+        return score;
+    }
+    
     // ============== Accessors ==============
 
 
@@ -234,55 +244,55 @@ public class Entry
     /**
      * Returns the value of lastModified.
      */
-    public Date getLastModified()
+    public Date getModified()
     {
-        return lastModified;
+        return modified;
     }
 
 
     /**
-     * Sets the value of lastModified.
-     * @param lastModified The value to assign lastModified.
+     * Sets the value of modified.
+     * @param modified The value to assign modified.
      */
-    public void setLastModified(Date lastModified)
+    public void setModified(Date modified)
     {
-        this.lastModified = lastModified;
+        this.modified = modified;
     }
 
 
     /**
      * Returns the value of lastFetched.
      */
-    public Date getLastFetched()
+    public Date getAdded()
     {
-        return lastFetched;
+        return added;
     }
 
 
     /**
-     * Sets the value of lastFetched.
-     * @param lastFetched The value to assign lastFetched.
+     * Sets the value of added.
+     * @param added The value to assign added.
      */
-    public void setLastFetched(Date lastFetched)
+    public void setAdded(Date added)
     {
-        this.lastFetched = lastFetched;
+        this.added = added;
     }
 
 
 		/**
-		 * Returns the value of lastEdited.
+		 * Returns the value of Edited.
 		 */
-		public Date getLastEdited() {
-				return lastEdited;
+		public Date getEdited() {
+				return edited;
 		}
 
 
 		/**
-		 * Sets the value of lastEdited.
-		 * @param lastEdited The value to assign lastEdited.
+		 * Sets the value of Edited.
+		 * @param Edited The value to assign Edited.
 		 */
-		public void setLastEdited(Date lastEdited) {
-				this.lastEdited = lastEdited;
+		public void setEdited(Date edited) {
+				this.edited = edited;
 		}
 
     
@@ -498,14 +508,15 @@ public class Entry
         if ( date != null )
             setIssued(date);
         
-        date = that.getLastModified();
+        date = that.getModified();
         if ( date != null )
-            setLastModified(date);
+            setModified(date);
         
         String[] tags = that.getTags();
         if ( tags != null && tags.length > 0 )
             setTags(tags);
     }
+    
 }
 
 

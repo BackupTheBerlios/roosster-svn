@@ -14,27 +14,49 @@
 //
 // =========================================================================
 
-const DIV_ID_ENTRIESOUT   = "entries-out";
-const FORM_ID_ENTRYFORM   = "entryform";
+const DIV_ID_OUTPUTMESSAGES = "output-messages";
+const DIV_ID_ENTRIESOUT     = "entries-out";
+const DIV_ID_LOADINGNOTE    = "loading-notification";
+const DIV_ID_ENTRYURLLINK   = "entry-url-link";
+const FORM_ID_ENTRYFORM     = "entryform";
+
+const ID_HEADER_QUERYSTRING = 'headerQueryStr';
+const ID_QUERYSTRING        = 'queryStr';
 
 const PARAM_JUMP      = "jump";
+const PARAM_ACTION    = "action";
+const PARAM_URL       = "url";
+const PARAM_QUERY     = "query";
 
 const TAB_SEARCH = 'search-tab';
 const TAB_EDIT   = 'edit-tab';
 const TAB_ADD    = 'add-tab';
 const TAB_TAGS   = 'tags-tab';
+const TAB_TOOLS  = 'tools-tab';
+
+const TABMENU_SEARCH = 'searchTabMenu';
+const TABMENU_EDIT   = 'editTabMenu';
+const TABMENU_ADD    = 'addTabMenu';
+const TABMENU_TAGS   = 'tagsTabMenu';
+const TABMENU_TOOLS  = 'toolsTabMenu';
 
 const DEFAULT_TAB     = TAB_SEARCH;
 
 //
-var currentTab = DEFAULT_TAB;
+var currentTab     = DEFAULT_TAB;
+var currentTabMenu = null;
 
 //
 var entryList = new EntryList();
 
-//
+// Entry-object, contains the currently edited entry
 var currentEntry    = null;
+
+// String, contains the url of the currently edited entry or the last added URL
 var currentEntryUrl = null;
+
+// String, contains the last search's query String
+var lastQuery = null;
 
 // needed for RoossterHttpState, don't make simultanious requests
 var xmlhttp;
@@ -42,6 +64,8 @@ var xmlhttp;
 var httpstate = new RoossterHttpState();
 
 var debugConsole = new Debug();
+
+var outputMsgElem = null;
 
 // =========================================================================
 //
@@ -54,39 +78,118 @@ var debugConsole = new Debug();
  * 
  */
 function initClient() {
-    var jumpString = new Querystring().get(PARAM_JUMP);
+    outputMsgElem = getById(DIV_ID_OUTPUTMESSAGES);
+    
+    var qs = new Querystring();
+    var jumpString = qs.get(PARAM_JUMP);
     if ( jumpString ) {
         var oldTab = currentTab;
         if ( setTab(jumpString) )
             return;
         else 
             currentTab = oldTab; // switch back tab, because it has been set to jumpString
-    }    
-        
-    setTab(currentTab); // use default tab if a wrong tab was specified
+    } else {  
+        setTab(currentTab); // use default tab if a wrong tab was specified
+    }
+    
+    var queryStr = qs.get(PARAM_QUERY);
+    if ( queryStr != null ) {
+        doSearch(queryStr);
+        return;
+    }
+    
+    var actionStr = qs.get(PARAM_ACTION);
+    var urlStr = qs.get(PARAM_URL);
+    if ( actionStr != null && urlStr != null ) {
+        if ( actionStr == 'add' )
+            doAdd(urlStr);
+        else if ( actionStr == 'edit' ) 
+            doEdit(urlStr);
+    }
 }
     
 
 /**
  * 
  */
-function setTab(tabid) {
+function setTab(tabid, clearOutputMessages) {
+    // clear messages, except if it's explicitly specified that they should stay  
+    if ( clearOutputMessages != false )
+        __clearOutputMessages();
+  
     var hidden = this.__hideTab(this.currentTab);
     var shown = this.__showTab(tabid);
     this.currentTab = tabid;
-    return hidden && shown;
+    if ( hidden && shown ) {
+        switch(this.currentTab) {
+            case TAB_SEARCH:
+                if ( this.currentTabMenu != null ) getById(this.currentTabMenu).className = '';
+                getById(TABMENU_SEARCH).className = 'active';
+                this.currentTabMenu = TABMENU_SEARCH;
+                break;
+            case TAB_EDIT:
+                if ( this.currentTabMenu != null ) getById(this.currentTabMenu).className = '';
+                getById(TABMENU_EDIT).className = 'active';
+                this.currentTabMenu = TABMENU_EDIT;
+                break;
+            case TAB_ADD:
+                if ( this.currentTabMenu != null ) getById(this.currentTabMenu).className = '';
+                getById(TABMENU_ADD).className = 'active';
+                this.currentTabMenu = TABMENU_ADD;
+                break;
+            case TAB_TAGS:
+                if ( this.currentTabMenu != null ) getById(this.currentTabMenu).className = '';
+                getById(TABMENU_TAGS).className = 'active';
+                this.currentTabMenu = TABMENU_TAGS;
+                break;
+            case TAB_TOOLS:
+                if ( this.currentTabMenu != null ) getById(this.currentTabMenu).className = '';
+                getById(TABMENU_TOOLS).className = 'active';
+                this.currentTabMenu = TABMENU_TOOLS;
+                break;
+        }
+    } else {
+        return false;
+    }
 }    
 
-    
 
 /**
  * 
  */
 function displayDate(date) {
-    // TODO implement this
-    return date;
+    if ( date == null ) 
+        return "no date";
+  
+    if ( date instanceof Date ) {
+        var day = new String(date.getDate());
+        day = day.length > 1 ? day : "0"+day;
+        
+        var month = new String(date.getMonth());
+        month = month.length > 1 ? month : "0"+month;
+        
+        var hours = new String(date.getHours());
+        hours = hours.length > 1 ? hours : "0"+hours;
+        
+        var minutes = new String(date.getMinutes());
+        minutes = minutes.length > 1 ? minutes : "0"+minutes;
+        
+        return day+"/"+month+"/"+date.getFullYear()+" "+hours+":"+minutes;
+        
+    } else {
+        return "no date";
+    }
 }
 
+
+/**
+ * 
+ */
+function toggleDisplay(currId) {
+		thisMenu = getById(currId).style;
+    thisMenu.display =  thisMenu.display == "block" ? "none" : "block";
+		return false;
+}
 
 // =========================================================================
 //
@@ -98,16 +201,28 @@ function displayDate(date) {
 /**
  * 
  */
-function doSearch(queryStr) {
-    __clearState(true);
+function doSearch(queryStr, offset, limit) {
+    __clearAll();
         
-    if ( queryStr == null || queryStr == '' )  
-        return null;
+    if ( queryStr == null || queryStr == '' ) {
+        if ( lastQuery )
+            queryStr = lastQuery;
+        else
+            return null;
+    }
   
-    xmlhttp.open("GET", API_ENDPOINT + "/search?query="+ escape(queryStr) , true);     
+    var pagerArgs = offset ? "&output.offset="+ offset : "";
+    pagerArgs += limit ? "&output.limit="+limit : "";
+    
+    toggleDisplay(DIV_ID_LOADINGNOTE);
+    xmlhttp.open("GET", API_ENDPOINT + "/search?query="+ escape(queryStr)+pagerArgs , true);     
     xmlhttp.onreadystatechange = searchResponseHandler;
     xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
-    xmlhttp.send(null);   
+    xmlhttp.send(null);
+    
+    lastQuery = queryStr;
+    getById(ID_HEADER_QUERYSTRING).value = queryStr;
+    getById(ID_QUERYSTRING).value = queryStr;
 }
 
 
@@ -125,13 +240,15 @@ function searchResponseHandler() {
         var entriesOut = getById(DIV_ID_ENTRIESOUT);
         
         if ( entriesOut == null )
-            _exception("Can't find Element '"+DIV_ID_ENTRIESOUT+"' to output entries");
+            __exception("Can't find Element '"+DIV_ID_ENTRIESOUT+"' to output entries");
+      
+        XmlRemoveAllChildren(entriesOut);
         
         var entriesFound = false;
         if ( entryList != null ) {
-            var entries = entryList.getList();
+            entryList.attachPager(entriesOut);
             
-            XmlRemoveAllChildren(entriesOut);
+            var entries = entryList.getList();
             
             var ulEntryList = XmlCreateElement("ul");
             ulEntryList.id = 'entry-list';
@@ -149,12 +266,12 @@ function searchResponseHandler() {
         if ( !entriesFound ) 
             entriesOut.appendChild( XmlCreateText("No Entries found for this search!") );
         
+        setTab(TAB_SEARCH);    
     } else {
-        // TODO display better error 
-        alert("error");
+        __outputMessage("Error while executing search! Server said: <"+httpstate.lastExceptionText+">", true);
     }
-
-    setTab(TAB_SEARCH);    
+    
+    toggleDisplay(DIV_ID_LOADINGNOTE);
     debugConsole.show();
 }
 
@@ -162,10 +279,52 @@ function searchResponseHandler() {
 /**
  * 
  */
-function postEdit() {
-    __clearState(false);
+function doEdit(url, clearOutputMsg) {
+    __clearHttp(false);
+    if ( clearOutputMsg )
+        __clearOutputMessages();
+        
+    if ( url == null && url == '' )
+        __exception("You must provide an Entry's URL when you want to edit an Entry");   
+    
+    toggleDisplay(DIV_ID_LOADINGNOTE);
+    xmlhttp.open("GET", API_ENDPOINT + "/entry?url="+ escape(url) , true);
+    xmlhttp.onreadystatechange = function() {
+        if ( xmlhttp.readyState != 4) 
+            return;
+          
+        if ( httpstate.checkHttpState()  ) {
+            var list = parseEntryList(xmlhttp.responseXML);
+            
+            debugConsole.addMsg("List returned from /entry?url="+url+" is: "+list);
+            
+            currentEntry = list.get(url);
+            currentEntry.fillIntoEditForm(document.entryform);
+            
+            setTab(TAB_EDIT, clearOutputMsg);
+            
+        } else {
+            __outputMessage("Can't fetch Entry for URL: "+url+
+                            " ! Server said: <"+httpstate.lastExceptionText+">", true);
+        }
+        
+        toggleDisplay(DIV_ID_LOADINGNOTE);
+        debugConsole.show();
+    };
+    
+    xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
+    xmlhttp.send(null);        
+}
+
+
+/**
+ * 
+ */
+function putEdit() {
+    __clearHttp();
     
     if ( currentEntry != null && currentEntry instanceof Entry ) {
+        toggleDisplay(DIV_ID_LOADINGNOTE);
         currentEntry.overwriteWithForm(document.entryform);
         
         xmlhttp.open("PUT", API_ENDPOINT + "/entry" , true);
@@ -174,12 +333,11 @@ function postEdit() {
         xmlhttp.send(currentEntry.asDomDocument());          
         
         setTab(TAB_EDIT);
+        debugConsole.addMsg("Posting edited "+currentEntry);
     } else {
-        // TODO make this better
-        alert("Bad Error! Can't post non-existant entry!");
+        __outputMessage("Can't edit non-existant entry!", true);
     }
   
-    debugConsole.addMsg("Posting edited "+currentEntry);
     debugConsole.show();
 }
 
@@ -191,67 +349,14 @@ function putResponseHandler() {
     if ( xmlhttp.readyState != 4) 
         return;
       
-    if ( httpstate.checkHttpState()  ) {
-        
-        // TODO write this into message area
-        alert("updated successfully");
-        
-    } else {
-        // TODO display better error 
-        alert("error");
-    }
-    setTab(TAB_EDIT);
+    if ( httpstate.checkHttpState()  ) 
+        __outputMessage("Entry updated successfully");
+    else 
+        __outputMessage("Error while trying to update! Server said: <"+httpstate.lastExceptionText+">", true);
+    
+    setTab(TAB_EDIT, false);
+    toggleDisplay(DIV_ID_LOADINGNOTE);
     debugConsole.show();
-}
-
-
-/**
- * 
- */
-function doEdit(url) {
-    __clearState(false);
-        
-    if ( url == null && url == '' )
-        __exception("You must provide an Entry's URL when you want to edit an Entry");   
-    
-    if ( entryList.get(url) ) {
-      
-        currentEntry = entryList.get(url)
-        currentEntry.fillIntoEditForm(document.entryform);
-        setTab(TAB_EDIT);
-        debugConsole.addMsg("Showing edit form for cached "+currentEntry);
-        debugConsole.show();
-    
-    } else {
-      
-        // entry is not cached, retrieve it from server and put it in cache
-        
-        xmlhttp.open("GET", API_ENDPOINT + "/entry?url="+ escape(url) , true);
-        xmlhttp.onreadystatechange = function() {
-        
-            if ( xmlhttp.readyState == 4) {
-              
-                if ( !httpstate.checkHttpState()  ) {
-                    // TODO display better error 
-                    alert("error");
-                }
-                
-                var list = parseEntryList(xmlhttp.responseXML);
-                
-                debugConsole.addMsg("List returned from /entry?url="+url+" is: "+list);
-                
-                currentEntry = list.get(url);
-                currentEntry.fillIntoEditForm(document.entryform);
-                
-                setTab(TAB_EDIT);
-                debugConsole.show();
-           }
-        };
-        
-        xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
-        xmlhttp.send(null);        
-        
-    }
 }
 
 
@@ -259,11 +364,11 @@ function doEdit(url) {
  *
  */
 function doAdd(url) {
-    __clearState(true);  
-  
+    __clearAll();  
+    
     if ( url != null && url != '' ) {
         currentEntryUrl = url;
-      
+        toggleDisplay(DIV_ID_LOADINGNOTE);
         xmlhttp.open("POST", API_ENDPOINT + "/addurl", true);
         xmlhttp.onreadystatechange = postResponseHandler;        
         xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
@@ -282,16 +387,31 @@ function postResponseHandler() {
     if ( httpstate.checkHttpState() ) {
         
         var list = parseEntryList(xmlhttp.responseXML);
-        currentEntry = list.get(currentEntryUrl);
-        currentEntry.fillIntoEditForm(document.entryform);
+        
+        if ( list == null ) {
+            __outputMessage("Some undefined error occurred while adding URL "+currentEntryUrl, true);
+            return;
+        }
+          
+        if ( list.length() > 1 ) {
+            __outputMessage("URL "+currentEntryUrl+" represented a feed! "+list.length()+" URLs were added");
+        } else {
+            __outputMessage("Successfully added URL '"+currentEntryUrl +"'!");
+            doEdit(currentEntryUrl, false);
+        }
         
     } else {
-        // TODO
-        alert("error while posting, probably a duplicate entry! "+httpstate.lastExceptionText);
+        if ( httpstate.lastException == EXC_DUPLICATE ) {
+            debugConsole.addMsg("Editing instead of adding duplicate Entry "+httpstate.lastExceptionText);
+            __outputMessage("Entry with URL '"+httpstate.lastExceptionText+
+                            "' was previously added. Loaded Entry-data!");
+            doEdit(httpstate.lastExceptionText, false);
+        } else {
+            __outputMessage("Error while trying to add Entry! Server said: <"+httpstate.lastExceptionText+">", true);
+        } 
       
     }
-    
-    setTab(TAB_EDIT);
+    toggleDisplay(DIV_ID_LOADINGNOTE);
     debugConsole.show();    
 }
 
@@ -303,21 +423,42 @@ function postResponseHandler() {
 // =========================================================================
 
 
-/*
+/**
  * 
  */
-function __clearState(withListAndEntry) {
+function __clearHttp(withListAndEntry) {
     httpstate.clearState();
     xmlhttp = __newXmlHttp();
-    
-    if ( withListAndEntry ) {
-        entryList = new EntryList();
-        currentEntry = null;
-        currentEntryUrl = null;
-    }
+}
+
+function __clearOutputMessages() {
+    XmlRemoveAllChildren(outputMsgElem);
+}
+
+function __clearEntries() {
+    entryList = new EntryList();
+    currentEntry = null;
+    currentEntryUrl = null;
+}
+
+function __clearAll() {
+    __clearEntries();
+    __clearHttp();
+    __clearOutputMessages();
+}
+
+
+/**
+ *
+ */
+function __outputMessage(msg, error) {
+    var p = XmlCreateElement('p');
+    p.className = error ? 'error-messages' : 'output-messages';
+    p.appendChild(XmlCreateText(msg));
+    outputMsgElem.appendChild(p);
 }
     
-    
+
 /**
  * 
  */
@@ -345,7 +486,7 @@ function __newXmlHttp() {
  * 
  */
 function __showTab(tabid) {
-    tabid = document.getElementById(tabid);
+    tabid = getById(tabid);
     if ( tabid ) {
         if (tabid.style)
             tabid.style.display="block";
@@ -363,7 +504,7 @@ function __showTab(tabid) {
  * 
  */
 function __hideTab(tabid) {
-    tabid = document.getElementById(tabid);
+    tabid = getById(tabid);
     if ( tabid ) {
         if (tabid.style) 
             tabid.style.display = "none";

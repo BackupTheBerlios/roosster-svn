@@ -27,10 +27,12 @@
 package org.roosster.util;
 
 import java.util.regex.PatternSyntaxException;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 
 import org.roosster.Registry;
+import org.roosster.Constants;
 
 
 /**
@@ -42,8 +44,48 @@ public class StringUtil
     private static Logger LOG = Logger.getLogger(StringUtil.class);
     
 
+    
     /**
-     * removes whitespace, \t, \n, \r 
+     * 
+     */
+    public static String formatEntryDate(Date date)
+    {
+        if ( date == null )
+            return "";
+        
+        try {
+            return XmlUtil.getDateFormat(Constants.ENTRY_DATE_FORMAT_LONG).format(date);
+        } catch (Exception ex) {
+            LOG.warn("Exception while converting Date to String", ex);
+            return "";
+        }
+    }
+    
+    
+    /**
+     * 
+     */
+    public static Date parseEntryDate(String dateStr)
+    {
+        if ( dateStr == null || "".equals(dateStr) )
+            return null;
+        
+        try {
+            return XmlUtil.getDateFormat(Constants.ENTRY_DATE_FORMAT_LONG).parse(dateStr);
+        } catch(java.text.ParseException ex) {
+            try {
+                return XmlUtil.getDateFormat(Constants.ENTRY_DATE_FORMAT_SHORT).parse(dateStr);
+            } catch(Exception ex1) {
+                // TODO more precise exception here
+                throw new NumberFormatException(ex1.getMessage());
+            }
+        }
+        
+    }
+
+
+    /**
+     * removes \t, \n, \r 
      */
     public static String strip(String str)
     {

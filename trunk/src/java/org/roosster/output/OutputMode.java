@@ -46,18 +46,23 @@ public interface OutputMode
     /**
      *
      */
-    public void output(Registry registry, Output output,
-                       PrintWriter writer, EntryList entries)
+    public void output(Output output, PrintWriter writer, EntryList entries)
                 throws OperationException;
 
     /**
      *
      */
-    public String getContentType();
+    public String getContentType(EntryList entries);
 
 
     /**
      *
      */
     public void setContentType(String type);
+    
+    
+    /**
+     *
+     */
+    public void setRegistry(Registry registry);
 }

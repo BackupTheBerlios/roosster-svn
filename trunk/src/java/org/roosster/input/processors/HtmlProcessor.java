@@ -90,7 +90,7 @@ public class HtmlProcessor implements ContentTypeProcessor
 
         // set some basic properties
         entry.setFileType(FILE_TYPE);
-        entry.setLastFetched(new Date());
+        entry.setAdded(new Date());
         
         // copy raw contents before processing stream
         Writer rawContents = new StringWriter();
@@ -125,6 +125,7 @@ public class HtmlProcessor implements ContentTypeProcessor
         private boolean isBody                 = false;
         private boolean isScript               = false;
         private boolean isStyle                = false;
+        private boolean isTitle                = false;
         
         
         /**
@@ -155,11 +156,13 @@ public class HtmlProcessor implements ContentTypeProcessor
             
             currentTag = qName;
             
-            if ( "body".equalsIgnoreCase(qName) ) 
+            if ( "title".equalsIgnoreCase(qName) )
+                isTitle = true;
+            else if ( "body".equalsIgnoreCase(qName) ) 
                 isBody = true;
             else if ( "style".equalsIgnoreCase(qName) ) 
                 isStyle = true;
-            if ( "script".equalsIgnoreCase(qName) ) 
+            else if ( "script".equalsIgnoreCase(qName) ) 
                 isScript = true;
         }
         
@@ -170,13 +173,19 @@ public class HtmlProcessor implements ContentTypeProcessor
         public void endElement(String nsURI, String localName, String qName)
                         throws SAXException
         {
-            //LOG.debug("HTMLPARSE: <-- Pop <"+qName+"> from element stack");
+            //LOG.debug("HTMLPARSE: <-- Pop <"+qName+"> from element stack\nCurrent Text is: "+currentText);
             
-            if ( "body".equalsIgnoreCase(qName) ) 
+            if ( "title".equalsIgnoreCase(qName) ) {
+                isTitle = true;
+                entry.setTitle(currentText.toString());    
+            } 
+            else if ( "body".equalsIgnoreCase(qName) ) 
                 isBody = false;
+                
             else if ( "style".equalsIgnoreCase(qName) ) 
                 isStyle = false;
-            if ( "script".equalsIgnoreCase(qName) ) 
+            
+            else if ( "script".equalsIgnoreCase(qName) ) 
                 isScript = false;
 
 
@@ -198,7 +207,8 @@ public class HtmlProcessor implements ContentTypeProcessor
                     entry.appendContent(str);
                     entry.appendContent(" ");
                 }
-            }
+            } else if ( isTitle )
+                currentText.append(StringUtil.strip(new String(text, start, length)).trim());
         }
     }
     

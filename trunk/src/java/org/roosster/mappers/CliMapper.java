@@ -99,7 +99,7 @@ public class CliMapper
         String outputMode = registry.getConfiguration().getProperty(Constants.PROP_OUTPUTMODE, 
                                                                     DEF_OUTPUT_MODE);
         
-        new Dispatcher(registry).run(commandName, cmdLine).output(outputMode, outputStream);
+        new Dispatcher(registry).run(commandName, outputMode, cmdLine).output(outputStream);
     }
 
 

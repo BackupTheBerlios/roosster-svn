@@ -188,10 +188,10 @@ public class FeedParser
             Date now = new Date();
             
             entry.setIssued( feedEntry.getPublishedDate() == null ? now : feedEntry.getPublishedDate() );
-            entry.setLastFetched(now);
+            entry.setAdded(now);
             
             // TODO fix this, create a WireFeed and use the modified date of that
-            entry.setLastModified( now );
+            entry.setModified( now );
         
         } 
         
@@ -228,49 +228,27 @@ public class FeedParser
         URL url = null;
         String uriString = null;
         try {
-            uriString = feedEntry.getUri();
             
-            if ( uriString != null ) {
-              
-                url = new URI(uriString).toURL();
-                
+            if ( feedEntry.getLink() != null ) {
+                url = new URL(feedEntry.getLink());
             } else {
                 
-                if ( feedEntry.getLink() != null ) 
-                    url = new URL(feedEntry.getLink());
+                uriString = feedEntry.getUri();
+                if ( uriString != null ) 
+                    url = new URI(uriString).toURL();
                 else 
-                    LOG.warn("Feed Entry has 'null' URI element. Can't create roosster Entry");
+                    LOG.warn("Feed Entry has 'null' URI and no link element. Can't create roosster Entry");
                 
             }
             
         } catch (URISyntaxException ex) {
-          
-            try {
-                if ( feedEntry.getLink() != null ) 
-                    url = new URL(feedEntry.getLink());
-                else 
-                    LOG.warn("Feed Entry has 'null' URI element. Can't create roosster Entry");
-                
-            } catch (MalformedURLException ex2) {
-                LOG.warn("Skipping Entry! Can't create URL for Entry with "+uriString+
-                         "/"+feedEntry.getLink(), 
-                         ex2);
-            }
-            
+            LOG.warn("Skipping Entry! Can't create URL for Entry with "+uriString+
+                     "/"+feedEntry.getLink(), 
+                     ex);
         } catch (MalformedURLException ex) {
-
-            try {
-                if ( feedEntry.getLink() != null ) 
-                    url = new URL(feedEntry.getLink());
-                else 
-                    LOG.warn("Feed Entry has 'null' URI element. Can't create roosster Entry");
-                
-            } catch (MalformedURLException ex2) {
-                LOG.warn("Skipping Entry! Can't create URL for Entry with "+uriString +
+               LOG.warn("Skipping Entry! Can't create URL for Entry with "+uriString +
                          "/"+feedEntry.getLink(), 
-                         ex2);
-            }
-            
+                         ex);
         }
         
         return url;

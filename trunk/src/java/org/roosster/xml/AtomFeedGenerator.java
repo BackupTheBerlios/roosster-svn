@@ -129,7 +129,7 @@ public class AtomFeedGenerator
         
 
         atomEntry.setCreated( entry.getIssued());
-        atomEntry.setModified( entry.getLastModified());
+        atomEntry.setModified( entry.getModified());
         atomEntry.setContents(contentList);
         
         return atomEntry;

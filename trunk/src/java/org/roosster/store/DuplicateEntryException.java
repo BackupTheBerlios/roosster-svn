@@ -35,7 +35,7 @@ import java.net.URL;
 public class DuplicateEntryException extends RuntimeException
 {
     public DuplicateEntryException(URL url) {
-        super("Entry with URL "+url+" is already stored");
+        super(url == null ? "null" : url.toString());
     }
 
 }

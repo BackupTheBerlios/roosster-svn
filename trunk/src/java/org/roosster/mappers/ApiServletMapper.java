@@ -88,7 +88,7 @@ public class ApiServletMapper extends ServletMapper
 
     /**
      */
-    protected Map parseRequestArguments(HttpServletRequest req) throws IOException
+    protected Map parseRequestArguments(HttpServletRequest req) throws Exception
     {
         try {
             Map args = super.parseRequestArguments(req);
@@ -121,8 +121,8 @@ public class ApiServletMapper extends ServletMapper
             return args;
             
         } catch(ParseException ex) {
-            LOG.warn("Exception while parsing request body", ex);
-            throw new IllegalArgumentException("Can't parse entry-xml in request");
+            Throwable t = ex.getCause() == null ? ex : ex.getCause();
+            throw new OperationException("Can't parse entry-xml in request", t);
         }
     }
     

@@ -67,9 +67,9 @@ public class EntryGenerator implements EntryTags
             Document doc = XmlUtil.getDocumentBuilder().newDocument();
                                        
             Element root = XmlUtil.createChild(doc, ENTRYLIST);
-            root.setAttribute(TOTAL_ATTR,   String.valueOf(entries.getTotalSize()) );
-            root.setAttribute(OFFSET_ATTR,  String.valueOf(entries.getOffset()) );
-            root.setAttribute(LIMIT_ATTR,   String.valueOf(entries.getLimit()) );
+            root.setAttribute(TOTAL_ATTR,    String.valueOf(entries.getTotalSize()) );
+            root.setAttribute(OFFSET_ATTR,   String.valueOf(entries.getOffset()) );
+            root.setAttribute(LIMIT_ATTR,    String.valueOf(entries.getLimit()) );
             
             for ( int i = 0; i < entries.size(); i++ ) {
                 Entry entry = entries.getEntry(i);
@@ -80,9 +80,9 @@ public class EntryGenerator implements EntryTags
                 entryNode.setAttribute(TYPE_ATTR,     entry.getFileType());
                 
                 entryNode.setAttribute(ISSUED_ATTR,   XmlUtil.formatW3cDate(entry.getIssued()) );
-                entryNode.setAttribute(MODIFIED_ATTR, XmlUtil.formatW3cDate(entry.getLastModified()) );
-                entryNode.setAttribute(FETCHED_ATTR,  XmlUtil.formatW3cDate(entry.getLastFetched()) );
-                entryNode.setAttribute(EDITED_ATTR,   XmlUtil.formatW3cDate(entry.getLastEdited()) );
+                entryNode.setAttribute(MODIFIED_ATTR, XmlUtil.formatW3cDate(entry.getModified()) );
+                entryNode.setAttribute(ADDED_ATTR,    XmlUtil.formatW3cDate(entry.getAdded()) );
+                entryNode.setAttribute(EDITED_ATTR,   XmlUtil.formatW3cDate(entry.getEdited()) );
                 
                 XmlUtil.createTextChild(entryNode, NOTE,    entry.getNote());
                 XmlUtil.createTextChild(entryNode, CONTENT, StringUtil.truncate(entry.getContent(), truncate));

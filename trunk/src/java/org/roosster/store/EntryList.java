@@ -32,12 +32,16 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
 public class EntryList extends AbstractList
 {
+    private static Logger LOG = Logger.getLogger(EntryList.class);
+
     private int totalSize   = 0;
     private int offset	     = 0;
     private int limit       = -1;
@@ -81,9 +85,9 @@ public class EntryList extends AbstractList
         Date newest = new Date( System.currentTimeMillis() );
         for(int i = 0; i < list.size(); i++) {
             Entry entry = (Entry) list.get(i);
-            if ( entry.getLastModified() != null ) {
-                if ( newest.before(entry.getLastModified()) ) 
-                    newest = entry.getLastModified();
+            if ( entry.getModified() != null ) {
+                if ( newest.before(entry.getModified()) ) 
+                    newest = entry.getModified();
             }
         }
         
@@ -113,16 +117,25 @@ public class EntryList extends AbstractList
      */
     public boolean addEntry(Entry entry)
     {
-        return list.add(entry);
+        return add(entry);
     }
 
     
     /**
      * @exception ArrayIndexOutOfBoundsException
+     * @exception IllegalArgumentException if obj
      */
     public boolean add(Object obj)
     {
-        return list.add(obj);
+        if ( obj instanceof Entry ) {
+            if ( LOG.isDebugEnabled() ) {
+                Entry entry = (Entry) obj;
+                LOG.debug("Position: "+ (size()+1) +" - Score: "+entry.score()+" - Adding: "+entry);
+            }
+            return list.add(obj);
+        } else {
+            throw new IllegalArgumentException("");
+        }
     }
 
     

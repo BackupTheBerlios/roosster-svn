@@ -33,6 +33,9 @@ package org.roosster;
  */
 public interface Constants
 {
+    public static final String ENTRY_DATE_FORMAT_SHORT = "yyyyMMddHHmm";
+    public static final String ENTRY_DATE_FORMAT_LONG  = "yyyyMMdd";
+    
     public static final String TAG_SEPARATOR    = ",";
   
     public static final String W3C_DATEFORMAT   = "yyyy-MM-dd'T'HH:mm:ssZ";
@@ -62,6 +65,8 @@ public interface Constants
 
     // args are used in commands, and only an a request basis
     public static final String ARG_URL          = "url";
+    public static final String ARG_ISSUED       = "issued";
+    public static final String ARG_MODIFIED     = "modified";
     public static final String ARG_FORCE        = "force";
     public static final String ARG_NOTE         = "note";
     public static final String ARG_TAGS         = "tags";

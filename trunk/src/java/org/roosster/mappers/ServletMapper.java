@@ -42,9 +42,9 @@ import org.apache.log4j.Logger;
 import org.roosster.util.MapperUtil;
 import org.roosster.util.ServletUtil;
 import org.roosster.util.StringUtil;
-import org.roosster.store.EntryStore;
 import org.roosster.commands.CommandNotFoundException;
 import org.roosster.InitializeException;
+import org.roosster.OperationException;
 import org.roosster.Registry;
 import org.roosster.Output;
 import org.roosster.Dispatcher;
@@ -188,36 +188,36 @@ public class ServletMapper extends HttpServlet
         try {
             String commandName = getCommandName(method, req);
             Map args = parseRequestArguments(req);
-    
+            
+            // add request arguments to configuration
+            registry.getConfiguration().setRequestArguments(args);
+            
             // run commands            
-            Output output = dispatcher.run(commandName, args);
+            Output output = dispatcher.run(commandName, getOutputMode(), args);
 
             // determine content type
             String contentType = output.getContentType();
-            contentType = contentType == null ? DEF_CONTENT_TYPE : contentType; 
-            resp.setContentType(contentType+"; charset="+outputEncoding);
+            contentType = contentType == null ? DEF_CONTENT_TYPE : contentType;
+            String contentHeader = contentType+"; charset="+outputEncoding;
+            resp.setContentType(contentHeader);
+            
+            LOG.debug("Set Content-Type Header field to: "+contentHeader);
 
             // output everything
-            output.output( getOutputMode(), resp.getWriter() );
+            output.output( resp.getWriter() );
             
         } catch (CommandNotFoundException ex) {
           
             LOG.warn(ex.getMessage(), ex);
             resp.sendError(resp.SC_NOT_FOUND, 
-                           "RoossterException: <"+ex.getClass()+"> "+ex.getMessage());
-            
-        } catch (IllegalArgumentException ex) {
-          
-            LOG.warn(ex.getMessage(), ex);
-            resp.sendError(resp.SC_BAD_REQUEST, 
-                           "RoossterException: <"+ex.getClass()+"> "+ex.getMessage());
+                           "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
             
         } catch (Exception ex) {
-          
-            LOG.warn(ex.getMessage(), ex);
-            resp.sendError(resp.SC_INTERNAL_SERVER_ERROR, 
-                           "RoossterException: <"+ex.getClass()+"> "+ex.getMessage());
             
+            Throwable t = ex.getCause() == null ? ex : ex.getCause();
+            LOG.warn("Sending HTTP Status Code 500: "+t.getMessage(), t);
+            resp.sendError(resp.SC_INTERNAL_SERVER_ERROR, 
+                           "RoossterException: <"+t.getClass().getName()+"> "+t.getMessage());
         }
     }
     
@@ -256,7 +256,7 @@ public class ServletMapper extends HttpServlet
     
     /**
      */
-    protected Map parseRequestArguments(HttpServletRequest req) throws IOException
+    protected Map parseRequestArguments(HttpServletRequest req) throws Exception
     {
         Map args = new HashMap();
 

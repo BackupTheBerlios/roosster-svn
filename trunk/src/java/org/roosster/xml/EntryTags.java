@@ -49,7 +49,7 @@ public interface EntryTags
     public static final String HREF_ATTR    = "href";
     public static final String ISSUED_ATTR  = "issued";
     public static final String MODIFIED_ATTR= "modified";
-    public static final String FETCHED_ATTR = "fetched";
+    public static final String ADDED_ATTR   = "added";
     public static final String EDITED_ATTR  = "edited";
     public static final String TYPE_ATTR    = "type";
     public static final String TITLE_ATTR   = "title";

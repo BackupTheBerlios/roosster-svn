@@ -38,6 +38,7 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
  
 import org.roosster.util.ServletUtil;
+import org.roosster.store.EntryStore;
 import org.roosster.Constants;
 import org.roosster.Registry;
 
@@ -51,6 +52,7 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
     
     public static final String VELCTX_BASEURL     = "baseurl";
     public static final String VELCTX_APPVERSION  = "roossterVersion";
+    public static final String VELCTX_INDEXNUM    = "roossterIndexContains";
     
     private ServletContext servletContext = null;
     
@@ -83,7 +85,7 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
     public Template handleRequest(HttpServletRequest req, 
                                   HttpServletResponse resp,
                                   Context context)
-                           throws java.lang.Exception
+                           throws Exception
     {
         initContext(req, context);
       
@@ -114,15 +116,23 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
     /**
      * 
      */
-    protected void initContext(HttpServletRequest req, Context context)
+    protected void initContext(HttpServletRequest req, Context context) throws Exception
     {
         Registry registry = (Registry) servletContext.getAttribute(Constants.CTX_REGISTRY);
         
         if ( registry == null )
             throw new IllegalStateException("Servlet Environment not properly initialized! No Registry!");
         
+        
         context.put(VELCTX_APPVERSION, registry.getConfiguration().getProperty(Constants.PROP_APPVERSION));
-        context.put(VELCTX_BASEURL, ServletUtil.getBaseUrl(req));
+        context.put(VELCTX_BASEURL,    ServletUtil.getBaseUrl(req));
+        
+        try {
+            EntryStore store = (EntryStore) registry.getPlugin("store");
+            context.put(VELCTX_INDEXNUM,   String.valueOf(store.getDocNum()) );
+        } catch (IOException ex) {
+            context.put(VELCTX_INDEXNUM,   "no docs there yet");
+        }
     }
     
     
