@@ -34,7 +34,6 @@ import org.roosster.Registry;
 
 
 /**
- * Class that provides basic String functions
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */

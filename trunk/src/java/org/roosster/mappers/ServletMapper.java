@@ -42,6 +42,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.roosster.util.MapperUtil;
+import org.roosster.util.ServletUtil;
 import org.roosster.InitializeException;
 import org.roosster.Registry;
 import org.roosster.Output;
@@ -253,7 +254,7 @@ public class ServletMapper extends HttpServlet
      */
     protected String getBaseUrl(HttpServletRequest req)
     {
-        return "http://"+ req.getServerName() +":"+ req.getServerPort()+ req.getContextPath()+"/" ;
+        return ServletUtil.getBaseUrl(req);
     }
 
     
