@@ -26,17 +26,8 @@
  */
 package org.roosster.util;
 
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Arrays;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -77,17 +68,33 @@ public class MapperUtil
      */
     public static void main(String[] args) 
     {
-        String mapperName = args[0] ;
+        LOG.config("Testing which mapper to use: "+args[0]);
         
-        List arguments = Arrays.asList(args);
-        args = (String[]) arguments.subList(1, arguments.size()).toArray(new String[0]);
-     
-        LOG.config("Testing which mapper to use: "+mapperName);
-        
-        if ( ARG_WEBMAPPER.equals(mapperName) )
-            ServletMapper.main(args);
-        else 
-            CliMapper.main(args); // is also default 
+        if ( ARG_WEBMAPPER.equals(args[0]) ) 
+            ServletMapper.main( MapperUtil.shift(args) );
+        else
+            CliMapper.main( ARG_CLIMAPPER.equals(args[0]) ? MapperUtil.shift(args) : args ); 
+    }
+    
+    
+    /**
+     * removes the first element, shortening the array by one
+     */
+    public static String[] shift(String[] array) 
+    {
+        List arr = Arrays.asList(array);
+        return (String[]) arr.subList(1, arr.size()).toArray(new String[0]);
+    }
+    
+    
+    /**
+     * prepends <code>newElem</code> to the array, shifting all elements one index up.
+     */
+    public static String[] unshift(String[] array, String newElem) 
+    {
+        List arr = new ArrayList( Arrays.asList(array) );
+        arr.add(0, newElem);
+        return (String[]) arr.toArray(new String[0]);
     }
     
     
