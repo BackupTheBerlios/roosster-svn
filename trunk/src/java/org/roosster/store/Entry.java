@@ -63,6 +63,7 @@ public class Entry
     public static final String FILETYPE     = "filetype";
     public static final String NOTE         = "note";
     public static final String TAGS         = "tags";
+    public static final String PUBLIC       = "pub";
     public static final String RAW          = "raw";
 
     public static final float  TITLE_BOOST  = 100;
@@ -91,6 +92,7 @@ public class Entry
     private StringBuffer note           = new StringBuffer();
     private StringBuffer raw            = new StringBuffer();
     private String[]     tags           = new String[0];
+    private boolean      pub            = false;
 
 
     /**
@@ -123,6 +125,7 @@ public class Entry
                 setModified(      StringUtil.parseEntryDate( doc.get(MODIFIED) ) );
                 setAdded(         StringUtil.parseEntryDate( doc.get(ADDED) ) );
                 setEdited(        StringUtil.parseEntryDate( doc.get(EDITED) ) );
+                setPublic(        StringUtil.parseBoolean( doc.get(PUBLIC) ) );
             }
         } catch (MalformedURLException ex) {
             throw new IllegalStateException("URL '"+doc.get(URL)+"' is not a valid URL: "+ex.getMessage());
@@ -145,6 +148,7 @@ public class Entry
         doc.add( Field.Keyword(ADDED,         StringUtil.formatEntryDate(added)) );
         doc.add( Field.Keyword(EDITED,        StringUtil.formatEntryDate(edited)) );
         doc.add( Field.Keyword(ISSUED,        StringUtil.formatEntryDate(issued)) );
+        doc.add( Field.Keyword(PUBLIC,        pub ? "true" : "false") );
         doc.add( Field.Text(CONTENT,          content.toString()) );
         
         Field titleField =  Field.Keyword(TITLE, title);
@@ -184,6 +188,24 @@ public class Entry
     }
     
     // ============== Accessors ==============
+
+
+    /**
+     *
+     */
+    public void setPublic(boolean pub)
+    {
+        this.pub = pub;
+    }
+
+
+    /**
+     *
+     */
+    public boolean getPublic()
+    {
+        return pub;
+    }
 
 
     /**
@@ -515,6 +537,8 @@ public class Entry
         String[] tags = that.getTags();
         if ( tags != null && tags.length > 0 )
             setTags(tags);
+        
+        setPublic(that.getPublic());
     }
     
 }

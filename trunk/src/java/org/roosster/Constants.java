@@ -69,7 +69,7 @@ public interface Constants
     // Properties specific for SyncDeliciousCommand
     public static final String PROP_DELICIOUS_USER       = "delicious.username";
     public static final String PROP_DELICIOUS_PASS       = "delicious.password";
-    public static final String PROP_DELICIOUS_LASTUPDATE = "delicious.lastupdate";
+    public static final String PROP_DELICIOUS_LASTSYNC   = "delicious.lastsync";
     
     public static final String PROP_APPVERSION  = "roosster.app.version";
 
@@ -80,6 +80,7 @@ public interface Constants
 
     // args are used in commands, and only an a request basis
     public static final String ARG_URL          = "url";
+    public static final String ARG_PUBLIC       = "pub";
     public static final String ARG_ISSUED       = "issued";
     public static final String ARG_MODIFIED     = "modified";
     public static final String ARG_FORCE        = "force";

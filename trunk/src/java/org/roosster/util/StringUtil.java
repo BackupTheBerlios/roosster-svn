@@ -44,6 +44,17 @@ public class StringUtil
     private static Logger LOG = Logger.getLogger(StringUtil.class);
     
 
+    /**
+     * 
+     */
+    public static boolean parseBoolean(String str)
+    {
+        if ( "true".equalsIgnoreCase(str) || "yes".equalsIgnoreCase(str) || "1".equals(str) )
+            return true;
+        else
+            return false;
+    }
+    
     
     /**
      * 

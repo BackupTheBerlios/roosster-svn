@@ -30,6 +30,7 @@ var ATTR_EDITED     = 'edited';
 var ATTR_HREF       = 'href';
 var ATTR_NAME       = 'name';
 var ATTR_EMAIL      = 'email';
+var ATTR_PUBLIC     = 'public';
 
 var ATTR_TOTAL      = 'total';
 var ATTR_LIMIT      = 'limit';
@@ -89,6 +90,7 @@ function __buildSingleEntry(entryElem) {
         
         entry.title       = entryElem.getAttribute(ATTR_TITLE) || "";
         entry.type        = entryElem.getAttribute(ATTR_TYPE) || "";
+        entry.pub         = entryElem.getAttribute(ATTR_PUBLIC) == 'true' ? true : false;
 
         // TODO make real dates here 
         entry.issuedDate    = parseW3cDate(entryElem.getAttribute(ATTR_ISSUED));
@@ -116,7 +118,7 @@ function __buildSingleEntry(entryElem) {
         else 
             entry.tags = tags ? new Array(tags) : new Array();
         
-        debugConsole.addMsg("Parsed Entry: "+entry.toString());
+        debugConsole.addMsg("Parsed Entry: "+entry.toString() +" "+entry.pub);
         
         return entry;
         
@@ -417,6 +419,7 @@ function Entry(url) {
     this.note         = '';
     this.tags         = new Array();
     this.type         = '';
+    this.pub          = false;
     this.author       = '';
     this.authorEmail  = '';
     this.issuedDate   = null;
@@ -444,6 +447,7 @@ function Entry(url) {
         node.authorEmail.value = this.authorEmail;
         node.note.value = this.note;
         node.content.value = this.content;
+        node.pub.checked = this.pub ? "checked" : null;
         node.issuedDate.value =  displayDate(this.issuedDate);
         node.modifiedDate.value = displayDate(this.modifiedDate);
         node.addedDate.value = displayDate(this.addedDate);
@@ -469,6 +473,7 @@ function Entry(url) {
         this.author = nullOrEmpty(node.author.value) ? this.author : node.author.value;
         this.authorEmail = nullOrEmpty(node.authorEmail.value) ? this.authorEmail : node.authorEmail.value;
         this.note = nullOrEmpty(node.note.value) ? this.note : node.note.value;
+        this.pub = node.pub.checked;
     }
     
     
@@ -491,6 +496,7 @@ function Entry(url) {
         // <li class="entry-url">        
         var liEntryUrl = XmlCreateElement("li");
         liEntryUrl.className = 'entrylist-entry-url';
+        if ( this.pub == true ) liEntryUrl.appendChild(__pubImageNode.cloneNode(true));
         liEntryUrl.appendChild(createLink(this.url, this.title, "_blank"));
         ulEntryList.appendChild(liEntryUrl);
         
@@ -563,6 +569,7 @@ function Entry(url) {
         elemEntry.setAttribute(ATTR_HREF, this.url);
         elemEntry.setAttribute(ATTR_TITLE, this.title);
         elemEntry.setAttribute(ATTR_TYPE, this.type);
+        elemEntry.setAttribute(ATTR_PUBLIC, this.pub == true ? 'true' : 'false' );
         elemEntryList.appendChild(elemEntry);
         
         var elemAuthor = xmlDoc.createElement(TAG_AUTHOR);
@@ -602,3 +609,7 @@ function Entry(url) {
     }
 }
 
+
+var __pubImageNode = document.createElement('img');
+__pubImageNode.setAttribute('src', '$baseurl/images/public.png');
+__pubImageNode.className = "public-image";

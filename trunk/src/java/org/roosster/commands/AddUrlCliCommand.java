@@ -67,6 +67,7 @@ public class AddUrlCliCommand extends AbstractCommand implements Command, Consta
         if ( tags != null )
             entry.setTags( StringUtil.split(tags, TAG_SEPARATOR) );
         
+        entry.setPublic( StringUtil.parseBoolean( (String) arguments.get(ARG_PUBLIC) ) );
         
         EntryList list = new EntryList();
         list.add(entry);

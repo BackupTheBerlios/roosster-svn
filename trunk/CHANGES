@@ -1,4 +1,11 @@
 
+Revision XX / 2005-04-XX / Benjamin Reitzammer
+
+* added public attribute to Entry.class and updated everything affected (API, 
+  parser etc)
+* made JS interface slightly nicer
+* implemented EntryStore.getChangedEntries(after, before)
+
 Revision 58 / 2005-03-21 / Benjamin Reitzammer
 
 * moved initialization in servlet env into ServletContextListener, that's much cleaner

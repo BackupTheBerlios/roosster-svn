@@ -53,6 +53,7 @@ public interface EntryTags
     public static final String EDITED_ATTR  = "edited";
     public static final String TYPE_ATTR    = "type";
     public static final String TITLE_ATTR   = "title";
+    public static final String PUBLIC_ATTR  = "public";
     
     // <author> attributes
     public static final String NAME_ATTR    = "name";

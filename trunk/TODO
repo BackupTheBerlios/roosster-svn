@@ -5,6 +5,7 @@ JS Client
 * implement delete functionality (ask before deleting)
 * add select box for selecting sort order
 * add authentication option
+* make extended search interface
 * LATER mass delete
 
 * DONE add link to URL to every view of Entry
@@ -54,6 +55,7 @@ General
 * rewrite raw content to reflect image locations ...
 * finish SyncDeliciousCommand
 * add public/private flag to Entry.class
+* LATER Thinlet GUI http://thinlet.sf.net/ GUI Editor http://thing.sourc eforge.net/
 
 * DONE add setOutputProperty(String, Object) and respective getter to Output.class
   and use it to pass request to Templates in HtmlMode
@@ -69,4 +71,20 @@ General
 * DONE handle RAW field in XmlProcessor
 
 
-- don't hardcode output mode in ApiServlet 
+Scratchpad Feature:
+====================
+
+* - make own url scheme
+- add boolean attribute to Entry.class,
+-  add search option (on extra page), to search only standalone notes,
+-  show only standalone notes, add new tab for that
+
+
+maybe
+-  implement new Entry class, make Entry an interface and let the new  and old Entry class implement it
+- this would make a Factory necessary,  Commons Discovery?
+
+
+
+
+

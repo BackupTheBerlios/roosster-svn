@@ -55,7 +55,6 @@ public class SearchCommand extends AbstractCommand implements Command
             output.setEntries( store.search(query) );
         else
             output.setEntries( store.getAllEntries() );
-
     }
 
 

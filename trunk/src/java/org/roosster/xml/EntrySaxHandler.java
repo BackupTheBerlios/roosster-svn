@@ -45,6 +45,7 @@ import org.roosster.OperationException;
 import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
 import org.roosster.util.XmlUtil;
+import org.roosster.util.StringUtil;
 
 /**
  * 
@@ -172,6 +173,7 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
             
             currentEntry.setTitle( atts.getValue(TITLE_ATTR) );
             currentEntry.setFileType( atts.getValue(TYPE_ATTR) );
+            currentEntry.setPublic( StringUtil.parseBoolean(atts.getValue(PUBLIC_ATTR)) );
             
             currentEntry.setIssued( parseDate(atts.getValue(ISSUED_ATTR)) );
             currentEntry.setModified( parseDate(atts.getValue(MODIFIED_ATTR)) );

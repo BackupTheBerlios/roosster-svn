@@ -34,6 +34,7 @@ import del.icio.us.Delicious;
 import org.apache.log4j.Logger;
 
 import org.roosster.store.EntryStore;
+import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
 import org.roosster.Constants;
 import org.roosster.Command;
@@ -57,7 +58,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
     {
         Configuration conf = registry.getConfiguration();
       
-        String timeMillisString = conf.getProperty(PROP_DELICIOUS_LASTUPDATE);
+        String timeMillisString = conf.getProperty(PROP_DELICIOUS_LASTSYNC);
         
         Delicious delicious = new Delicious(conf.getProperty(PROP_DELICIOUS_USER), 
                                             conf.getProperty(PROP_DELICIOUS_PASS));
@@ -69,20 +70,39 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
             
             LOG.info("Never synced before with del.icio.us, so this may take some time! Go, get yourself a coffee!");
             
+            // build a diff between the set of entries stored in roosster and
+            // the one fetched from del.icio.us
+            // respect only the ones with public set to true
+            
         } else {
             // ok we synced once, now ask del.icio.us if something changed since 
             // then; if something changed, then get all posts since the roosster
             // last update time
             
             Date lastSync = new Date(Long.parseLong(timeMillisString));
-            Date delLastUpdate = delicious.getLastUpdate();
+            Date lastDelUpdate = delicious.getLastUpdate();
             
-            LOG.info("Last sync was "+lastSync+", del.icio.us' last update was "+delLastUpdate);            
+            LOG.info("Last sync was "+lastSync+", del.icio.us' last update was "+lastDelUpdate);
+
+            
+            // get items from del.icio.us since lastSync, or if lastSync is after
+            // lastDelUpdate get all Posts since lastDelUpdate
+            
+            
+            
+            // build a diff between the two sets, post new links to del.icio.us, 
+            // update changed ones, and store new links in roosster
+            // respect only the ones with public set to true
+            
+            
+            EntryStore store = (EntryStore) registry.getPlugin("store");
+            EntryList changedEntries = store.getChangedEntries(lastSync, null);
+            output.setEntries(changedEntries);            
         }
             
       
-        conf.setRequestProperty(PROP_DELICIOUS_LASTUPDATE, System.currentTimeMillis() +"");
-        conf.persist(new String[] {PROP_DELICIOUS_LASTUPDATE});
+        conf.setRequestProperty(PROP_DELICIOUS_LASTSYNC, System.currentTimeMillis() +"");
+        conf.persist(new String[] {PROP_DELICIOUS_LASTSYNC});
     }
 
 
@@ -92,5 +112,8 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
     {
         return "Sync with del.icio.us";
     }
-
+    
+    
 }
+
+

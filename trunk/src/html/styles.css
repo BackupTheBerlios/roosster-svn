@@ -8,9 +8,9 @@
  * See http://www.opensource.org/licenses/artistic-license.php for details
  */
 ## velocity helper definitions
-#set ($linkColor        = '#5F86FF')
-#set ($headerColor      = '#8FABFF')
-#set ($tagDatesColor    = '#0050CF')
+#set ($linkColor        = '#33a1ff')
+#set ($headerColor      = '#33a1ff')
+#set ($tagDatesColor    = '#008aff')
 #set ($inputFocusColor  = '#EFEFEF')
 #set ($errorColor       = '#EF0E0E')
 #set ($infoColor        = '#FAD163')
@@ -68,12 +68,14 @@ a:hover { background-color:$inputFocusColor; }
 dfn     { border-bottom:dotted 1px black; font-style:normal;}
 body    { margin:0pt;padding:0pt; }
 
+input[type=submit]            { background: url($baseurl/images/button_bg.png) top left repeat-x; }
 input[type=text]              { width:250px; }
 input[readonly=readonly]      { border-width:0px; }
 textarea                      { width:350px; }
 input:focus, textarea:focus   { background-color:$inputFocusColor; }
 input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1px solid black; }
 
+.public-image { float:left; margin:10px; } 
  
 .tab      { display: none; }
 #tabarea  { padding:10px; }
@@ -95,12 +97,18 @@ input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1p
  *
  */
 #roosster { 
-    background-color:$headerColor; 
+    background: $headerColor url($baseurl/images/header_bg.png) top left repeat-x;
     padding:1px 10px 10px 0px; 
     margin: 0px 0px 10px 0px;
-    height:40px;
+    height:50px;
 }
-.roossterheading  { font-size:16px; font-weight:900; margin:10px 0px 0px 20px; padding:10px 0px 0px 0px;}
+.roossterheading  { 
+    font-family: Garamond, 'Copperplate Gothic Light', Georgia, 'Times New Roman', Serif;
+    font-size:16px; 
+    font-weight:900; 
+    margin:10px 0px 0px 20px; 
+    padding:10px 0px 0px 0px;
+}
 
 #tablist li {
     list-style-type: none;
@@ -112,7 +120,7 @@ input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1p
 #tablist li a { 
     color:$bgColor; 
     width:80px; 
-    height:30px; 
+    height:35px; 
     font-weight:600; 
     display:block; 
     padding-top:5px; 

@@ -75,6 +75,7 @@ public class PutEntryCliCommand extends AbstractCommand implements Command, Cons
         String tags     = (String) arguments.get(ARG_TAGS);
         String issued   = (String) arguments.get(ARG_ISSUED);
         String modified = (String) arguments.get(ARG_MODIFIED);
+        String pubStr   = (String) arguments.get(ARG_PUBLIC);
         if ( title != null )
             entry.setTitle(title);
         if ( note != null )
@@ -85,7 +86,8 @@ public class PutEntryCliCommand extends AbstractCommand implements Command, Cons
             entry.setModified(StringUtil.parseEntryDate(modified));
         if ( tags != null ) 
             entry.setTags( StringUtil.split(tags, TAG_SEPARATOR) );
-
+        if ( pubStr != null ) 
+            entry.setPublic( StringUtil.parseBoolean(pubStr) );
         
         EntryList list = new EntryList();
         list.add(entry);

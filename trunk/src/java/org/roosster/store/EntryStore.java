@@ -46,6 +46,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.RangeQuery;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.index.Term;
@@ -53,6 +54,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.index.IndexWriter;
 
+import org.roosster.util.StringUtil;
 import org.roosster.*;
 
 /**
@@ -277,32 +279,44 @@ public class EntryStore implements Plugin, Constants
         LOG.debug("Sort Instance: "+sort);
         
         Hits hits = searcher.search(query, sort);
-        int hitsNum = hits.length();
-
-        EntryList entries = new EntryList(hitsNum);
-
-        int limit  = getLimit();
-        int offset = getOffset();
-        LOG.info("Found "+hitsNum+" matches for query: <"+query+">");
-        LOG.debug("Offset is : "+offset+" / Limit is: "+limit);
-
-        entries.setLimit(limit);
-        entries.setOffset(offset);
         
-        if ( hitsNum > offset ) {
-            // Hits class throws an IndexOutOfBoundsException just like an
-            // array, when an element is requested, that's outside the
-            // hits index bounds
-            int lastElem = hitsNum >= offset+limit ? offset+limit : hitsNum;
-
-            for(int i = offset; i < lastElem; i++) {
-                entries.add( new Entry(hits.doc(i), hits.score(i)) );
-            }
-        }
-
-        return entries;
+        LOG.info("Found "+hits.length()+" matches for query: <"+query+">");
+        
+        return fillEntryList(hits);
     }
 
+    
+    /**
+     * @return an {@link EntryList EntryList}-objects that's never <code>null</code>
+     */
+    public EntryList getChangedEntries(Date after, Date before) throws IOException
+    {
+        if ( !isInitialized() )
+            throw new IllegalStateException("Database must be initialized before use!");
+        
+        if ( after == null )
+            after = new Date();
+        if ( before == null )
+            before = new Date();
+        
+        LOG.debug("Getting Entries edited after "+after+" and before "+before);
+        
+        Term afterTerm = new Term(Entry.EDITED, StringUtil.formatEntryDate(after));
+        Term beforeTerm = new Term(Entry.EDITED, StringUtil.formatEntryDate(before));
+        
+        Query query = new RangeQuery(afterTerm, beforeTerm, true); // search inclusively
+        IndexSearcher searcher = new IndexSearcher(indexDir);
+        
+        Sort sort = determineSort();
+        LOG.debug("Sort Instance: "+sort);
+        
+        Hits hits = searcher.search(query, sort);        
+
+        LOG.info("Found "+hits.length()+" matches for query: <"+query+">");
+        
+        return fillEntryList(hits);
+    }
+    
 
     /**
      * @return <code>null</code> if there is no entry with the
@@ -608,6 +622,40 @@ public class EntryStore implements Plugin, Constants
         }
 
         return analyzer;
+    }
+    
+    
+    /**
+     * 
+     */
+    private EntryList fillEntryList(Hits hits) throws IOException
+    {
+        if ( hits == null ) 
+            throw new IllegalArgumentException("Parameter 'hits' is not allowed to be null");
+      
+        int hitsNum = hits.length();
+
+        EntryList entries = new EntryList(hitsNum);
+
+        int limit  = getLimit();
+        int offset = getOffset();
+        LOG.debug("Offset is : "+offset+" / Limit is: "+limit);
+
+        entries.setLimit(limit);
+        entries.setOffset(offset);
+        
+        if ( hitsNum > offset ) {
+            // Hits class throws an IndexOutOfBoundsException just like an
+            // array, when an element is requested, that's outside the
+            // hits index bounds
+            int lastElem = hitsNum >= offset+limit ? offset+limit : hitsNum;
+
+            for(int i = offset; i < lastElem; i++) {
+                entries.add( new Entry(hits.doc(i), hits.score(i)) );
+            }
+        }
+
+        return entries;
     }
 
 

@@ -78,6 +78,7 @@ public class EntryGenerator implements EntryTags
                 entryNode.setAttribute(HREF_ATTR,     entry.getUrl().toString());
                 entryNode.setAttribute(TITLE_ATTR,    entry.getTitle());
                 entryNode.setAttribute(TYPE_ATTR,     entry.getFileType());
+                entryNode.setAttribute(PUBLIC_ATTR,   entry.getPublic() ? "true" : "false");
                 
                 entryNode.setAttribute(ISSUED_ATTR,   XmlUtil.formatW3cDate(entry.getIssued()) );
                 entryNode.setAttribute(MODIFIED_ATTR, XmlUtil.formatW3cDate(entry.getModified()) );

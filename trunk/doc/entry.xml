@@ -8,7 +8,8 @@
          added="...w3cdate..." 
          edited="...w3cdate..."
          type=".."  
-         title="...">
+         title="..."
+         public="true">
     <author name="" email=""/>
     <author name="" email=""/>
     <tag>test</tag>
