@@ -157,6 +157,9 @@
           </jar>
     </target>
 
+    <target name="jar-all" depends="jar-cli, jar-web">
+    </target>
+    
     <target name="clean" depends="init" description="Removes 'dist' and 'build' directories">
         <delete dir="${dist.dir}" />
         <delete dir="${build.dir}" />
