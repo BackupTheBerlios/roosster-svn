@@ -28,30 +28,35 @@ package org.roosster.logging;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
+import org.roosster.util.StringUtil;
 
 /**
+ * Simple Formatter which returns a log message always in the format:<br/>
+ * <pre>&lt;TIME&gt;  [&lt;LOG_LEVEL&gt;] &lt;LOG_MESSAGE&gt;</pre>
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: ConsoleFormatter.java,v 1.1 2004/12/03 14:30:15 firstbman Exp $
  */
 public class ConsoleFormatter extends Formatter
 {
-
 
     /**
      *
      */
     public String format(LogRecord record)
     {
-        String padded = pad("["+record.getLevel().getName()+"]", 10, ' ');
-        StringBuffer msg = new StringBuffer(padded);
-        msg.append(record.getMessage()).append("\n");
+        SimpleDateFormat df = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss.SSS");
+      
+        String padded = StringUtil.leftPad("  ["+record.getLevel().getName()+"]", 12, ' ');
+        
+        StringBuffer msg = new StringBuffer( df.format(new Date()) );
+        
+        msg.append(padded).append(record.getMessage()).append("\n");
 
         if ( record.getThrown() != null ) {
             StringWriter strWriter = new StringWriter();
@@ -62,20 +67,4 @@ public class ConsoleFormatter extends Formatter
         return msg.toString();
     }
 
-
-    /**
-     *
-     */
-    private String pad(String s, int length, char c){
-        int needed = length - s.length();
-        if (needed <= 0){
-            return s;
-        }
-        StringBuffer sb = new StringBuffer(length);
-        sb.append(s);
-        for (int i=0; i<needed; i++){
-            sb.append(c);
-        }
-        return (sb.toString());
-    }
 }

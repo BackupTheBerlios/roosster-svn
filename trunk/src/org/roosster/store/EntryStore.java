@@ -187,7 +187,15 @@ public class EntryStore implements Plugin
 
 
     /**
-    * @return an {@link EntryList EntryList}-objects that's never <code>null</code>
+     */
+    public int getDocNum() throws IOException
+    {
+        return getReader().maxDoc();
+    }
+    
+      
+    /**
+     * @return an {@link EntryList EntryList}-objects that's never <code>null</code>
      */
     public EntryList search(String queryStr) throws IOException, ParseException
     {
@@ -209,6 +217,9 @@ public class EntryStore implements Plugin
         LOG.info("Found "+hitsNum+" matches for query: <"+query+">");
         LOG.finest("Offset is : "+offset+" / Limit is: "+limit);
 
+        entries.setLimit(limit);
+        entries.setOffset(offset);
+        
         if ( hitsNum > offset ) {
             // Hits class throws an IndexOutOfBoundsException just like an
             // array, when an element is requested, that's outside the

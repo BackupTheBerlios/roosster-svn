@@ -39,6 +39,7 @@ import org.roosster.InitializeException;
 import org.roosster.Registry;
 import org.roosster.Configuration;
 import org.roosster.util.StringUtil;
+import org.roosster.logging.VelocityLogSystem;
 
 /**
  *
@@ -74,8 +75,10 @@ public class TemplateFactory implements Plugin
             if ( path == null || "".equals(path) ) 
                 path = conf.getHomeDir() + "/"+DEF_TMPL_PATH;
 
+            LOG.finest("Setting template path to '"+path+"'");
             props.setProperty("file.resource.loader.path", path);
-
+            
+            Velocity.setProperty("runtime.log.logsystem", new VelocityLogSystem());
             Velocity.init(props);
 
         } catch (Exception ex) {
@@ -138,17 +141,7 @@ public class TemplateFactory implements Plugin
         VelocityContext context = new VelocityContext();
         context.put("stringutil", new StringUtil(registry));
 
-        Configuration conf =  registry.getConfiguration();
-        String[] names = conf.getPropertyNames("internal.");
-
-        for (int i = 0; i < names.length; i++) {
-            String prop = conf.getProperty(names[i]);
-            String argName = names[i].substring("internal.".length());
-
-            LOG.fine("Adding '"+argName+"' with value '"+prop+"' to TemplateContext");
-           
-            context.put(argName, prop);
-        }
+        context.put("props", registry.getConfiguration().getProperties());
         
         return context;
     }

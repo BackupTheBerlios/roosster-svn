@@ -34,6 +34,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.DateField;
 import org.apache.lucene.document.Field;
 
+import org.roosster.util.StringUtil;
+
 /**
  * TODO make dateformat configurable
  *
@@ -41,6 +43,8 @@ import org.apache.lucene.document.Field;
  */
 public class Entry
 {
+    public static final String TAG_SEPARATOR= ",";
+  
     public static final String ALL          = "all";
     public static final String CONTENT      = "content";
     public static final String LAST_MOD     = "lastmod";
@@ -51,17 +55,21 @@ public class Entry
     public static final String AUTHOR       = "author";
     public static final String AUTHOREMAIL  = "authormail";
     public static final String FILETYPE     = "filetype";
+    public static final String NOTE         = "note";
+    public static final String TAGS         = "tags";
 
 
     private Date         issued	       = null;
     private Date         lastModified	 = null;
-    private Date         lastFetched	 = null;
-    private URL          url           = null;
-    private String       title         = "";
-    private String       author        = "";
-    private String       authorEmail   = "";
+    private Date         lastFetched	   = null;
+    private URL          url            = null;
+    private String       title          = "";
+    private String       author         = "";
+    private String       authorEmail    = "";
     private String       fileType	     = "";
-    private StringBuffer content       = new StringBuffer();
+    private StringBuffer content        = new StringBuffer();
+    private StringBuffer note           = new StringBuffer();
+    private String[]     tags           = new String[0];
 
 
     /**
@@ -90,6 +98,8 @@ public class Entry
                 setAuthorEmail( doc.getField(AUTHOREMAIL).stringValue() );
                 setFileType( doc.getField(FILETYPE).stringValue() );
                 setContent( doc.getField(CONTENT).stringValue() );
+                setNote( doc.getField(NOTE).stringValue() );
+                setTags( StringUtil.splitString(doc.getField(TAGS).stringValue(), TAG_SEPARATOR) );
 
                 setIssued( !"".equals(doc.getField(ISSUED).stringValue())
                            ? DateField.stringToDate(doc.getField(ISSUED).stringValue()) : null );
@@ -120,6 +130,8 @@ public class Entry
         doc.add( Field.Text(AUTHOREMAIL,   authorEmail) );
         doc.add( Field.Text(FILETYPE,      fileType) );
         doc.add( Field.Text(CONTENT,       content.toString()) );
+        doc.add( Field.Text(NOTE,          note.toString()) );
+        doc.add( Field.Text(TAGS,          StringUtil.joinStrings(tags, TAG_SEPARATOR)) );
 
         String lastModStr = lastModified != null ? DateField.dateToString(lastModified) : "";
         String lastFetStr = lastFetched != null ? DateField.dateToString(lastFetched) : "";
@@ -128,7 +140,8 @@ public class Entry
         doc.add( Field.Text(LAST_FETCHED,  lastFetStr) );
         doc.add( Field.Text(ISSUED,        issuedStr) );
 
-        doc.add( Field.Text(ALL,  url +" "+ title +" "+ author+" "+authorEmail+" "+content) );
+        doc.add( Field.Text(ALL,  url +" "+ title +" "+ author+" "+authorEmail+" "+
+                                  content +" "+note+" "+StringUtil.joinStrings(tags, TAG_SEPARATOR)) );
         return doc;
     }
 
@@ -138,7 +151,7 @@ public class Entry
      */
     public String toString()
     {
-        return url.toString();
+        return "Entry: "+url.toString();
     }
 
 
@@ -318,4 +331,47 @@ public class Entry
       this.fileType = fileType;
     }
 
+    /**
+     * Returns the value of tags.
+     */
+    public String[] getTags()
+    {
+      return tags;
+    }
+  
+    /**
+     * Sets the value of tags.
+     * @param tags The value to assign tags.
+     */
+    public void setTags(String[] tags)
+    {
+      this.tags = tags;
+    }
+  
+    /**
+     * Returns the value of note.
+     */
+    public String getNote()
+    {
+      return note.toString();
+    }
+  
+    /**
+     * Sets the value of note.
+     * @param note The value to assign note.
+     */
+    public void setNote(String note)
+    {
+      this.note = new StringBuffer(note);
+    }
+
+    /**
+     * 
+     */
+    public void appendNote(String note)
+    {
+      this.note.append(note);
+    }
 }
+
+

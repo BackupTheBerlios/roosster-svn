@@ -1,6 +1,16 @@
 ## navigation include for roosster
-<ul class="navigation">
-    <li class="nav-elem"><a href="$baseurl">Search</a></li>
-    <li class="nav-elem"><a href="${baseurl}addurlform">Add URL</a></li>
-</ul>
+<table class="navigation">
+  <tr>
+    <td>
+      <span class="nav-elem"><a href="#url('')">Search</a></span> 
+      <span class="nav-elem"><a href="#url('addurlform')">Add URL</a></span>
+    </td>
+    <td class="top-search-box">
+      <form action="#url('search')" method="get">
+        Search <input type="text" size="40" name="query" value="$!{props.get('query')}" />
+      </form>    
+    </td>
+  </tr>
+</table>
+  
 

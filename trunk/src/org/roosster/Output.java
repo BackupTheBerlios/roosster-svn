@@ -32,10 +32,12 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.roosster.store.Entry;
 import org.roosster.store.EntryList;
+import org.roosster.util.StringUtil;
 
 
 /**
@@ -49,15 +51,11 @@ public class Output
 
     private static final String[] AVL_MODES = new String[] {"atom", "html", "text"};
 
-    /** if the value of this property is set to a value below zero, no output is truncated
-     */
-    public static final String PROP_TRUNCLENGTH = "output.truncate.length";
-
     private Registry    registry       = null;
     private OutputMode  mode           = null;
     private EntryList   entries        = new EntryList();
     private String      templateName   = null;
-    private int         truncateLength = -1;
+    private boolean     truncation     = true;
 
     /**
      *
@@ -68,8 +66,6 @@ public class Output
             throw new IllegalArgumentException("Output-object needs non-null Registry object ");
 
         this.registry = registry;
-        String truncLength = registry.getConfiguration().getProperty(PROP_TRUNCLENGTH, "-1");
-        truncateLength = Integer.valueOf(truncLength).intValue();
     }
 
 
@@ -123,6 +119,24 @@ public class Output
             this.entries = entries;
     }
 
+    
+    /**
+     *
+     */
+    public boolean getTruncation()
+    {
+        return truncation;
+    }
+
+    
+    /**
+     *
+     */
+    public void setTruncation(boolean truncation)
+    {
+        this.truncation = truncation;
+    }
+
 
     /**
      *
@@ -139,6 +153,13 @@ public class Output
                 outEntries[i] = entries.getEntry(i);
             }
 
+            if ( !truncation ) {
+                Configuration conf = registry.getConfiguration();
+                Map reqArgs = conf.getProperties();
+                reqArgs.put(StringUtil.PROP_TRUNCLENGTH, "-1");
+                conf.setRequestArguments(reqArgs);
+            }
+            
             LOG.fine("Running OutputMode "+mode.getClass());
             mode.output(registry, this, writer, outEntries);
         } finally {
@@ -163,24 +184,6 @@ public class Output
     public void setOutputMode(String modeName) throws OperationException
     {
         loadOutputMode(modeName, registry);
-    }
-
-
-    /**
-     */
-    public void setTruncateLength(int truncateLength)
-    {
-        this.truncateLength= truncateLength;
-    }
-
-
-    /**
-     * OutputMode-classes may opt to ignore the truncation setting
-     * completely
-     */
-    public int getTruncateLength()
-    {
-        return truncateLength;
     }
 
 

@@ -1,0 +1,25 @@
+<html>
+    <head>
+      <title>roosster</title>
+      <style type="text/css">
+          <!--
+          #include("styles.css") 
+          //-->
+      </style>
+    </head>
+    <body>
+        <div id="head">
+          <h1>roosster - personal search</h1>
+        </div>
+        
+        #parse("navigation.html")
+        
+        <div id="content">
+          #parse( $content_template )
+        </div>
+        <div id="foot">
+          powered by <a href="http://roosster.org/">roosster - personal search</a>
+          | <em>index contains $!{props.get("internal.docnum")} Entries</em>
+        </div>
+    </body>
+</html>

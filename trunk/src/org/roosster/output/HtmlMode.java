@@ -45,9 +45,11 @@ public class HtmlMode implements OutputMode
 {
     private static Logger LOG = Logger.getLogger(HtmlMode.class.getName());
     
-    private static final String ENTRY_TMPL = "entry.html";
-    private static final String CSS_TMPL   = "styles.css";
+    private static final String PROP_SCREEN_TMPL = "output.html.screen_tmpl";
 
+    private static final String SCREEN_TMPL = "main_screen.html";
+    private static final String ENTRY_TMPL  = "entries.html";
+    
     private String contentType = DEF_CONTENT_TYPE;
 
     /**
@@ -61,17 +63,18 @@ public class HtmlMode implements OutputMode
 
         TemplateFactory tmplFactory = (TemplateFactory) registry.getPlugin("templates");
         try {
+            String screenTmpl = registry.getConfiguration().getProperty(PROP_SCREEN_TMPL, SCREEN_TMPL);
+            
             String tmplName = output.getTemplateName();
             if ( tmplName == null )
                 tmplName = ENTRY_TMPL;
+
+            LOG.fine("Using Templates: screen: "+screenTmpl+", tmpl: "+tmplName);
             
-            LOG.fine("Using Template: "+tmplName);
-            
-            Template tmpl = tmplFactory.getTemplate(tmplName);
-            
-            tmpl.set("title",   "personal search");
-            tmpl.set("num",     new Integer(entries.length));
-            tmpl.set("entries", Arrays.asList(entries));
+            Template tmpl = tmplFactory.getTemplate(screenTmpl);
+            tmpl.set("content_template", tmplName);
+            tmpl.set("num",              new Integer(entries.length));
+            tmpl.set("entries",          Arrays.asList(entries));
 
             tmpl.write(writer);
 

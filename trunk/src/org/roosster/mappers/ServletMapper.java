@@ -47,6 +47,7 @@ import org.roosster.InitializeException;
 import org.roosster.Registry;
 import org.roosster.Output;
 import org.roosster.Dispatcher;
+import org.roosster.store.EntryStore;
 
 
 /**
@@ -71,6 +72,7 @@ public class ServletMapper extends HttpServlet
     
     public static final String ARG_MODE    = "output.mode";
     public static final String ARG_BASEURL = "internal.baseurl";
+    public static final String ARG_DOCNUM  = "internal.docnum";
 
     private static Properties properties = null;
     
@@ -143,21 +145,22 @@ public class ServletMapper extends HttpServlet
             String commandName = getCommandName(req);
             Map args = parseRequestArguments(req);
 
-            LOG.fine("BASE URL is "+getBaseUrl(req));
-            args.put(ARG_BASEURL, getBaseUrl(req));
+            setSpecialArgs(req, args);
 
-            registry.getConfiguration().setRequestArguments(args);
-            
+            // run commands            
             Output output = dispatcher.run(commandName, args);
 
-            // TODO see if conf.getRequestArguments() contains a
-            // different outputmode
+            // determine output mode
+            String outputMode = (String) args.get(ARG_MODE);
+            if ( outputMode == null || "".equals(outputMode) )
+                outputMode = DEF_OUTPUT_MODE;
             
-            output.setOutputMode(DEF_OUTPUT_MODE);
+            output.setOutputMode(outputMode);
             String contentType = output.getContentType();
             contentType = contentType == null ? DEF_CONTENT_TYPE : contentType; 
             resp.setContentType(contentType+"; charset="+outputEncoding);
 
+            // output everything
             writer = resp.getWriter();
             output.output(writer);
             
@@ -188,7 +191,24 @@ public class ServletMapper extends HttpServlet
     
     // ============ private Helper methods ============
 
-
+    
+    /**
+     * 
+     */
+    private void setSpecialArgs(HttpServletRequest req, Map args) throws IOException
+    {
+        EntryStore store = (EntryStore) registry.getPlugin("store");
+        
+        args.put(ARG_BASEURL, getBaseUrl(req));
+        args.put(ARG_DOCNUM,  new Integer(store.getDocNum()));
+    
+        registry.getConfiguration().setRequestArguments(args);
+    }
+    
+    
+    /**
+     * 
+     */
     private String getBaseUrl(HttpServletRequest req)
     {
         return "http://"+ req.getServerName() +":"+ req.getServerPort()+ CONTEXT_PATH+"/" ;

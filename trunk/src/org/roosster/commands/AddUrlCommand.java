@@ -38,17 +38,20 @@ import org.roosster.input.UrlFetcher;
 import org.roosster.Command;
 import org.roosster.Registry;
 import org.roosster.Output;
+import org.roosster.util.StringUtil;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: AddUrlCommand.java,v 1.1 2004/12/03 14:30:13 firstbman Exp $
  */
 public class AddUrlCommand extends AbstractCommand implements Command
 {
 
     public static final String ARG_URL   = "url";
     public static final String ARG_FORCE = "force";
+    public static final String ARG_NOTE  = "note";
+    public static final String ARG_TAGS  = "tags";
+    public static final String ARG_TITLE = "title";
 
 
     /**
@@ -59,18 +62,33 @@ public class AddUrlCommand extends AbstractCommand implements Command
     {
         validateArguments(arguments, new String[] {ARG_URL});
 
-        String forceStr = (String) arguments.get(ARG_FORCE);
-
-        URL url = new URL( (String) arguments.get(ARG_URL) );
-
         UrlFetcher fetcher = (UrlFetcher) registry.getPlugin("fetcher");
-        Entry[] entries = fetcher.fetch(new URL[] {url});
-
+        Entry[] entries = fetcher.fetch(new URL[] {new URL( (String) arguments.get(ARG_URL) )});
+        
         if ( entries.length > 0 ) {
+            // read in and set optional fields
+            String title = (String) arguments.get(ARG_TITLE);
+            if ( title != null && !"".equals(title) ) 
+                for(int i = 0; i < entries.length; i++) { entries[i].setTitle(title); }
+            
+            String note  = (String) arguments.get(ARG_NOTE);
+            String tags  = (String) arguments.get(ARG_TAGS);
+            if ( note != null || tags != null ) {
+                for(int i = 0; i < entries.length; i++) {
+                    if ( note != null )
+                        entries[i].setNote(note);
+                    if ( tags != null ) 
+                        entries[i].setTags( StringUtil.splitString(tags, Entry.TAG_SEPARATOR) );
+                }
+            }
+
+            // shall existing entries get overwritten, or an exception thrown?
+            String forceStr = (String) arguments.get(ARG_FORCE);
             boolean force = false;
             if ( "1".equals(forceStr) || "true".equalsIgnoreCase(forceStr) )
                 force = true;
 
+            // now finally store entries in index
             EntryStore store = (EntryStore) registry.getPlugin("store");
             store.addEntries(entries, force);
         }

@@ -27,9 +27,11 @@
 package org.roosster.util;
 
 import java.util.logging.Logger;
+import java.util.logging.Level;
+import java.util.regex.PatternSyntaxException;
 
 import org.roosster.Registry;
-import org.roosster.Output;
+
 
 /**
  * Class that provides basic String functions
@@ -41,29 +43,95 @@ public class StringUtil
 {
     private static Logger LOG = Logger.getLogger(StringUtil.class.getName());
 
+
+    /** if the value of this property is set to a value below zero, no output is truncated.
+     * Value is: <pre>output.truncate.length</pre>
+     */
+    public static final String PROP_TRUNCLENGTH = "output.truncate.length";
+
     private Registry registry       = null;
     private int      truncateLength = -1;
     
+    
+    /**
+     * 
+     */
     public StringUtil(Registry registry)
     {
         if ( registry == null )
             throw new IllegalArgumentException("Argument 'registry' cannot be null");
         
         this.registry = registry;
-        String truncLength = registry.getConfiguration().getProperty(Output.PROP_TRUNCLENGTH, "-1");
+        String truncLength = registry.getConfiguration().getProperty(PROP_TRUNCLENGTH, "-1");
         truncateLength = Integer.valueOf(truncLength).intValue();
     }
     
     
     /**
-     *
+     * It truncates the specified string to a length specified in the property
+     * {@link PROP_TRUNCLENGTH}. This method is thread safe. 
      */
-    public String trunc(String str)
+    public String truncate(String str)
     {
         return StringUtil.truncate(str, truncateLength);
     }
     
 
+    /**
+     * @return null if an exception occurred
+     */
+    public static String[] splitString(String str, String regex)
+    {
+        try {
+            if ( str != null && regex != null ) {
+                return str.split(regex);
+            }
+        } catch (PatternSyntaxException ex) {
+            LOG.log(Level.WARNING, "Exception while splitting string", ex);
+        }
+        
+        return null;
+    }
+    
+    
+    /**
+     * 
+     */
+    public static String joinStrings(String[] strings, String joinStr)
+    {
+        if ( strings == null )
+            return null;
+        else if ( strings.length < 1 || joinStr == null )
+            return "";
+        
+        StringBuffer sb = new StringBuffer();
+        for(int i = 0; i < strings.length; i++) {
+            sb.append(strings[i]);
+            if ( i+1 < strings.length )
+                sb.append(joinStr);
+        }
+        
+        return sb.toString();
+    }
+    
+    /**
+     * 
+     */
+    public static String leftPad(String s, int length, char c){
+        int needed = length - s.length();
+        if (needed <= 0) 
+            return s;
+        
+        StringBuffer sb = new StringBuffer(length);
+        sb.append(s);
+        for (int i = 0; i < needed; i++) {
+            sb.append(c);
+        }
+        
+        return sb.toString();
+    }
+    
+    
     /**
      * Truncate a String to a specified length
      *
@@ -81,5 +149,29 @@ public class StringUtil
             return str;
         else
             return str.length() > length+1 ? str.substring(0, length) : str;
+    }
+    
+    
+    /**
+     */
+    public String join(String[] str, String joinStr)
+    {
+        return StringUtil.joinStrings(str, joinStr);
+    }
+    
+    
+    /**
+     */
+    public String[] split(String str, String regex)
+    {
+        return StringUtil.splitString(str, regex);
+    }
+    
+    
+    /**
+     */
+    public String pad(String str, int length, char c)
+    {
+        return StringUtil.leftPad(str, length, c);
     }
 }

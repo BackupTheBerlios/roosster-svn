@@ -89,7 +89,13 @@ public class Configuration
      */
     public Map getProperties()
     {
-        return new HashMap(properties);
+        Map map = new HashMap(properties);
+        
+        Map args = getRequestArguments();
+        if ( args != null )
+            map.putAll(args);
+        
+        return map;
     }
 
 

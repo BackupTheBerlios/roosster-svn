@@ -37,6 +37,8 @@ import java.util.List;
 public class EntryList extends AbstractList
 {
     private int totalSize = 0;
+    private int offset	   = 0;
+    private int limit     = 0;
     private List list = new ArrayList();
 
 
@@ -100,5 +102,43 @@ public class EntryList extends AbstractList
     public Entry getEntry(int i)
     {
         return (Entry) list.get(i);
+    }
+    
+    
+    /**
+     * Returns the value of offset.
+     */
+    public int getOffset()
+    {
+      return offset;
+    }
+  
+    
+    /**
+     * Sets the value of offset.
+     * @param offset The value to assign offset.
+     */
+    public void setOffset(int offset)
+    {
+      this.offset = offset;
+    }
+  
+    
+    /**
+     * Returns the value of limit.
+     */
+    public int getLimit()
+    {
+      return limit;
+    }
+
+    
+    /**
+     * Sets the value of limit.
+     * @param limit The value to assign limit.
+     */
+    public void setLimit(int limit)
+    {
+      this.limit = limit;
     }
 }

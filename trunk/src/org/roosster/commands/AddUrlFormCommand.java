@@ -24,47 +24,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.web;
+package org.roosster.commands;
 
-import java.io.PrintWriter;
-import java.io.IOException;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import javax.servlet.http.*;
-import javax.servlet.ServletException;
+import java.util.Map;
 
-import org.roosster.OperationException;
-import org.roosster.InitializeException;
-import org.roosster.Dispatcher;
+import org.roosster.Command;
 import org.roosster.Registry;
-import org.roosster.Configuration;
 import org.roosster.Output;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: RoossterServlet.java,v 1.1 2004/12/03 14:30:16 firstbman Exp $
  */
-public class RoossterServlet extends HttpServlet
+public class AddUrlFormCommand extends AbstractCommand implements Command
 {
-    private static Logger LOG = Logger.getLogger(RoossterServlet.class.getName());
-
-    /**
-     *
-     */
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
-                throws ServletException, IOException
-    {
-        resp.getWriter().print("HELLO ROOSSTER");
-    }
-
+    private static final String TMPL = "addurlform.html"; 
     
     /**
-     *
      */
-    public void doGet(HttpServletRequest req, HttpServletResponse resp)
-               throws ServletException, IOException
+    public void execute(Map arguments, Registry registry, Output output)
+                 throws Exception
     {
-        doPost(req, resp);
+        output.setTemplateName(TMPL);
+    }
+
+
+    /**
+     */
+    public String getName()
+    {
+        return "Add Url";
     }
 }
+

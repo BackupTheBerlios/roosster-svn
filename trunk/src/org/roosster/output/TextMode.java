@@ -52,6 +52,8 @@ public class TextMode implements OutputMode
         if ( entries == null )
             throw new IllegalArgumentException("entries parameter is not allowed to be null");
 
+        StringUtil util = new StringUtil(registry);
+        
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < entries.length; i++) {
             stream.println("URL:           "+ entries[i].getUrl() );
@@ -62,8 +64,10 @@ public class TextMode implements OutputMode
             stream.println("Last-Modified: "+ entries[i].getLastModified() );
             stream.println("Last-Fetched:  "+ entries[i].getLastFetched() );
             stream.println("FileType:      "+ entries[i].getFileType() );
+            stream.println("Tags:          "+ StringUtil.joinStrings(entries[i].getTags(), Entry.TAG_SEPARATOR) );
+            stream.println("Note:          "+ util.truncate(entries[i].getNote()) );
             stream.println("Content:");
-            stream.println(StringUtil.truncate(entries[i].getContent(), output.getTruncateLength()));
+            stream.println( util.truncate(entries[i].getContent()) );
         }
 
         stream.println();

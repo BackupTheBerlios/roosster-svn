@@ -1,19 +1,37 @@
-<html>
-    <head>
-        #parse("head.html")
-    </head>
-    <body>
-    Number of Entries: <b>$num</b>
-    <ul id="entry-list">
-        #foreach($entry in $entries)
-            <li>
-                <ul class="entry">
-                    <li class="entry-url"><a href="$entry.url">$entry.title</a></li> 
-                    <li class="entry-content">#truncate($entry.content)<strong>[...]</strong></li> 
-                    <li class="entry-info">$entry.issued</li>
-                </ul>
-            </li>
-        #end
-    </ul>
-    </body>
-</html>
+#set( $entry = $entries.get(0))
+
+<h3>Details for Entry: <strong>$entry.url</strong></h3>
+
+<form action="putentry" method="post">
+  <input type="hidden" name="url" value="$entry.url" />
+  <table class="entry">
+    <tr>
+      <td>Title</td>
+      <td><input type="text" value="$entry.title" name="title" /></td>
+    </tr>
+    <tr>
+      <td>Tags (comma-separated)</td>
+      <td><input type="text" value="#join($entry.tags)" name="title" /></td>
+    </tr>
+    <tr>
+      <td valign="top">Note</td>
+      <td><textarea name="note" rows="4" cols="40">$!entry.note</textarea></td>
+    </tr>
+    <tr>
+      <td>Issued</td>
+      <td>$entry.issued</td>
+    </tr>
+    <tr>
+      <td>Last Fetched</td>
+      <td>$entry.lastFetched</td>
+    </tr>
+    <tr>
+      <td>Last Modified</td>
+      <td>$entry.modified</td>
+    </tr>
+  </table>
+</form>
+<a href="#url('entry')?output.html.screen_tmpl=cachedentry.html&url=$entry.url">cached content of entry</a>
+
+
+

@@ -1,4 +1,9 @@
 #macro( truncate $text )
-    ${stringutil.trunc($text)}
+    ${stringutil.truncate($text)}
 #end
 
+#macro( url $url )
+    ${props.get('internal.baseurl')}${url}
+#end
+
+#macro( join $strArray ) $stringutil.join($strArray, ",") #end
