@@ -41,6 +41,7 @@ import org.roosster.Constants;
 
 /**
  * TODO make dateformat configurable
+ * TODO silently remove duplicates when setting tags
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
@@ -455,7 +456,7 @@ public class Entry
      */
     public void setNote(String note)
     {
-      this.note = new StringBuffer(note);
+      this.note = new StringBuffer(note == null ? "" : note);
     }
 
     /**

@@ -68,4 +68,13 @@ public abstract class AbstractOutputMode implements OutputMode
         this.registry = registry;
     }
 
+    
+    /**
+     *
+     */
+    public Registry getRegistry()
+    {
+        return registry;
+    }
+
 }

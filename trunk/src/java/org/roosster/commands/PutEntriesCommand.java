@@ -76,6 +76,11 @@ public class PutEntriesCommand extends AbstractCommand implements Command, Const
                     
                     LOG.debug("Updated Entry, now trying to store it");
                     
+                    //
+                    // TODO what about first storing entries which should be updated 
+                    // in extra list and then do a batch update ?
+                    //
+                    
                     // now finally update entry in index
                     store.addEntries(new Entry[] {storedEntry}, true);
                     

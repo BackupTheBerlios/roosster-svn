@@ -76,10 +76,19 @@ public class PutEntryCliCommand extends AbstractCommand implements Command, Cons
         String issued   = (String) arguments.get(ARG_ISSUED);
         String modified = (String) arguments.get(ARG_MODIFIED);
         String pubStr   = (String) arguments.get(ARG_PUBLIC);
+        String type     = (String) arguments.get(ARG_FILETYPE);
+        String author   = (String) arguments.get(ARG_AUTHOR);
+        String email     = (String) arguments.get(ARG_AUTHOREMAIL);
         if ( title != null )
             entry.setTitle(title);
         if ( note != null )
             entry.setNote(note);
+        if ( type != null ) 
+            entry.setFileType(type);
+        if ( author != null ) 
+            entry.setAuthor(author);
+        if ( email != null ) 
+            entry.setAuthorEmail(email);
         if ( issued != null )
             entry.setIssued(StringUtil.parseEntryDate(issued));
         if ( modified != null )

@@ -51,14 +51,20 @@ public class GetEntryCommand extends AbstractCommand implements Command
     {
         validateArguments(arguments, new String[] {ARG_URL});
 
+        URL url = new URL((String) arguments.get(ARG_URL));
+        
+        LOG.debug("Trying to get Entry with URL '"+url+"'");
+        
         EntryStore store = (EntryStore) registry.getPlugin("store");
-        Entry entry = store.getEntry( new URL((String) arguments.get(ARG_URL)) );
+        Entry entry = store.getEntry(url);
 
         LOG.info("Found entry: "+entry);
 
         if ( entry != null ) {
             output.addEntry(entry);
             output.setTruncation(false); // disable truncation
+        } else {
+            output.addOutputMessage("Can't find Entry with URL '"+url+"'");
         }
     }
 

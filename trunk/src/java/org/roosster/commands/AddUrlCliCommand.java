@@ -63,6 +63,15 @@ public class AddUrlCliCommand extends AbstractCommand implements Command, Consta
         String note  = (String) arguments.get(ARG_NOTE);
         entry.setNote( note == null ? "" : note );
 
+        String type  = (String) arguments.get(ARG_FILETYPE);
+        entry.setFileType( type == null ? "" : type );
+
+        String author  = (String) arguments.get(ARG_AUTHOR);
+        entry.setAuthor( author == null ? "" : author );
+
+        String email  = (String) arguments.get(ARG_AUTHOREMAIL);
+        entry.setAuthorEmail( email == null ? "" : email );
+
         String tags  = (String) arguments.get(ARG_TAGS);
         if ( tags != null )
             entry.setTags( StringUtil.split(tags, TAG_SEPARATOR) );

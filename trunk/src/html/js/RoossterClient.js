@@ -29,19 +29,21 @@ var PARAM_ACTION    = "action";
 var PARAM_URL       = "url";
 var PARAM_QUERY     = "query";
 
+var TAB_HOME   = 'home-tab';
 var TAB_SEARCH = 'search-tab';
 var TAB_EDIT   = 'edit-tab';
 var TAB_ADD    = 'add-tab';
 var TAB_TAGS   = 'tags-tab';
 var TAB_TOOLS  = 'tools-tab';
 
+var TABMENU_HOME   = 'homeTabMenu';
 var TABMENU_SEARCH = 'searchTabMenu';
 var TABMENU_EDIT   = 'editTabMenu';
 var TABMENU_ADD    = 'addTabMenu';
 var TABMENU_TAGS   = 'tagsTabMenu';
 var TABMENU_TOOLS  = 'toolsTabMenu';
 
-var DEFAULT_TAB     = TAB_SEARCH;
+var DEFAULT_TAB     = TAB_HOME;
 
 //
 var currentTab     = DEFAULT_TAB;
@@ -123,6 +125,11 @@ function setTab(tabid, clearOutputMessages) {
     this.currentTab = tabid;
     if ( hidden && shown ) {
         switch(this.currentTab) {
+            case TAB_HOME:
+                if ( this.currentTabMenu != null ) getById(this.currentTabMenu).className = '';
+                getById(TABMENU_HOME).className = 'active';
+                this.currentTabMenu = TABMENU_HOME;
+                break;
             case TAB_SEARCH:
                 if ( this.currentTabMenu != null ) getById(this.currentTabMenu).className = '';
                 getById(TABMENU_SEARCH).className = 'active';
@@ -183,15 +190,6 @@ function displayDate(date) {
 }
 
 
-/**
- * 
- */
-function toggleDisplay(currId) {
-		thisMenu = getById(currId).style;
-    thisMenu.display =  thisMenu.display == "block" ? "none" : "block";
-		return false;
-}
-
 // =========================================================================
 //
 // API Functions
@@ -209,7 +207,7 @@ function doDelete(url) {
         return null;
   
     toggleDisplay(DIV_ID_LOADINGNOTE);
-    xmlhttp.open("DELETE", API_ENDPOINT + "/delete?url="+ escape(url) , true);     
+    xmlhttp.open("DELETE", API_ENDPOINT + "/entry?url="+ escape(url) , true);     
     xmlhttp.onreadystatechange = deleteResponseHandler;
     xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
     xmlhttp.send(null);
@@ -511,7 +509,7 @@ function __clearAll() {
  */
 function __outputMessage(msg, error) {
     var p = XmlCreateElement('p');
-    p.className = error ? 'error-messages' : 'output-messages';
+    p.className = error ? 'error' : 'info';
     p.appendChild(XmlCreateText(msg));
     outputMsgElem.appendChild(p);
 }

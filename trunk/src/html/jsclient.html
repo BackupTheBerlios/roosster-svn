@@ -7,6 +7,7 @@
   <title>roosster - personal search engine</title>
   <style type="text/css"> @import url($baseurl/styles.css); </style>
   <script type="text/javascript" src="$baseurl/js/BrowserDetect.js" />
+  <script type="text/javascript" src="$baseurl/js/core.js" />
   <script type="text/javascript" src="$baseurl/js/RoossterUtil.js" />
   <script type="text/javascript" src="$baseurl/js/RoossterApi.js" />
   <script type="text/javascript" src="$baseurl/js/RoossterClient.js" />
@@ -21,6 +22,7 @@
     </div>
     <span class="roossterheading">roosster - personal search engine</span>
     <ul id="tablist">
+      <li id="homeTabMenu"> <a href="#home" onclick="return setTab(TAB_HOME);">Home</a> </li>
       <li id="searchTabMenu"> <a href="#search" onclick="return setTab(TAB_SEARCH);">Search</a> </li>
       <li id="editTabMenu"> <a href="#edit" onclick="return setTab(TAB_EDIT);">Edit</a> </li>
       <li id="addTabMenu"> <a href="#add" onclick="return setTab(TAB_ADD);">Add</a> </li>
@@ -32,6 +34,10 @@
   <div id="output-messages"> </div>
   
   <div id="tabarea">
+    <div id="home-tab" class="tab">
+      try a search ...
+    </div>
+    
     <div id="search-tab" class="tab">        
       <form onsubmit="doSearch(getById('queryStr').value); return false;" >
         <table>
@@ -109,7 +115,7 @@
     </div>
     
     <div id="tools-tab" class="tab">
-      <a href="javascript:location.href='$baseurl/?jump=add-tab&action=add&url='+escape(location.href);">Add to roosster</a> (Bookmarklet)
+      #include('includes/tools.inc')
     </div>
     
   </div>

@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Date;
 import java.security.*;
@@ -391,7 +392,16 @@ public class EntryStore implements Plugin, Constants
      */
     public int deleteEntry(URL url) throws IOException
     {
-        return deleteEntry(url, null);
+      return deleteEntries(new URL[] {url}, null);
+    }
+
+
+    /**
+     *
+     */
+    public int deleteEntries(URL[] urls) throws IOException
+    {
+        return deleteEntries(urls, null);
     }
 
 
@@ -445,28 +455,27 @@ public class EntryStore implements Plugin, Constants
     /**
      *
      */
-    protected int deleteEntry(URL url, IndexReader reader) throws IOException
+    protected int deleteEntries(URL[] urls, IndexReader reader) throws IOException
     {
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
 
-        if ( url == null )
-            throw new IllegalArgumentException("Parameter 'url' is not allowed to be null");
+        if ( urls == null )
+            throw new IllegalArgumentException("Parameter 'urls' is not allowed to be null");
 
         boolean closeReader = false;
         try {
-            LOG.debug("Deleting Entry with URL: "+url.toString());
-
             if ( reader == null ) {
                 reader = getReader();
                 closeReader = true;
             }
 
-            Term term = new Term( URLHASH, computeHash(url.toString()) );
-            int numDeleted = reader.delete(term);
+            int numDeleted = 0;
+            for (int i = 0; i < urls.length; i++) { 
+                numDeleted += reader.delete( new Term(URLHASH, computeHash(urls[i].toString())) );
+            }
 
-            LOG.info("Deleted "+numDeleted+" Entries");
-
+            LOG.debug("Deleted "+numDeleted+" Entries for URLs: "+ Arrays.asList(urls));
             return numDeleted;
 
         } finally {
@@ -500,7 +509,7 @@ public class EntryStore implements Plugin, Constants
             if ( IndexReader.indexExists(indexDir) ) {
                 reader = getReader();
                 for (int i = 0; i < entries.length; i++ ) {
-                    deleteEntry(entries[i].getUrl(), reader);
+                    deleteEntries(new URL[] {entries[i].getUrl()}, reader);
                 }
                 reader.close();
                 reader = null;

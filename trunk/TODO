@@ -1,14 +1,21 @@
-JS Client
+Web Interface
 =========
+* LATER make extended search interface
+* LATER mass delete
 * implement and show search history 
 * let user choose 'limit' in paging
-* implement delete functionality (ask before deleting)
 * add select box for selecting sort order
 * add authentication option
-* make extended search interface
-* make image for non-public entries
-* LATER mass delete
+* show users for which creation of XmlHttpRequest object fails (and Safari)
+  a message, that it won't work
+* implement recent (with recent.html just including search)
+* link to feeds in web interface
+* put all valid destinations in class and access only fields of this class?
+* add buttons for changing textarea size
 
+* DONE implement delete functionality 
+* DONE put Delete link on Entry detail page
+* DONE make image for non-public entries
 * DONE add link to URL to every view of Entry
 * DONE show small note somewhere on screen, when waiting for server 
   (like Gmail's 'Loading ...')
@@ -35,7 +42,7 @@ API
 * implement tag fetching
 * configurable authentication
 * make sure response codes are correct 
-* PUT is allowed for creating resource too, SHOULD return 201 then
+* implement tag API
 
 * DONE implement api method to retrieve number of entries (integrated in entrylist)
 * DONE implement command to fetch only raw contents of entry
@@ -45,6 +52,8 @@ API
 
 General
 =========
+* LATER Thinlet GUI http://thinlet.sf.net/ GUI Editor http://thing.sourceforge.net/
+* LATER use some kind of ErrorListener instead of ServletMapper.wrapProcessRequest() ?
 * look at all TODO comments in sourcecode
 * update roosster.app.version property
 * move to MultiFieldQueryParser, remove Entry.ALL
@@ -57,12 +66,12 @@ General
 * finish SyncDeliciousCommand
 * implement HitList (see Otis mail) and make it return Entry objects
   (instantiated on the fly), use this in EntryList.class
-* EntryList.class should only use HitList, for this always add offset
-  to requested index (and throw IndexOutOfBoundsException, when
-  requested index+offset is greater than limit)
 * add property for HtmlMode template suffix/prefix
 * use file locking in Configuration.persist() ?
-* LATER Thinlet GUI http://thinlet.sf.net/ GUI Editor http://thing.sourc eforge.net/
+* make duplicate entry handling more sane
+* extend XmlProcessor.class to use EntryParser.class
+* implement InvalidRequestException to give meaningful error messages in case of 
+  wrong/missing arguments
 
 * DONE add property delicious.api.endpoint
 * DONE implement get/setJumpTo in Output.class

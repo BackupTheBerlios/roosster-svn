@@ -41,7 +41,7 @@ public class VelocityTemplateUtil
     private static Logger LOG = Logger.getLogger(VelocityTemplateUtil.class);
 
     private Registry     registry       = null;
-    private int          truncate       = 100;
+    private int          truncate       = -1;
 
     public VelocityTemplateUtil(Registry registry)
     {
@@ -50,9 +50,9 @@ public class VelocityTemplateUtil
 
         this.registry    = registry;    
 
-        //String truncStr = registry.getConfiguration()
-        //                          .getProperty(Constants.PROP_TRUNCLENGTH, "-1");
-        //truncate = Integer.valueOf(truncStr).intValue();
+        String truncStr = registry.getConfiguration()
+                                  .getProperty(Constants.PROP_TRUNCLENGTH, "-1");
+        truncate = Integer.valueOf(truncStr).intValue();
     }
 
     
@@ -62,6 +62,15 @@ public class VelocityTemplateUtil
     public String truncate(String str)  
     {
         return StringUtil.truncate(str, truncate);
+    } 
+
+
+    /**
+     * 
+     */
+    public String join(String[] str, String separator)  
+    {
+        return StringUtil.join(str, separator);
     } 
 
 

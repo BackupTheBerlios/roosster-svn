@@ -31,8 +31,12 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration; 
 import javax.servlet.http.*;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -44,6 +48,7 @@ import org.roosster.util.ServletUtil;
 import org.roosster.util.StringUtil;
 import org.roosster.logging.LogUtil;
 import org.roosster.commands.CommandNotFoundException;
+import org.roosster.store.DuplicateEntryException;
 import org.roosster.xml.ParseException;
 import org.roosster.InitializeException;
 import org.roosster.OperationException;
@@ -154,15 +159,13 @@ public class ServletMapper extends HttpServlet
         processRequest(GET, req, resp);
     }
 
-    
+  
     /**
-     * 
      */
     protected void processRequest(int method,
                                   HttpServletRequest req, 
                                   HttpServletResponse resp)
                            throws ServletException, IOException
-
     {
         if ( LOG.isDebugEnabled() ) {
             LOG.debug("======================================================");
@@ -170,57 +173,72 @@ public class ServletMapper extends HttpServlet
             LOG.debug("Using: "+this);
         }
         
+        Output output = null;
+        String commandName = null;
         try {
-            String commandName = getCommandName(method, req);
+          
+            commandName = getCommandName(method, req);
             Map args = parseRequestArguments(req);
             
-            // add request arguments to configuration
-            registry.getConfiguration().setRequestArguments(args);
-            
             // run commands            
-            Output output = dispatcher.run(commandName, getOutputMode(), args);
+            output = dispatcher.run(commandName, getOutputMode(), args);
 
-            if ( output.entriesSize() < 1 ) {
+            if ( output.entriesSize() < 1 && !returnEmptyList() ) {
                 resp.setStatus(resp.SC_NO_CONTENT);
             } else {
-                // determine content type
-                String contentType = output.getContentType();
-                contentType = contentType == null ? DEF_CONTENT_TYPE : contentType;
-                String contentHeader = contentType+"; charset="+outputEncoding;
-                resp.setContentType(contentHeader);
                 
-                LOG.debug("Set Content-Type Header field to: "+contentHeader);
-    
-                output.setOutputProperty(Constants.VELCTX_BASEURL, getBaseUrl(req));
-                output.setOutputProperty(Constants.VELCTX_HTTPREQ, req);
+                prepareOutput(req, resp, output);
                 
                 // output everything
                 output.output( resp.getWriter() );
             }
-            
-        } catch (CommandNotFoundException ex) {
           
-            LOG.warn(ex.getMessage(), ex);
+        } catch (Exception ex) {
+            processException(method, req, resp, output, commandName, ex);
+        }
+    }
+    
+    
+    /**
+     * 
+     */
+    protected void processException(int method, 
+                                    HttpServletRequest req, 
+                                    HttpServletResponse resp,
+                                    Output output, 
+                                    String commandName,
+                                    Exception ex)
+                             throws ServletException, IOException
+    {
+        if ( ex instanceof OperationException ) 
+            ex = (Exception) ex.getCause();
+            
+        LOG.warn(ex.getMessage(), ex);
+          
+        if ( ex instanceof DuplicateEntryException ) {
+            
+            // argument 'url' is still in request, no need to add it
+            DuplicateEntryException duplEx = (DuplicateEntryException) ex;
+            addMessageToRequest(req, Constants.OUTPUTMSG_LEVEL_INFO, "Entry "+ex.getMessage()+" already stored");
+            internalRedirect(req, resp, "/application/entry");
+          
+        } else if ( ex instanceof CommandNotFoundException ) {
             resp.sendError(resp.SC_NOT_FOUND, 
                            "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
             
-        } catch (ParseException ex) {
-
-            LOG.warn("Sending HTTP Status Code 400: "+ex.getMessage(), ex);
+        } else if ( ex instanceof ParseException ) {
             resp.sendError(resp.SC_BAD_REQUEST, 
                            "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-
-            LOG.warn("Sending HTTP Status Code 400: "+ex.getMessage(), ex);
+                           
+        } else if ( ex instanceof IllegalArgumentException ) {
             resp.sendError(resp.SC_BAD_REQUEST, 
                            "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
-        } catch (Exception ex) {
-            
-            Throwable t = ex.getCause() == null ? ex : ex.getCause();
-            LOG.warn("Sending HTTP Status Code 500: "+t.getMessage(), t);
+                           
+        } else {
             resp.sendError(resp.SC_INTERNAL_SERVER_ERROR, 
-                           "RoossterException: <"+t.getClass().getName()+"> "+t.getMessage());
+                           "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
         }
+      
     }
     
     
@@ -246,6 +264,17 @@ public class ServletMapper extends HttpServlet
     }
 
 
+    /**
+     * if <code>true</code>, then empty result sets are returned as normal results,
+     * going through the OutputMode process; if <code>false</code>, then a 
+     * <code>204 No-Content</code> response is sent.
+     */
+    protected boolean returnEmptyList()
+    {
+        return true;
+    }
+    
+    
     /**
      *
      */
@@ -285,7 +314,75 @@ public class ServletMapper extends HttpServlet
     {
         return ServletUtil.getBaseUrl(req);
     }
+    
+    
+    /**
+     * this method does not return
+     */
+    protected void internalRedirect(HttpServletRequest req,
+                                    HttpServletResponse resp,
+                                    String destination)
+                             throws ServletException, IOException 
+    {
+        LOG.warn("Internal redirect to: "+destination);
+        RequestDispatcher dispatcher = req.getRequestDispatcher(destination);
+        dispatcher.forward(req, resp);
+    }
+    
+    
+    /**
+     * 
+     */
+    protected void addMessageToRequest(HttpServletRequest req, String level, String msgStr)
+    {
+        List msg = Arrays.asList(new String[] { level, msgStr} );
+        req.setAttribute(Constants.REQ_OUTPUT_MESSAGES, Arrays.asList(new List[] {msg}));
+    }
+
+    
+    // ============ private Helper methods ============
+    
+    /**
+     * 
+     */
+    private void prepareOutput(HttpServletRequest req,  
+                               HttpServletResponse resp, 
+                               Output output)
+    {
+        // determine content type
+        String contentType = output.getContentType();
+        contentType = contentType == null ? DEF_CONTENT_TYPE : contentType;
+        String contentHeader = contentType+"; charset="+outputEncoding;
+        resp.setContentType(contentHeader);
+        
+        LOG.debug("Set Content-Type Header field to: "+contentHeader);
+    
+        output.setOutputProperty(Constants.VELCTX_BASEURL,  getBaseUrl(req));
+        output.setOutputProperty(Constants.VELCTX_HTTPREQ,  req);
+        
+        // add output messages, stored in request
+        List outputMessages = (List) req.getAttribute(Constants.REQ_OUTPUT_MESSAGES);
+        if ( outputMessages != null ) {
+            LOG.debug("Preserving output messages from request: "+outputMessages);
+            for (int i = 0; i < outputMessages.size(); i++) {
+                List msg = (List) outputMessages.get(i); 
+                output.addOutputMessage((String) msg.get(0), (String) msg.get(1));
+            }
+        }
+    }
 
     
 }
 
+/*
+try {
+    if ( output == null )
+        output = dispatcher.getOutput(commandName, getOutputMode());
+    
+    prepareOutput(req, resp, output);
+    output.addOutputMessage(Constants.OUTPUTMSG_LEVEL_ERROR, ex.getMessage());
+    output.output( resp.getWriter() );
+} catch(Exception ex2) {
+    throw new ServletException(ex2);
+}
+*/

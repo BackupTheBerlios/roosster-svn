@@ -1,10 +1,18 @@
 
-Revision XX / 2005-04-XX / Benjamin Reitzammer
+Revision 64 / 2005-03-30 / Benjamin Reitzammer
 
-* added public attribute to Entry.class and updated everything affected (API, 
+* added 'public' property to Entry.class and updated everything affected (API, 
   parser etc)
 * made JS interface slightly nicer
 * implemented EntryStore.getChangedEntries(after, before)
+* added EntryStore.deleteEntries(URL[]) method
+* renamed index.html to jsclient.html and added new index.html
+* implemented ServletMapp.returnEmptyList() to fix a bug
+* finished HTML-only web interface
+* added VelocityTemplateUtil
+* added Configuration.setProperty
+* changed exception handling in ServletMapper, to allow nice error messages in
+  HTML-only web interface
 
 Revision 58 / 2005-03-21 / Benjamin Reitzammer
 

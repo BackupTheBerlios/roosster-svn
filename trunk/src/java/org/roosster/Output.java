@@ -45,7 +45,6 @@ import org.roosster.util.StringUtil;
 
 
 /**
- * TODO throw out that AVL_MODES stuff 
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
@@ -54,7 +53,6 @@ public class Output
     private static Logger LOG = Logger.getLogger(Dispatcher.class.getName());
 
     private String       commandName    = null;
-    private String       jumpTo         = null;
     private Registry     registry       = null;
     private OutputMode   mode           = null;
     private EntryList    entries        = new EntryList();
@@ -102,25 +100,7 @@ public class Output
     {
         return properties.keySet();
     }
-    
 
-    /**
-     * 
-     */
-    public String getJumpTo()
-    {
-        return jumpTo;
-    }
-    
-
-    /**
-     * 
-     */
-    public void setJumpTo(String jumpTo)
-    {
-        this.jumpTo = jumpTo; 
-    }
-    
 
     /**
      * 
@@ -136,13 +116,25 @@ public class Output
      */
     public void setOutputMessages(String msg)
     {
-        outputMessages.clear();
-        outputMessages.add(msg);
+        setOutputMessages(Constants.OUTPUTMSG_LEVEL_INFO, msg);
     }
     
     
     /**
-     * @return a list of String-object, may be empty, but never null
+     * absolutely no formatting is applied to this message
+     */
+    public void setOutputMessages(String level, String msg)
+    {
+        if ( level == null  || "".equals(level) )
+            throw new IllegalArgumentException("'level' is not allowed to be null");
+        
+        outputMessages.clear();
+        outputMessages.add(Arrays.asList(new String[] {level, msg}));
+    }
+    
+    
+    /**
+     * @return a list of List-objects, may be empty, but never null
      */
     public List getOutputMessages()
     {
@@ -155,7 +147,19 @@ public class Output
      */
     public void addOutputMessage(String msg)
     {
-        outputMessages.add(msg);
+        addOutputMessage(Constants.OUTPUTMSG_LEVEL_INFO, msg);
+    }
+
+
+    /**
+     * absolutely no formatting is applied to this message
+     */
+    public void addOutputMessage(String level, String msg)
+    {
+        if ( level == null  || "".equals(level) )
+            throw new IllegalArgumentException("'level' is not allowed to be null");
+        
+        outputMessages.add(Arrays.asList(new String[] {level, msg}));
     }
 
 

@@ -34,7 +34,7 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
-
+import org.apache.log4j.Logger;
 import org.roosster.store.Entry;
 import org.roosster.store.EntryList;
 import org.roosster.util.VelocityUtil;
@@ -52,7 +52,8 @@ import org.roosster.Constants;
  */
 public class HtmlMode extends AbstractOutputMode implements OutputMode, Constants
 {
-
+    private static Logger LOG = Logger.getLogger(HtmlMode.class);
+    
     public static final String TMPL_ROOT = "includes";
     
     /**
@@ -65,9 +66,10 @@ public class HtmlMode extends AbstractOutputMode implements OutputMode, Constant
             throw new IllegalArgumentException("entries parameter is not allowed to be null");
 
         Context context = new VelocityContext();
-        VelocityUtil.initContext(registry, context);
+        VelocityUtil.initContext(getRegistry(), context);
         
-        context.put(VELCTX_COMMAND, output.getCommandName());
+        context.put(VELCTX_COMMAND,   output.getCommandName());
+        context.put(VELCTX_OUTPUTMSG, output.getOutputMessages());         
         context.put(VELCTX_ENTRYLIST, entries);         
 
         Iterator iter = output.getOutputPropertyNames().iterator();
@@ -76,9 +78,14 @@ public class HtmlMode extends AbstractOutputMode implements OutputMode, Constant
             context.put(name, output.getOutputProperty(name));
         }
         
-        String templateName = TMPL_ROOT +"/"+ output.getCommandName() +".html";
+        // determine which template to use
+        String jumpToCommand = getRegistry().getConfiguration().getProperty(ARG_JUMPTO);
+        String nextCommand = jumpToCommand == null ? output.getCommandName() : jumpToCommand;
+        
+        String templateName = TMPL_ROOT +"/"+ nextCommand +".html";
         
         try {
+            LOG.debug("HtmlMode: Merging context and template '"+templateName+"'");
             Velocity.getTemplate(templateName).merge(context, writer);
         } catch (Exception ex) {
             throw new OperationException("Can't find or merge template '"+templateName+"'", ex);

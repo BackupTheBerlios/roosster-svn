@@ -355,7 +355,7 @@ function EntryList(total, limit, offset) {
     
         var leftChild = XmlCreateElement('td');
         leftChild.className = 'tdalignleft';
-        leftChild.appendChild( XmlCreateText("Showing results "+offset+"-"+
+        leftChild.appendChild( XmlCreateText("Showing results "+offset+" - "+
                                              (nextOffset > this.total ? this.total : nextOffset)+
                                              " of "+this.total) );
         
@@ -486,7 +486,9 @@ function Entry(url) {
         // <li class="entry-url">        
         var liEntryUrl = XmlCreateElement("li");
         liEntryUrl.className = 'entrylist-entry-url';
-        if ( this.pub == true ) liEntryUrl.appendChild(__pubImageNode.cloneNode(true));
+        if ( this.pub == true )  liEntryUrl.appendChild(__pubImageNode.cloneNode(true));
+        else liEntryUrl.appendChild(__privateImageNode.cloneNode(true));
+          
         liEntryUrl.appendChild(createLink(this.url, this.title, "_blank"));
         ulEntryList.appendChild(liEntryUrl);
         
@@ -502,11 +504,11 @@ function Entry(url) {
         liEntryDates.className = 'entry-dates';
         liEntryDates.appendChild( XmlCreateText("MODIFIED: ") );
         liEntryDates.appendChild( createLink("javascript:doSearch('modified:"+this.searchableDate(this.modifiedDate)+"')", displayDate(this.modifiedDate)) );
-        liEntryDates.appendChild( XmlCreateText("-- ISSUED: ") );
+        liEntryDates.appendChild( XmlCreateText(" -- ISSUED: ") );
         liEntryDates.appendChild( createLink("javascript:doSearch('issued:"+this.searchableDate(this.issuedDate)+"')", displayDate(this.issuedDate)) );
-        liEntryDates.appendChild( XmlCreateText("-- ADDED: ") );
+        liEntryDates.appendChild( XmlCreateText(" -- ADDED: ") );
         liEntryDates.appendChild( createLink("javascript:doSearch('added:"+this.searchableDate(this.addedDate)+"')", displayDate(this.addedDate)) );
-        liEntryDates.appendChild( XmlCreateText("-- EDITED: ") );
+        liEntryDates.appendChild( XmlCreateText(" -- EDITED: ") );
         liEntryDates.appendChild( createLink("javascript:doSearch('edited:"+this.searchableDate(this.editedDate)+"')", displayDate(this.editedDate)) );
         ulEntryList.appendChild(liEntryDates);
         
@@ -602,4 +604,8 @@ function Entry(url) {
 
 var __pubImageNode = document.createElement('img');
 __pubImageNode.setAttribute('src', '$baseurl/images/public.png');
-__pubImageNode.className = "public-image";
+__pubImageNode.className = "entry-image";
+
+var __privateImageNode = document.createElement('img');
+__privateImageNode.setAttribute('src', '$baseurl/images/private.png');
+__privateImageNode.className = "entry-image";

@@ -101,6 +101,15 @@ public class Configuration
     
     
     /**
+     */
+    public void setProperty(String propName, String value)
+    {
+        if ( propName != null && value != null )
+            properties.setProperty(propName, value);
+    }
+    
+    
+    /**
      * @return null if there is no such property
      */
     public String getProperty(String propName)

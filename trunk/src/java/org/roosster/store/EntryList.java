@@ -27,6 +27,7 @@
 package org.roosster.store;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.Date;
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -66,12 +67,12 @@ public class EntryList extends AbstractList
      * getTotalSize() == size()
      * </pre>
      */
-    public EntryList(List list) 
+    public EntryList(Collection c) 
     {
         this();
         
-        if ( list != null )
-            this.list.addAll(list);
+        if ( c != null )
+            this.list.addAll(c);
     }
     
     
@@ -145,7 +146,8 @@ public class EntryList extends AbstractList
         if ( obj instanceof Entry ) {
             if ( LOG.isDebugEnabled() ) {
                 Entry entry = (Entry) obj;
-                LOG.debug("Position: "+ (size()+1) +" - Score: "+entry.score()+" - Adding: "+entry);
+                // TODO turn this on again
+                //LOG.debug("Position: "+ (size()+1) +" - Score: "+entry.score()+" - Adding to EntryList: "+entry);
             }
             return list.add(obj);
         } else {

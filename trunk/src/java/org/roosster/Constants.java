@@ -58,7 +58,15 @@ public interface Constants
     public static final String VELCTX_ENTRYLIST   = "entryList";    
     public static final String VELCTX_TMPLUTIL    = "util";    
     public static final String VELCTX_HTTPREQ     = "req";    
+    public static final String VELCTX_LASTQUERY   = "lastQuery";
     
+    // 
+    public static final String OUTPUTMSG_LEVEL_INFO  = "info";
+    public static final String OUTPUTMSG_LEVEL_ERROR = "error";
+    
+    // names of request attributes
+    public static final String REQ_OUTPUT_MESSAGES = "http.request.outputmessages";
+
     // for internal use only
     public static final String PARAM_ENTRIES    = "internal.param.entry";
     
@@ -97,7 +105,11 @@ public interface Constants
     public static final String PROP_TRUNCLENGTH = "output.truncate.length";
 
 
-    // args are used in commands, and only an a request basis
+    // args are used in commands, and only an a request basis (although they could be
+    // defined in property files, this wouldn't make much sense
+    public static final String ARG_QUERY        = "query";
+    public static final String ARG_JUMPTO       = "jumpto";
+    
     public static final String ARG_URL          = "url";
     public static final String ARG_PUBLIC       = "pub";
     public static final String ARG_ISSUED       = "issued";
@@ -105,9 +117,10 @@ public interface Constants
     public static final String ARG_FORCE        = "force";
     public static final String ARG_NOTE         = "note";
     public static final String ARG_TAGS         = "tags";
-    public static final String ARG_TITLE        = "title";;    
-    public static final String ARG_AUTHOR       = "author";;    
-    public static final String ARG_AUTHOREMAIL  = "email";;    
+    public static final String ARG_TITLE        = "title";    
+    public static final String ARG_AUTHOR       = "author";    
+    public static final String ARG_AUTHOREMAIL  = "email";    
+    public static final String ARG_FILETYPE     = "type";    
     public static final String ARG_FILE         = "file";
     
     

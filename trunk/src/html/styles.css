@@ -56,7 +56,15 @@
  */
  
 #entry-form     {}
-#entry-form textarea     { height:100px; }
+textarea { height:100px; }
+
+.entry-detail  { width:700px; padding:5px;}
+.entry-detail td { padding-bottom:5px;}
+
+.action-links { text-align:center; font-size:small; }
+.action-links a { float:left; display:block; width:175px; padding:2px;  }
+
+.detail-delete-link:hover { background-color:$deleteLinkColor; }
 
 #indexedcontent { display:none; overflow:auto; border:1px solid $tagDatesColor; width:500px; height:130px;}
 
@@ -90,9 +98,10 @@ input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1p
     text-align:center;
     margin:auto;
 }
+#output-messages li { list-style-type: none; }
 
-.error-messages { background-color:$errorColor; color:$bgColor; padding:5px; }
-.output-messages {  background-color:$infoColor;  padding:5px; }
+.error   { background-color:$errorColor; color:$bgColor; padding:5px; }
+.info  {  background-color:$infoColor;  padding:5px; }
 
 
 /* 

@@ -41,8 +41,6 @@ import org.roosster.input.ContentTypeProcessor;
 import org.roosster.xml.*;
 
 /**
- * TODO: Tries to determine, if the stream is a feed, and parses it, if this is the case.
- * If not, it just indexes it.
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
@@ -84,7 +82,8 @@ public class XmlProcessor implements ContentTypeProcessor
             throw new IllegalArgumentException("No parameter is allowed to be null");
 
         try {
-            // TODO only use FeedParser if it's really a feed
+            // TODO Try to determine, if the stream is a feed, and parses it, 
+            // if this is the case. If not, it just indexes it
 
             FeedParser parser = new FeedParser();
             return parser.parse(url, stream, encoding);

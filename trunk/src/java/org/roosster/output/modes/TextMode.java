@@ -56,6 +56,8 @@ public class TextMode extends AbstractOutputMode implements OutputMode, Constant
         String truncStr = registry.getConfiguration().getProperty(PROP_TRUNCLENGTH, "-1");
         int truncate = Integer.valueOf(truncStr).intValue();
         
+        // TODO show output messages?
+        
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < entries.size(); i++) {
             Entry entry = entries.getEntry(i);

@@ -43,6 +43,7 @@ import org.roosster.store.EntryList;
 import org.roosster.xml.EntryParser;
 import org.roosster.xml.ParseException;
 import org.roosster.OperationException;
+import org.roosster.Output;
 import org.roosster.Constants;
 import org.roosster.Registry;
 
@@ -59,7 +60,7 @@ public class ApiServletMapper extends ServletMapper
     private static final String PUTENTRY_CMD  = "putentries";
     private static final String SEARCH_CMD    = "search";
     private static final String ADD_CMD       = "addurls";
-    private static final String DEL_CMD       = "del";
+    private static final String DEL_CMD       = "delete";
     
     /**
      *
@@ -127,6 +128,59 @@ public class ApiServletMapper extends ServletMapper
         }
 
           return args;
+    }
+    
+    
+    /**
+     * 
+     */
+    protected void processException(int method, 
+                                    HttpServletRequest req, 
+                                    HttpServletResponse resp,
+                                    Output output, 
+                                    String commandName,
+                                    Exception ex)
+                             throws ServletException, IOException
+    {
+        if ( ex instanceof OperationException ) {
+            ex = (Exception) ex.getCause();
+        }
+          
+        if ( ex instanceof CommandNotFoundException ) {
+          
+            LOG.warn(ex.getMessage(), ex);
+            resp.sendError(resp.SC_NOT_FOUND, 
+                           "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
+            
+        } else if ( ex instanceof ParseException ) {
+
+            LOG.warn("Sending HTTP Status Code 400: "+ex.getMessage(), ex);
+            resp.sendError(resp.SC_BAD_REQUEST, 
+                           "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
+                           
+        } else if ( ex instanceof IllegalArgumentException ) {
+
+            LOG.warn("Sending HTTP Status Code 400: "+ex.getMessage(), ex);
+            resp.sendError(resp.SC_BAD_REQUEST, 
+                           "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
+                           
+        } else {
+            
+            Throwable t = ex.getCause() == null ? ex : ex.getCause();
+            LOG.warn("Sending HTTP Status Code 500: "+t.getMessage(), t);
+            resp.sendError(resp.SC_INTERNAL_SERVER_ERROR, 
+                           "RoossterException: <"+t.getClass().getName()+"> "+t.getMessage());
+        }
+      
+    }
+    
+    
+    /**
+     *
+     */
+    protected boolean returnEmptyList()
+    {
+        return false;
     }
     
     

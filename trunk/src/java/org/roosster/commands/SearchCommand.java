@@ -28,6 +28,7 @@ package org.roosster.commands;
 
 import java.util.Map;
 
+import org.roosster.Constants;
 import org.roosster.Command;
 import org.roosster.Registry;
 import org.roosster.Output;
@@ -42,15 +43,19 @@ import org.roosster.store.Entry;
  */
 public class SearchCommand extends AbstractCommand implements Command
 {
-    public static final String ARG_Q = "query";
+
 
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        validateArguments(arguments, new String[] {ARG_Q});
+        String query = (String) arguments.get(Constants.ARG_QUERY);
         
-        EntryStore store = (EntryStore) registry.getPlugin("store");
-        output.setEntries( store.search( (String) arguments.get(ARG_Q) ) );
+        if ( query != null && !"".equals(query) ) {
+            EntryStore store = (EntryStore) registry.getPlugin("store");
+            output.setEntries( store.search(query) );
+        } else {
+            output.addOutputMessage("No queryString specified. Can't execute search!");
+        }
     }
 
 

@@ -34,8 +34,17 @@ import java.net.URL;
  */
 public class DuplicateEntryException extends RuntimeException
 {
+    private URL url = null;
+    
     public DuplicateEntryException(URL url) {
         super(url == null ? "null" : url.toString());
+        this.url = url;
     }
+    
+    
+    /**
+     *
+     */
+     public URL getUrl() { return url; }
 
 }

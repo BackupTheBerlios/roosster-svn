@@ -75,6 +75,14 @@ public class Dispatcher
 
     /**
      */
+    public Output getOutput(String commandName, String outputMode) throws OperationException
+    {
+        return new Output(registry, outputMode, commandName);
+    }
+
+    
+    /**
+     */
     public Output run(String commandName, String outputMode, Map reqArgs) 
                throws IOException, IllegalStateException,
                       IllegalArgumentException, OperationException
@@ -83,22 +91,13 @@ public class Dispatcher
 
         try {
             conf.setRequestArguments(reqArgs);
-
-            // command chains have precedence over normal command definitions
-            List classes = (List) commandChains.get(commandName);
-            if ( classes == null )
-                classes = (List) commands.get(commandName);
             
-            if ( classes == null || classes.size() < 1 )
-                throw new CommandNotFoundException(commandName);
-
-            Output output = new Output(registry, outputMode, commandName);
+            Command[] commands = getCommands(commandName);
+            Output output = getOutput(commandName, outputMode);
             
-            for(int i = 0; i < classes.size(); i++) {
-                Command command = (Command) classes.get(i);
-                LOG.debug("Executing Command: "+ command);
-                
-                command.execute(reqArgs, registry, output);
+            for(int i = 0; i < commands.length; i++) {
+                LOG.debug("Executing Command: "+ commands[i]);
+                commands[i].execute(reqArgs, registry, output);
             }
 
             return output;
@@ -110,6 +109,23 @@ public class Dispatcher
 
 
     // ============ private Helper methods ============
+
+    
+    /**
+     * 
+     */
+    private Command[] getCommands(String commandName) throws CommandNotFoundException
+    {
+        // command chains have precedence over normal command definitions
+        List classes = (List) commandChains.get(commandName);
+        if ( classes == null )
+            classes = (List) commands.get(commandName);
+        
+        if ( classes == null || classes.size() < 1 )
+            throw new CommandNotFoundException(commandName);
+        
+        return (Command[]) classes.toArray(new Command[0]);
+    }
 
 
     /**

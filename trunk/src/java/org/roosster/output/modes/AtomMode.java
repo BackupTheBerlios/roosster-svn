@@ -53,17 +53,7 @@ public class AtomMode extends AbstractOutputMode implements OutputMode
         if ( entries == null )
             throw new IllegalArgumentException("entries parameter is not allowed to be null");
 
-
         new AtomFeedGenerator().createFeed(registry, stream, entries);
-        
-        List messages = output.getOutputMessages();
-        if ( messages.size() > 0 ) {
-            stream.print("<!--");
-            for(int i = 0; i < messages.size(); i++) {
-                stream.print(messages.get(i));
-            }
-            stream.print("-->");
-        }
     }
 
 }
