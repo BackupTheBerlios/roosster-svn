@@ -1,0 +1,11 @@
+#parse('includes/head.inc')
+
+Search
+<ul>
+  #foreach ( $entry in $entryList)
+  <li>$entry.url</li>
+  #end
+<ul>
+
+#parse('includes/foot.inc')
+

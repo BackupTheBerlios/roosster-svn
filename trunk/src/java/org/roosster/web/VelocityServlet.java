@@ -38,6 +38,7 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
  
 import org.roosster.util.ServletUtil;
+import org.roosster.util.VelocityUtil;
 import org.roosster.store.EntryStore;
 import org.roosster.Constants;
 import org.roosster.Registry;
@@ -45,15 +46,11 @@ import org.roosster.Registry;
 /**
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
+public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet 
+                          implements Constants
 {
     private static Logger LOG = Logger.getLogger(VelocityServlet.class.getName());
-    
-    
-    public static final String VELCTX_BASEURL     = "baseurl";
-    public static final String VELCTX_APPVERSION  = "roossterVersion";
-    public static final String VELCTX_INDEXNUM    = "roossterIndexContains";
-    
+
     private ServletContext servletContext = null;
     
     /**
@@ -124,15 +121,9 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
             throw new IllegalStateException("Servlet Environment not properly initialized! No Registry!");
         
         
-        context.put(VELCTX_APPVERSION, registry.getConfiguration().getProperty(Constants.PROP_APPVERSION));
-        context.put(VELCTX_BASEURL,    ServletUtil.getBaseUrl(req));
+        VelocityUtil.initContext(registry, context);
         
-        try {
-            EntryStore store = (EntryStore) registry.getPlugin("store");
-            context.put(VELCTX_INDEXNUM,   String.valueOf(store.getDocNum()) );
-        } catch (IOException ex) {
-            context.put(VELCTX_INDEXNUM,   "no docs there yet");
-        }
+        context.put(VELCTX_BASEURL,    ServletUtil.getBaseUrl(req));
     }
     
     

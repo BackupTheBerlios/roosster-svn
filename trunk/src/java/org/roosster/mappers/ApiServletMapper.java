@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import javax.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.xml.sax.SAXException;
 import org.apache.log4j.Logger;
@@ -41,6 +44,7 @@ import org.roosster.xml.EntryParser;
 import org.roosster.xml.ParseException;
 import org.roosster.OperationException;
 import org.roosster.Constants;
+import org.roosster.Registry;
 
 
 /**
@@ -56,6 +60,18 @@ public class ApiServletMapper extends ServletMapper
     private static final String SEARCH_CMD    = "search";
     private static final String ADD_CMD       = "addurls";
     private static final String DEL_CMD       = "del";
+    
+    /**
+     *
+     */
+    public void init(ServletConfig config) throws ServletException
+    {
+        Registry registry = (Registry) config.getServletContext().getAttribute(Constants.CTX_REGISTRY);
+        
+        if ( registry == null || !registry.isInitialized() )
+            super.init(config);
+    }
+    
     
     /**
      *

@@ -60,6 +60,7 @@
        <property name="all.jar.file"     value="roosster-all.jar" />
        <property name="cli.jar.file"     value="roosster-cli.jar" />
        <property name="min.jar.file"     value="roosster-min.jar" />
+       <property name="tmpl.jar.file"    value="roosster-templates.jar" />
        <property name="starter.jar.file" value="roosster-start.jar" />
         
        <!-- property file definition -->
@@ -191,6 +192,22 @@
             </manifest>
           </jar>
     </target>
+    
+    
+    <target name="-dist-jar-templates"
+            description="Builds the .jar file which contains only the html templates" >
+
+        <echo>+ ============================================= +</echo>
+        <echo>+ Roosster - Build templates .jar file          +</echo>
+        <echo>+ ============================================= +</echo>
+        
+        <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+
+        <jar destfile="${dist.dir}/${tmpl.jar.file}" compress="true">
+            <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+            <fileset dir="${html.dir}" includes="**/*" />
+        </jar>
+    </target>
 
     
     <target name="dist-jar-starter"
@@ -268,7 +285,7 @@
 
     
     <target name="dist-war" 
-            depends="dist-jar-minimal, dist-jar-starter"
+            depends="dist-jar-minimal, dist-jar-starter, -dist-jar-templates"
             description="builds a ready-to-deploy .war file of roosster">
         
         <echo>+ ============================================= +</echo>
@@ -281,6 +298,7 @@
             <fileset dir="${lib.dir}/war" includes="*.jar"/>
             <fileset dir="${lib.dir}/common" includes="*.jar"/>
             <fileset file="${dist.dir}/${min.jar.file}" />
+            <fileset file="${dist.dir}/${tmpl.jar.file}" />
         </copy>
         
         <war destfile="${dist.dir}/roosster.war" webxml="${metadata.dir}/web.xml">

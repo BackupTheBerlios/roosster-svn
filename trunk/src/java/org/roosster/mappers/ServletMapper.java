@@ -72,7 +72,7 @@ public class ServletMapper extends HttpServlet
     public static final String DEF_ENC          = "UTF-8";
     
     public static final String DEF_CONTENT_TYPE = "text/xml";
-    public static final String DEF_OUTPUT_MODE  = "atom";
+    public static final String DEF_OUTPUT_MODE  = "html";
     
     public static final String DEF_COMMAND      = "search";
     
@@ -192,8 +192,13 @@ public class ServletMapper extends HttpServlet
             // add request arguments to configuration
             registry.getConfiguration().setRequestArguments(args);
             
+            // if no output mode is specified in request, then use html
+            String outputMode = args.containsKey(Constants.PROP_OUTPUTMODE) 
+                                      ? getOutputMode()
+                                      : DEF_OUTPUT_MODE;
+                                      
             // run commands            
-            Output output = dispatcher.run(commandName, getOutputMode(), args);
+            Output output = dispatcher.run(commandName, outputMode, args);
 
             if ( output.entriesSize() < 1 ) {
                 resp.setStatus(resp.SC_NO_CONTENT);

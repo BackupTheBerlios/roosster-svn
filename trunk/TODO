@@ -52,6 +52,8 @@ General
 * implement property to enable forcing of a certain ContentTypeProcessor
 * rewrite raw content to reflect image locations ...
 * finish SyncDeliciousCommand
+* add public/private flag to Entry.class
+* allow adding of HttpServletRequest to velocity context
 
 * DONE boost title field, optimize indexing
 * DONE extend Entry so that content field contains only meaningful (no

@@ -92,7 +92,7 @@ public class Dispatcher
             if ( classes == null || classes.size() < 1 )
                 throw new CommandNotFoundException(commandName);
 
-            Output output = new Output(registry, outputMode);
+            Output output = new Output(registry, outputMode, commandName);
             
             for(int i = 0; i < classes.size(); i++) {
                 Command command = (Command) classes.get(i);

@@ -51,6 +51,7 @@ public class Output
 {
     private static Logger LOG = Logger.getLogger(Dispatcher.class.getName());
 
+    private String       commandName    = null;
     private Registry     registry       = null;
     private OutputMode   mode           = null;
     private EntryList    entries        = new EntryList();
@@ -60,15 +61,26 @@ public class Output
     /**
      *
      */
-    public Output(Registry registry, String outputMode)  throws OperationException
+    public Output(Registry registry, String outputMode, String commandName)  
+           throws OperationException
     {
         if ( registry == null )
             throw new IllegalArgumentException("Output-object needs non-null Registry object ");
 
-        this.registry = registry;
+        this.commandName = commandName == null ? "" : commandName;
+        this.registry    = registry;
         loadOutputMode(outputMode, registry);
     }
 
+
+    /**
+     * 
+     */
+    public String getCommandName()
+    {
+        return commandName;
+    }
+    
 
     /**
      * absolutely no formatting is applied to this message

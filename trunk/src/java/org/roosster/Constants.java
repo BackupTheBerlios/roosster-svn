@@ -47,6 +47,13 @@ public interface Constants
     public static final String CTX_REGISTRY     = "servletcontext.param.registry";
     public static final String CTX_DISPATCHER   = "servletcontext.param.dispatcher";
 
+    // velocity specific constants 
+    public static final String VELCTX_BASEURL     = "baseurl";
+    public static final String VELCTX_APPVERSION  = "roossterVersion";
+    public static final String VELCTX_INDEXNUM    = "roossterIndexContains";    
+    public static final String VELCTX_COMMAND     = "commandName";    
+    public static final String VELCTX_ENTRYLIST   = "entryList";    
+    
     // for internal use only
     public static final String PARAM_ENTRIES    = "internal.param.entry";
     

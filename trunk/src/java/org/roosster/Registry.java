@@ -80,6 +80,14 @@ public class Registry
         }
     }
 
+    
+    /**
+     * 
+     */
+    public boolean isInitialized() 
+    {
+        return initialized;
+    }
 
     /**
      *

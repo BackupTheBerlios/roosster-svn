@@ -1,7 +1,11 @@
 
 Revision XX / 2005-03-XX / Benjamin Reitzammer
 
-* removed obsolete junk from Registry
+* removed obsolete junk from Registry, and added isInitialized() method
+* implemented HtmlMode.class (again ;) )
+* fixed situation, where servlet initialization was executed twice
+* implemented new build target to build jar file with templates, to fix error in
+  velocity resource loader usage 
 
 Revision 53 / 2005-03-14 / Benjamin Reitzammer
 
