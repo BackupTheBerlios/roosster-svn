@@ -28,6 +28,7 @@ package org.roosster;
 
 import java.io.PrintWriter;
 import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
 
 /**
  *
@@ -43,7 +44,7 @@ public interface OutputMode
      *
      */
     public void output(Registry registry, Output output,
-                       PrintWriter writer, Entry[] entries)
+                       PrintWriter writer, EntryList entries)
                 throws OperationException;
 
     /**

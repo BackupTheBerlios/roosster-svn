@@ -91,6 +91,9 @@ public class AddUrlCommand extends AbstractCommand implements Command
             // now finally store entries in index
             EntryStore store = (EntryStore) registry.getPlugin("store");
             store.addEntries(entries, force);
+            
+            output.addOutputMessage("Number of added Entries: "+entries.length);
+            output.setTemplateName("searchform.html");
         }
     }
 

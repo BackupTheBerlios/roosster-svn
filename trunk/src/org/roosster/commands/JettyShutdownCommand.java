@@ -27,39 +27,40 @@
 package org.roosster.commands;
 
 import java.util.Map;
-import java.net.URL;
 
-import org.roosster.store.EntryStore;
+import org.mortbay.jetty.Server;
+
 import org.roosster.Command;
 import org.roosster.Registry;
 import org.roosster.Output;
+import org.roosster.mappers.ServletMapper;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: DeleteEntryCommand.java,v 1.1 2004/12/03 14:30:13 firstbman Exp $
  */
-public class DeleteEntryCommand extends AbstractCommand implements Command
+public class JettyShutdownCommand extends AbstractCommand implements Command
 {
-
-    public static final String ARG_URL = "url";
-
-
+    private static final String ARG_CONFIRM = "confirm.shutdown"; 
+    private static final String TMPL        = "shutdown.html"; 
+    
     /**
-     *
      */
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        validateArguments(arguments, new String[] {ARG_URL});
-
-        String url = (String) arguments.get(ARG_URL);
-
-        EntryStore store = (EntryStore) registry.getPlugin("store");
-        int numDeleted = store.deleteEntry( new URL(url) );
-
-        output.addOutputMessage("Deleted "+numDeleted+" entry with URL "+url);
-        output.setTemplateName("searchform.html");
+        String confArg = (String) arguments.get(ARG_CONFIRM);
+        
+        if ( "true".equalsIgnoreCase(confArg) || "1".equals(confArg) ) {
+            LOG.warning("The server is shutting down NOW !!!");
+          
+            Server server = (Server) registry.getProperty(ServletMapper.RT_PROP_SERVER);
+            server.stop(true); // graceful shutdown
+            
+            output.setTemplateName(TMPL);
+        } else {
+            output.setTemplateName(TMPL);
+        }
     }
 
 
@@ -67,7 +68,7 @@ public class DeleteEntryCommand extends AbstractCommand implements Command
      */
     public String getName()
     {
-        return "Delete Entry";
+        return "Shutdown Webserver";
     }
-    
 }
+

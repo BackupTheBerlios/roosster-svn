@@ -51,11 +51,12 @@ public class Output
 
     private static final String[] AVL_MODES = new String[] {"atom", "html", "text"};
 
-    private Registry    registry       = null;
-    private OutputMode  mode           = null;
-    private EntryList   entries        = new EntryList();
-    private String      templateName   = null;
-    private boolean     truncation     = true;
+    private Registry     registry       = null;
+    private OutputMode   mode           = null;
+    private EntryList    entries        = new EntryList();
+    private String       templateName   = null;
+    private List         outputMessages = new ArrayList();
+    private boolean      truncation     = true;
 
     /**
      *
@@ -69,6 +70,34 @@ public class Output
     }
 
 
+    /**
+     * absolutely no formatting is applied to this message
+     */
+    public void setOutputMessages(String msg)
+    {
+        outputMessages.clear();
+        outputMessages.add(msg);
+    }
+    
+    
+    /**
+     * @return a list of String-object, may be empty, but never null
+     */
+    public List getOutputMessages()
+    {
+        return outputMessages;
+    }
+    
+    
+    /**
+     * absolutely no formatting is applied to this message
+     */
+    public void addOutputMessage(String msg)
+    {
+        outputMessages.add(msg);
+    }
+    
+    
     /**
      *
      */
@@ -148,11 +177,6 @@ public class Output
             loadOutputMode("", registry);
 
         try {
-            Entry[] outEntries = new Entry[entries.size()];
-            for(int i = 0; i < outEntries.length; i++) {
-                outEntries[i] = entries.getEntry(i);
-            }
-
             if ( !truncation ) {
                 Configuration conf = registry.getConfiguration();
                 Map reqArgs = conf.getProperties();
@@ -161,7 +185,7 @@ public class Output
             }
             
             LOG.fine("Running OutputMode "+mode.getClass());
-            mode.output(registry, this, writer, outEntries);
+            mode.output(registry, this, writer, entries);
         } finally {
             writer.flush();
         }

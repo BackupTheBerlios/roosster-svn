@@ -30,11 +30,14 @@ import java.io.PrintWriter;
 import java.util.logging.Logger;
 import java.util.Arrays;
 
-import org.roosster.store.Entry;
 import org.roosster.Output;
 import org.roosster.OutputMode;
 import org.roosster.OperationException;
-import org.roosster.Registry;
+import org.roosster.Registry;      
+import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
+import org.roosster.store.EntryStore;      
+import org.roosster.util.StringUtil;      
 
 /**
  * TODO move contenttype stuff into abstract class
@@ -55,7 +58,7 @@ public class HtmlMode implements OutputMode
     /**
      *
      */
-    public void output(Registry registry, Output output, PrintWriter writer, Entry[] entries)
+    public void output(Registry registry, Output output, PrintWriter writer, EntryList entries)
                 throws OperationException
     {
         if ( entries == null )
@@ -70,11 +73,16 @@ public class HtmlMode implements OutputMode
                 tmplName = ENTRY_TMPL;
 
             LOG.fine("Using Templates: screen: "+screenTmpl+", tmpl: "+tmplName);
+            LOG.info(StringUtil.joinStrings((String[]) output.getOutputMessages().toArray(new String[0]), "\n"));
             
             Template tmpl = tmplFactory.getTemplate(screenTmpl);
+            tmpl.set("output_messages",  output.getOutputMessages());
             tmpl.set("content_template", tmplName);
-            tmpl.set("num",              new Integer(entries.length));
-            tmpl.set("entries",          Arrays.asList(entries));
+            tmpl.set("entries",          entries);
+            
+            EntryStore store = (EntryStore) registry.getPlugin("store");
+            tmpl.set("offset",           new Integer(store.getOffset()));
+            tmpl.set("limit",            new Integer(store.getLimit()));
 
             tmpl.write(writer);
 

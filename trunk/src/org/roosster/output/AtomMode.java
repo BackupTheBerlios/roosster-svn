@@ -28,6 +28,7 @@ package org.roosster.output;
 
 import java.io.PrintWriter;
 import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
 import org.roosster.Output;
 import org.roosster.OutputMode;
 import org.roosster.OperationException;
@@ -47,7 +48,7 @@ public class AtomMode implements OutputMode
     /**
      *
      */
-    public void output(Registry registry, Output output, PrintWriter stream, Entry[] entries)
+    public void output(Registry registry, Output output, PrintWriter stream, EntryList entries)
                 throws OperationException
     {
         if ( entries == null )
@@ -55,7 +56,7 @@ public class AtomMode implements OutputMode
 
 
         AtomFeedGenerator generator = new AtomFeedGenerator();
-        generator.createFeed(registry, stream, entries);
+        generator.createFeed(registry, stream, (Entry[]) entries.toArray(new Entry[0]));
     }
 
 

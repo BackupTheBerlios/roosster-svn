@@ -39,7 +39,7 @@ import org.roosster.Output;
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  * @version $Id: DeleteEntryCommand.java,v 1.1 2004/12/03 14:30:13 firstbman Exp $
  */
-public class DeleteEntryCommand extends AbstractCommand implements Command
+public class ListAllCommand extends AbstractCommand implements Command
 {
 
     public static final String ARG_URL = "url";
@@ -51,15 +51,10 @@ public class DeleteEntryCommand extends AbstractCommand implements Command
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        validateArguments(arguments, new String[] {ARG_URL});
-
-        String url = (String) arguments.get(ARG_URL);
-
         EntryStore store = (EntryStore) registry.getPlugin("store");
-        int numDeleted = store.deleteEntry( new URL(url) );
-
-        output.addOutputMessage("Deleted "+numDeleted+" entry with URL "+url);
-        output.setTemplateName("searchform.html");
+        output.setEntries( store.getAllEntries() );
+        
+        output.setTemplateName("listall.html");
     }
 
 
@@ -67,7 +62,7 @@ public class DeleteEntryCommand extends AbstractCommand implements Command
      */
     public String getName()
     {
-        return "Delete Entry";
+        return "List all Entries";
     }
     
 }

@@ -52,15 +52,18 @@ import org.roosster.InitializeException;
 public class MapperUtil
 {
     private static Logger LOG = Logger.getLogger(MapperUtil.class.getName());
-
+    
     public static final String PROP_FILE_ARG  = "conf";
 
-    public static final String PROP_FILE        = "/roosster.properties";
+    public static final String CP_PROP_FILE     = "/roosster.properties";
     public static final String DEFAULT_LOG_CONF = "/default_logging.properties";
     public static final String VERBOSE_LOG_CONF = "/verbose_logging.properties";
     public static final String DEBUG_LOG_CONF   = "/debug_logging.properties";
 
-
+    private static final String DEF_HOMEDIR = ".roosster";
+    private static String homeDir = null;
+    
+    
     /**
      * As the name implies, this method parses command line arguments, provided
      * in the standard form of an array of <code>String</code>-objects into a
@@ -143,7 +146,7 @@ public class MapperUtil
     public static Properties loadProperties(Map cmdLine)
                                throws IOException, IllegalArgumentException
     {
-        InputStream propInput = MapperUtil.class.getResourceAsStream(PROP_FILE);
+        InputStream propInput = MapperUtil.class.getResourceAsStream(CP_PROP_FILE);
 
         if ( propInput == null )
             throw new IllegalArgumentException("Can't load default properties file");
@@ -154,16 +157,19 @@ public class MapperUtil
         // try to load user defines properties
         String propFileName =  (String) cmdLine.get(PROP_FILE_ARG);
 
-        if ( propFileName != null ) {
-            File propFile = new File(propFileName);
+        if ( propFileName == null ) {
+            // if the user didn't specify a file, use standard file in $HOME/.roosster
+            propFileName = getHomeDir() + File.separator + "roosster.properties"; 
+        }
+        
+        File propFile = new File(propFileName);
 
-            if ( propFile.canRead() ) {
-                LOG.fine("Overriding default setting with user defined settings");
-                propInput = new FileInputStream(propFile);
-                props.load(propInput);
-            } else {
-                LOG.warning("Can't read from user specified properties file "+propFileName);
-            }
+        if ( propFile.exists() && propFile.canRead() ) {
+            LOG.fine("Overriding default setting with user defined settings");
+            propInput = new FileInputStream(propFile);
+            props.load(propInput);
+        } else {
+            LOG.config("Can't use secondary configuration file: "+propFileName);
         }
 
         // now override with commandline parameters
@@ -182,4 +188,29 @@ public class MapperUtil
 
         return props;
     }
+    
+
+    /**
+     * This method returns the roosster home directory, where the
+     * default location for index directory and other settings is.
+     * By default this location is <code>$HOME/.roosster</code>. For
+     * determining <code>$HOME</code>, the system property
+     * <code>user.home</code> is used. If this is <code>null</code>,
+     * the current directory is used.
+     * @return a String that never ends with a slash &quot;/&quot;
+     */
+    public static String getHomeDir()
+    {
+        if ( homeDir == null ) {
+            homeDir = System.getProperty("user.home");
+            if ( homeDir == null )
+                homeDir = DEF_HOMEDIR;
+            else
+                homeDir += homeDir.endsWith("/") ? DEF_HOMEDIR : "/"+DEF_HOMEDIR;
+        }
+
+        return homeDir;
+    }
+
+    
 }

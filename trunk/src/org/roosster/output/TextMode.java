@@ -28,6 +28,7 @@ package org.roosster.output;
 
 import java.io.PrintWriter;
 import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
 import org.roosster.OutputMode;
 import org.roosster.Output;
 import org.roosster.OperationException;
@@ -46,7 +47,7 @@ public class TextMode implements OutputMode
     /**
      *
      */
-    public void output(Registry registry, Output output, PrintWriter stream, Entry[] entries)
+    public void output(Registry registry, Output output, PrintWriter stream, EntryList entries)
                 throws OperationException
     {
         if ( entries == null )
@@ -55,19 +56,21 @@ public class TextMode implements OutputMode
         StringUtil util = new StringUtil(registry);
         
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < entries.length; i++) {
-            stream.println("URL:           "+ entries[i].getUrl() );
-            stream.println("Title:         "+ entries[i].getTitle() );
-            stream.print("Author:        "+ entries[i].getAuthor() );
-            stream.println( "".equals(entries[i].getAuthorEmail()) ? "" : " <"+entries[i].getAuthorEmail()+">");
-            stream.println("Issued:        "+ entries[i].getIssued() );
-            stream.println("Last-Modified: "+ entries[i].getLastModified() );
-            stream.println("Last-Fetched:  "+ entries[i].getLastFetched() );
-            stream.println("FileType:      "+ entries[i].getFileType() );
-            stream.println("Tags:          "+ StringUtil.joinStrings(entries[i].getTags(), Entry.TAG_SEPARATOR) );
-            stream.println("Note:          "+ util.truncate(entries[i].getNote()) );
+        for (int i = 0; i < entries.size(); i++) {
+            Entry entry = entries.getEntry(i);
+          
+            stream.println("URL:           "+ entry.getUrl() );
+            stream.println("Title:         "+ entry.getTitle() );
+            stream.print("Author:        "+ entry.getAuthor() );
+            stream.println( "".equals(entry.getAuthorEmail()) ? "" : " <"+entry.getAuthorEmail()+">");
+            stream.println("Issued:        "+ entry.getIssued() );
+            stream.println("Last-Modified: "+ entry.getLastModified() );
+            stream.println("Last-Fetched:  "+ entry.getLastFetched() );
+            stream.println("FileType:      "+ entry.getFileType() );
+            stream.println("Tags:          "+ StringUtil.joinStrings(entry.getTags(), Entry.TAG_SEPARATOR) );
+            stream.println("Note:          "+ util.truncate(entry.getNote()) );
             stream.println("Content:");
-            stream.println( util.truncate(entries[i].getContent()) );
+            stream.println( util.truncate(entry.getContent()) );
         }
 
         stream.println();

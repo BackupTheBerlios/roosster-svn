@@ -190,7 +190,60 @@ public class EntryStore implements Plugin
      */
     public int getDocNum() throws IOException
     {
-        return getReader().maxDoc();
+        if ( !isInitialized() )
+            throw new IllegalStateException("Database must be initialized before use!");
+
+        int numdocs = 0;
+        IndexReader reader = null;
+        try {
+            reader = getReader();
+            numdocs = reader.numDocs();
+        } finally {
+            if ( reader != null ) 
+                reader.close();
+        }
+        
+        return numdocs; 
+    }
+    
+      
+    /**
+     *
+     */
+    public EntryList getAllEntries() throws IOException
+    {
+        if ( !isInitialized() )
+            throw new IllegalStateException("Database must be initialized before use!");
+        
+        IndexReader reader = null;
+        EntryList entries = null;
+        try {
+            reader = getReader();
+            int numdocs = reader.numDocs();
+            
+            entries = new EntryList();
+            entries.setTotalSize(numdocs);
+            
+            int limit  = getLimit();
+            int offset = getOffset();
+            LOG.info("Total number of Entries is "+numdocs);
+            LOG.finest("Offset is : "+offset+" / Limit is: "+limit);      
+          
+            if ( numdocs > offset ) {
+                int lastElem = numdocs >= offset+limit ? offset+limit : numdocs;
+
+                for (int i = offset; i < lastElem; i++) {
+                    if ( !reader.isDeleted(i) ) 
+                        entries.add( new Entry(reader.document(i)) );
+                }
+            }
+            
+        } finally {
+            if ( reader != null ) 
+                reader.close();          
+        }
+          
+        return entries;
     }
     
       
@@ -227,7 +280,7 @@ public class EntryStore implements Plugin
             int lastElem = hitsNum >= offset+limit ? offset+limit : hitsNum;
 
             for(int i = offset; i < lastElem; i++) {
-              entries.add( new Entry(hits.doc(i)) );
+                entries.add( new Entry(hits.doc(i)) );
             }
         }
 

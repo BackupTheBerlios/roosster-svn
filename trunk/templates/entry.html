@@ -27,11 +27,13 @@
     </tr>
     <tr>
       <td>Last Modified</td>
-      <td>$entry.modified</td>
+      <td>$entry.lastModified</td>
     </tr>
   </table>
 </form>
-<a href="#url('entry')?output.html.screen_tmpl=cachedentry.html&url=$entry.url">cached content of entry</a>
+<p><a href="#url('entry')?output.html.screen_tmpl=cachedentry.html&url=$entry.url">cached content of entry</a></p>
+<p><a href="#url('del')?url=$entry.url">delete entry!</a></p>
+
 
 
 

@@ -59,8 +59,10 @@ public class ServletMapper extends HttpServlet
 {
     private static Logger LOG = Logger.getLogger(ServletMapper.class.getName());
 
-    public static final String PROP_OUTENC = "default.output.encoding";
-    public static final String PROP_PORT   = "server.port";
+    public static final String PROP_OUTENC      = "default.output.encoding";
+    public static final String PROP_PORT        = "server.port";
+    
+    public static final String RT_PROP_SERVER   = "runtime.server.instance";
 
     public static final String DEF_CONTENT_TYPE = "text/html";
     public static final String DEF_OUTPUT_MODE  = "html";
@@ -79,6 +81,8 @@ public class ServletMapper extends HttpServlet
     private Dispatcher dispatcher     = null;
     private Registry   registry       = null;
     private String     outputEncoding = null;  
+    
+    private static Server server      = null;
 
     /**
      *
@@ -93,7 +97,7 @@ public class ServletMapper extends HttpServlet
             String port = properties.getProperty(PROP_PORT, DEF_PORT);
             
             
-            Server server = new Server();
+            server = new Server();
 
             SocketListener listener=new SocketListener();
             listener.setPort( Integer.valueOf(port).intValue() );
@@ -101,8 +105,9 @@ public class ServletMapper extends HttpServlet
            
             ServletHttpContext context = (ServletHttpContext) server.getContext("/");
             context.addServlet("roosster", CONTEXT_PATH+"/*","org.roosster.mappers.ServletMapper");
+            context.setStatsOn(true);
             
-            server.start ();
+            server.start();
 
         } catch (Exception ex) {
             if ( LOG.isLoggable(Level.CONFIG) )
@@ -127,6 +132,8 @@ public class ServletMapper extends HttpServlet
             
             outputEncoding = registry.getConfiguration().getProperty(PROP_OUTENC, DEF_ENC);
 
+            registry.setProperty(RT_PROP_SERVER, server);
+            
         } catch(InitializeException ex) {
             throw new ServletException(ex);
         }

@@ -44,7 +44,8 @@ public class Registry
 {
     private static Logger LOG = Logger.getLogger(Registry.class.getName());
 
-    private Map plugins = new Hashtable();
+    private Map plugins    = new Hashtable();
+    private Map properties = new Hashtable();
 
     /** Denotes actions that can be performed on plugins
      */
@@ -87,6 +88,28 @@ public class Registry
     public Configuration getConfiguration()
     {
         return conf;
+    }
+
+
+    /**
+     *
+     */
+    public Object getProperty(String key)
+    {
+        if ( key != null && !"".equals(key) )
+            return properties.get(key);
+        else
+            return null;
+    }
+
+
+    /**
+     *
+     */
+    public void setProperty(String key, Object obj)
+    {
+        if ( key != null && !"".equals(key) && obj != null )
+            properties.put(key, obj);
     }
 
 

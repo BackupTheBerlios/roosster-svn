@@ -14,12 +14,24 @@
         
         #parse("navigation.html")
         
+        #if ( $output_messages.size() > 0 )
+          <div id="output-message">
+              <ul>
+                #foreach( $msg in $output_messages )
+                  <li class="out-msg">$msg</li>
+                #end
+              </ul>
+          </div>
+        #end
+        
         <div id="content">
           #parse( $content_template )
         </div>
+        
         <div id="foot">
           powered by <a href="http://roosster.org/">roosster - personal search</a>
-          | <em>index contains $!{props.get("internal.docnum")} Entries</em>
+          | <a href="#url('shutdown')">shutdown webserver</a></em>
+          | <em>index contains <a href="#url('listall')">$!{props.get("internal.docnum")} Entries</a></em>
         </div>
     </body>
 </html>
