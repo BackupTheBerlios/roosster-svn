@@ -1,0 +1,51 @@
+
+Revision 50 / 2005-02-25 / Benjamin Reitzammer
+
+* fixed a bug in org.roosster.input.UrlFetcher that caused wrong 
+  ContentTypeProcessor to be used, when ContentType was specified with Encoding
+* removed JDOM dependency in EntryGenerator (ROME still needs JDOM)
+* removed "app" Servlet from web.xml; this means the application (when run as 
+  a web application is only available through the API)
+* Implemented a rudimentary HTML Parser to extract text only from HTML pages, and
+  use that as searchable content in index (uses TagSoup); is also used when 
+  fetching feeds. --> added raw field to Lucene Document to still store complete
+  URL's content
+* added lastedit field to Entry and Document, gets updated automatically
+* changed XML format, see doc/entry.xml for example of new structure
+* API now allows to select output mode (specify 'output.mode' request parameter)
+* standardized exception messages (for easy parsing and meaningful error Messages
+  in JS Client)
+* added number of entries in index to output in web interface
+* adding entries in web interface handles DuplicateEntriesException gracefully
+* added output-message facility to web interface. Error get printed nicely now.
+* added "quickjump" facility to web interface. for quickly jumping into specific
+  actions in the web interface, by specifying certain URL parameters 
+* improved HTML parser to parse title out of page, and set Entry title accordingly.
+* implemented frameset that shows raw cached contents of page (fixed output mode
+  bug for that, and changed output/outputmode handling a little)
+* fixed content type handling error
+* changed default boolean search operator to AND
+* edit page now has textarea with complete indexed content (can be toggled on/off)
+* changed default sort to RELEVANCE, and made date sorting faster, by explicitly
+  specifying to sort by number
+* extended Entry to store score, when created from Document
+* added pager to search results page in JS/web interfac
+* renamed some date fields in Entry.class, removed lastFetched and added 'added'
+* added tools tab, and bookmarklet 
+
+Revision 45 / 2005-02-11 /  Benjamin Reitzammer
+
+* finished API
+** finished EntrySaxHandler and EntryGenerator
+** implemented RoossterXml output mode
+* cleaned up some scattered constants, and moved them to org.roosster.Constants
+* implemented sorting of result
+* removed unnecessary instance methods from StringUtil
+* added CHANGELOG document to repository
+* fixed some minor bugs, that caused some fields in Entries to get overwritten
+  by wrong values
+* moved logging code to log4j
+* made Put and Add commands work with API and CLI
+* implemented AbstractOutputMode
+* finished basic test suite for API
+* finished first testing of Javascript client

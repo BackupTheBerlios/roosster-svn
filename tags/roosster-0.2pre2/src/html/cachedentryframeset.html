@@ -1,0 +1,9 @@
+<html>
+<head>
+<title>roosster - cached entry contents - </title>
+</head>
+#set ( $url = $req.getParameter('url') )
+<frameset rows="75,*">
+  <frame src="$baseurl/cachedentrynotice.html?url=${url}" name="notice" scrolling="no" />
+  <frame src="$baseurl/api/entry?url=${url}&output.mode=raw" name="rawcontent" />
+</frameset>
