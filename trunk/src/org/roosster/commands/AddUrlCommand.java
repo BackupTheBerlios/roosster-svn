@@ -76,4 +76,12 @@ public class AddUrlCommand extends AbstractCommand implements Command
         }
     }
 
+
+    /**
+     */
+    public String getName()
+    {
+        return "Add URL";
+    }
+
 }

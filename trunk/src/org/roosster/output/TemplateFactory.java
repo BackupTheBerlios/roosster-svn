@@ -26,39 +26,35 @@
  */
 package org.roosster.output;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.util.Hashtable;
-import java.util.Map;
+import java.io.StringWriter;
+import java.util.Properties;
 import java.util.logging.Logger;
-import org.apache.commons.io.IOUtils;
-import org.javaby.jbyte.Template;
-import org.javaby.jbyte.TemplateCreationException;
+
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.VelocityContext;
+
 import org.roosster.Plugin;
 import org.roosster.InitializeException;
 import org.roosster.Registry;
+import org.roosster.Configuration;
+import org.roosster.util.StringUtil;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: TemplateFactory.java,v 1.1 2004/12/03 14:30:14 firstbman Exp $
  */
 public class TemplateFactory implements Plugin
 {
     private static Logger LOG = Logger.getLogger(TemplateFactory.class.getName());
 
-    private static final String PROP_TMPL_PATH = "templates.path";
+    private static final String VELOCITY_PROP_FILE = "/velocity.properties";
+    private static final String PROP_TMPL_PATH     = "templates.path";
     
-    private Map     templates   = new Hashtable();
-    private Map     modTimes    = new Hashtable();
-    private String  path        = null;
-    private boolean initialized = false;
+    private static final String DEF_TMPL_PATH      = "templates";
+    
+    private Registry  registry    = null;
+    private boolean   initialized = false;
 
     /**
      */
@@ -66,13 +62,25 @@ public class TemplateFactory implements Plugin
     {
         LOG.finest("Initializing "+getClass());
 
-        path = registry.getConfiguration().getProperty(PROP_TMPL_PATH);
-        if ( path == null || "".equals(path) )
-            throw new InitializeException
-                      ("Property "+PROP_TMPL_PATH+" must be specified");
+        this.registry = registry;
 
-        if ( !path.endsWith("/") )
-            path = path +"/";
+        try {
+            Properties props = new Properties();
+            props.load(getClass().getResourceAsStream(VELOCITY_PROP_FILE));
+            
+            Configuration conf = registry.getConfiguration();
+            String path = conf.getProperty(PROP_TMPL_PATH);
+
+            if ( path == null || "".equals(path) ) 
+                path = conf.getHomeDir() + "/"+DEF_TMPL_PATH;
+
+            props.setProperty("file.resource.loader.path", path);
+
+            Velocity.init(props);
+
+        } catch (Exception ex) {
+            throw new InitializeException(ex);
+        }
         
         initialized = true;
     }
@@ -98,87 +106,38 @@ public class TemplateFactory implements Plugin
     
     /**
      */
-    public Template getTemplate(String fileName) 
-                                 throws IOException, TemplateCreationException
+    public Template getTemplate(String fileName) throws Exception
     {
-        String tmplStr = loadTemplate(fileName);
-        if ( tmplStr == null )
-            throw new FileNotFoundException("Can't find template file "+fileName);
-
-        return new Template(new BufferedReader(new StringReader(tmplStr)) );
-    }
-
-    
-    /**
-     */
-    public String getTemplateContent(String fileName) throws IOException
-    {
-        return loadTemplate(fileName);
-    }
-
-    
-    /**
-     * see if file exists, if not try to load from file or
-     * classpath, if yes see if it changed, if yes or if no
-     * contents is cached try to load from file or classpath
-     * @param fileName name of file to load from  
-     * @exception IOException if an IOException occurs while loading
-     * the file 
-     */
-    private String loadTemplate(String fileName) throws IOException
-    {
-        String returnStr = null;
-        String tmplContents = (String) templates.get(fileName);
-
-        File tmplFile = new File(path + fileName);
-        LOG.finest("Trying to open file "+tmplFile);
-
-        if ( tmplFile.exists() && tmplFile.canRead() ) {
-            
-            Long modTime = (Long) modTimes.get(fileName);
-            long modFile = tmplFile.lastModified();
-            LOG.finest("File exists: cached modtime "+modTime+", fileModTime "+modFile);
-            
-            if ( modTime == null 
-                   || modTime.longValue() < modFile 
-                   || tmplContents == null) {
-                LOG.finest("File has changed or isn't cached yet, loading now: "+tmplFile);
-                returnStr = IOUtils.toString(new FileReader(tmplFile));
-                templates.put(fileName, returnStr);
-                modTimes.put(fileName, new Long(System.currentTimeMillis()));
-            } else {
-                LOG.finest("File hasn't changed and is cached");
-                returnStr = tmplContents;
-            }
-            
-
-        } 
+        org.apache.velocity.Template tmpl = Velocity.getTemplate(fileName);
         
-        if ( tmplContents != null && returnStr == null ) {
-
-            LOG.finest("File cached, formerly loaded from classpath");
-            returnStr = tmplContents;
-            
-        } else if ( returnStr == null ) {
-
-            LOG.finest("No file found or cached, trying to load "+fileName+" from classpath"); 
-            
-            InputStream stream = null;
-            try {
-
-                stream = getClass().getResourceAsStream("/"+fileName); 
-                if ( stream != null ) {
-                    returnStr = IOUtils.toString(stream);
-                    templates.put(fileName, returnStr);
-                    modTimes.put(fileName, new Long(System.currentTimeMillis()));
-                }
-                
-            } finally {
-                if ( stream != null )
-                    stream.close();
-            }
-        }
-
-        return returnStr;
+        if ( tmpl == null )
+            throw new FileNotFoundException("Can't find template file "+fileName);
+        
+        return new Template(tmpl, getContext());
     }
+
+    
+    /**
+     */
+    public String getTemplateContent(String fileName) throws Exception
+    {
+        StringWriter writer = new StringWriter();
+        Velocity.getTemplate(fileName).merge(getContext(), writer);
+        return writer.toString();
+    }
+
+    
+    // ============ private Helper methods ============
+
+    
+    /**
+     * used to construct the default application Context
+     */
+    private VelocityContext getContext()
+    {
+        VelocityContext context = new VelocityContext();
+        context.put("stringutil", new StringUtil(registry));
+        return context;
+    }
+
 }

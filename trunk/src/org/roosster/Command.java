@@ -45,4 +45,7 @@ public interface Command
     public void execute(Map arguments, Registry registry, Output output)
                         throws Exception;
 
+    /**
+     */
+    public String getName();
 }

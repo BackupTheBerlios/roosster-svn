@@ -53,4 +53,12 @@ public class AddFileCommand extends AbstractCommand implements Command
         arguments.put( AddUrlCommand.ARG_URL, file.toURL().toString() );
     }
 
+
+    /**
+     */
+    public String getName()
+    {
+        return "Add File";
+    }
+    
 }

@@ -1,0 +1,4 @@
+#macro( truncate $text )
+    ${stringutil.trunc($text)}
+#end
+

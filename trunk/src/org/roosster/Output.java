@@ -51,7 +51,7 @@ public class Output
 
     /** if the value of this property is set to a value below zero, no output is truncated
      */
-    private static final String PROP_TRUNCLENGTH = "output.truncate.length";
+    public static final String PROP_TRUNCLENGTH = "output.truncate.length";
 
     private Registry    registry       = null;
     private OutputMode  mode           = null;
@@ -214,6 +214,8 @@ public class Output
     {
         Configuration conf = registry.getConfiguration();
 
+        LOG.fine("Trying to load OutputMode: "+modeName); 
+        
         modeName = modeName.trim();
         boolean correctMode = false;
         for(int i = 0; i < AVL_MODES.length; i++) {

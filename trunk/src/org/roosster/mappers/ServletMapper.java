@@ -60,13 +60,14 @@ public class ServletMapper extends HttpServlet
 
     public static final String DEF_CONTENT_TYPE = "text/html";
     public static final String DEF_OUTPUT_MODE  = "html";
+    public static final String DEF_COMMAND      = "searchform";
     
     public static final String DEF_ENC     = "UTF-8";
     public static final String PROP_OUTENC = "default.output.encoding";
     public static final String DEF_PORT    = "8181";
     public static final String PROP_PORT   = "server.port";
     
-    public static final String ARG_MODE    = "outmode";
+    public static final String ARG_MODE    = "output.mode";
 
     private static Properties properties = null;
     
@@ -137,23 +138,18 @@ public class ServletMapper extends HttpServlet
         
         try {
             String commandName = getCommandName(req);
-            if ( commandName == null )
-                throw new IllegalArgumentException("A command name must be specified");
-            
             Map args = parseRequestArguments(req);
             
             Output output = dispatcher.run(commandName, args);
 
-    
-            String outputMode = (String) registry.getConfiguration().getProperty(ARG_MODE);
-            if ( outputMode == null )
-                outputMode = DEF_OUTPUT_MODE;
+            // TODO see if conf.getRequestArguments() contains a
+            // different outputmode
             
-            output.setOutputMode(outputMode);
+            output.setOutputMode(DEF_OUTPUT_MODE);
             String contentType = output.getContentType();
             contentType = contentType == null ? DEF_CONTENT_TYPE : contentType; 
             resp.setContentType(contentType+"; charset="+outputEncoding);
-            
+
             writer = resp.getWriter();
             output.output(writer);
             
@@ -203,7 +199,7 @@ public class ServletMapper extends HttpServlet
             }
         }
         
-        return commandName;
+        return commandName == null ? DEF_COMMAND : commandName;
     }
 
     /**

@@ -61,4 +61,12 @@ public class DeleteEntryCommand extends AbstractCommand implements Command
         LOG.info("Deleted "+numDeleted+" entry with URL "+url);
     }
 
+
+    /**
+     */
+    public String getName()
+    {
+        return "Delete Entry";
+    }
+    
 }

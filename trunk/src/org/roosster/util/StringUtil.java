@@ -28,6 +28,9 @@ package org.roosster.util;
 
 import java.util.logging.Logger;
 
+import org.roosster.Registry;
+import org.roosster.Output;
+
 /**
  * Class that provides basic String functions
  *
@@ -38,6 +41,28 @@ public class StringUtil
 {
     private static Logger LOG = Logger.getLogger(StringUtil.class.getName());
 
+    private Registry registry       = null;
+    private int      truncateLength = -1;
+    
+    public StringUtil(Registry registry)
+    {
+        if ( registry == null )
+            throw new IllegalArgumentException("Argument 'registry' cannot be null");
+        
+        this.registry = registry;
+        String truncLength = registry.getConfiguration().getProperty(Output.PROP_TRUNCLENGTH, "-1");
+        truncateLength = Integer.valueOf(truncLength).intValue();
+    }
+    
+    
+    /**
+     *
+     */
+    public String trunc(String str)
+    {
+        return StringUtil.truncate(str, truncateLength);
+    }
+    
 
     /**
      * Truncate a String to a specified length

@@ -50,5 +50,12 @@ public class TemplateCommand extends AbstractCommand implements Command
             output.setTemplateName(tmpl);
     }
 
+
+    /**
+     */
+    public String getName()
+    {
+        return "";
+    }
 }
 

@@ -1,24 +1,19 @@
 <html>
     <head>
-        <title>roosster - List of Entries</title>
-        <style type="text/css">
-            <!--
-            {v:css_string}
-            //-->
-        </style>
+        #parse("head.html")
     </head>
     <body>
-    Number of Entries: <b>{v:num}</b>
+    Number of Entries: <b>$num</b>
     <ul id="entry-list">
-        <t:entries>
+        #foreach($entry in $entries)
             <li>
                 <ul class="entry">
-                    <li class="entry-url"><a href="{v:url}">{v:title}</a></li> 
-                    <li class="entry-content">{v:content} <strong>[...]</strong></li> 
-                    <li class="entry-info">{v:issued}</li>
+                    <li class="entry-url"><a href="$entry.url">$entry.title</a></li> 
+                    <li class="entry-content">#truncate($entry.content)<strong>[...]</strong></li> 
+                    <li class="entry-info">$entry.issued</li>
                 </ul>
             </li>
-        </t:entries>
+        #end
     </ul>
     </body>
 </html>

@@ -27,13 +27,7 @@
 package org.roosster.commands;
 
 import java.util.Map;
-import java.util.Date;
-import java.net.URL;
-import java.net.URLConnection;
-import org.apache.commons.io.IOUtils;
 
-import org.roosster.store.EntryStore;
-import org.roosster.store.Entry;
 import org.roosster.Command;
 import org.roosster.Registry;
 import org.roosster.Output;
@@ -41,31 +35,17 @@ import org.roosster.Output;
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: GetEntryCommand.java,v 1.1 2004/12/03 14:30:13 firstbman Exp $
  */
-public class GetEntryCommand extends AbstractCommand implements Command
+public class SearchFormCommand extends AbstractCommand implements Command
 {
-
-    public static final String ARG_URL = "url";
-
-
+    private static final String SEARCH_TMPL = "searchform.html"; 
+    
     /**
-     *
      */
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        validateArguments(arguments, new String[] {ARG_URL});
-
-        EntryStore store = (EntryStore) registry.getPlugin("store");
-        Entry entry = store.getEntry( new URL((String) arguments.get(ARG_URL)) );
-
-        LOG.info("Found entry: "+entry);
-
-        if ( entry != null ) {
-            output.addEntry(entry);
-            output.setTruncateLength(-1); // disable truncation
-        }
+        output.setTemplateName(SEARCH_TMPL);
     }
 
 
@@ -73,7 +53,7 @@ public class GetEntryCommand extends AbstractCommand implements Command
      */
     public String getName()
     {
-        return "Entry";
+        return "Search";
     }
-
 }
+

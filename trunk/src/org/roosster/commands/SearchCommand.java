@@ -52,4 +52,11 @@ public class SearchCommand extends AbstractCommand implements Command
         output.setEntries( store.search( (String) arguments.get(ARG_Q) ) );
     }
 
+
+    /**
+     */
+    public String getName()
+    {
+        return "Search Result";
+    }
 }

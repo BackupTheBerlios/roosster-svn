@@ -26,36 +26,51 @@
  */
 package org.roosster.output;
 
-import java.io.PrintWriter;
-import java.util.logging.Logger;
-import java.util.Arrays;
+import java.io.Writer;
 
-import org.roosster.store.Entry;
-import org.roosster.Output;
-import org.roosster.OutputMode;
-import org.roosster.OperationException;
-import org.roosster.Registry;
+import org.apache.velocity.VelocityContext;
+
 
 /**
- * TODO move contenttype stuff into abstract class
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class HtmlMode implements OutputMode
+public class Template 
 {
-    private static Logger LOG = Logger.getLogger(HtmlMode.class.getName());
-    
-    private static final String ENTRY_TMPL = "entry.html";
-    private static final String CSS_TMPL   = "styles.css";
+    private org.apache.velocity.Template tmpl       = null;
+    private VelocityContext              context    = null;
 
-    private String contentType = DEF_CONTENT_TYPE;
 
     /**
      *
      */
-    public void output(Registry registry, Output output, PrintWriter writer, Entry[] entries)
-                throws OperationException
+    public Template(org.apache.velocity.Template tmpl, VelocityContext context)
     {
+        if ( tmpl == null || context == null )
+            throw new IllegalArgumentException("Arguments are not allowed to be null");
+        
+        this.tmpl    = tmpl;
+        this.context = context;
+    }
+
+    
+    /**
+     *
+     */
+    public void set(String name, Object obj)
+    {
+        context.put(name, obj);
+    }
+
+    /**
+     */
+    public void write(Writer writer) throws Exception
+    {
+        tmpl.merge(context, writer);
+    }
+}
+
+/*
         if ( entries == null )
             throw new IllegalArgumentException("entries parameter is not allowed to be null");
 
@@ -69,34 +84,26 @@ public class HtmlMode implements OutputMode
             
             Template tmpl = tmplFactory.getTemplate(tmplName);
             
-            tmpl.set("title",   "personal search");
-            tmpl.set("num",     new Integer(entries.length));
-            tmpl.set("entries", Arrays.asList(entries));
+            tmpl.set("css_string", tmplFactory.getTemplateContent(CSS_TMPL));
+            tmpl.set("num", new Integer(entries.length));
+            
+            Template enTmpl = tmpl.get("entries");
+            for(int i = 0; i < entries.length; i++) {
+                enTmpl.set("url", entries[i].getUrl());
+                enTmpl.set("title", entries[i].getTitle());
+                enTmpl.set("issued", entries[i].getIssued());
+                
+                String content = entries[i].getContent();
+                enTmpl.set("content", StringUtil.truncate(content, output.getTruncateLength()));
 
-            tmpl.write(writer);
+                tmpl.append("entries", enTmpl);
+            }            
+
+            writer.println( tmpl.toString() );
 
         } catch(Exception ex) {
             throw new OperationException(ex);
         }
             
     }
-
-    /**
-     *
-     */
-    public String getContentType() 
-    {
-        return contentType;
-    }
-
-    
-    /**
-     *
-     */
-    public void setContentType(String type)
-    {
-        this.contentType = type;
-    }
-
-    
-}
+*/
