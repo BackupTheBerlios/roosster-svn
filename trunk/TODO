@@ -9,10 +9,28 @@ JS Client
 * if selected entry is edited, send to server, parse response into Entry, and 
   put it back into cached list
 * format entry list as table not unordered list
-
-
+* use init() to jump directly into a tab
+* make bookmarklet, to add a url (server fetches content and stores
+  it), then jump directly to edit tab
+* place only url text input field onto add-tab
 
 
 API
 =========
 * get rid of JDOM use in EntryGenerator
+* remove roosster servlet from web.xml
+* implement tag fetching
+* implement ccommand to fetch only raw contents of entry
+
+
+General
+=========
+* implement Entry.Author and use it to replace author/authorEmail in
+  Entry.class 
+* look at all TODO comments in sourcecode
+* use HTML parser (jtidy or jsoup) to process HTML before adding
+* extend Entry so that content field contains only meaningful (no
+  markup) text, while adding a new (unindexed, stored) field to
+  Entry.class text, while adding a new (unindexed, stored) field to
+  Entry.class. Return this "raw" field when cached contents is
+  requested
