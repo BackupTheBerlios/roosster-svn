@@ -78,6 +78,7 @@ General
 * IMPORTANT retain entry's date information with finer granularity (down to 
   seconds) and be sure to keep timezone information and output this information
   in roossterxml
+* del.icio.us: why does /api/posts/all does not contain extended text?
 
 * DONE add property delicious.api.endpoint
 * DONE implement get/setJumpTo in Output.class
