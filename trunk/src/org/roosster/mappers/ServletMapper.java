@@ -58,16 +58,19 @@ public class ServletMapper extends HttpServlet
 {
     private static Logger LOG = Logger.getLogger(ServletMapper.class.getName());
 
+    public static final String PROP_OUTENC = "default.output.encoding";
+    public static final String PROP_PORT   = "server.port";
+
     public static final String DEF_CONTENT_TYPE = "text/html";
     public static final String DEF_OUTPUT_MODE  = "html";
     public static final String DEF_COMMAND      = "searchform";
+    public static final String DEF_ENC          = "UTF-8";
+    public static final String DEF_PORT         = "8181";
     
-    public static final String DEF_ENC     = "UTF-8";
-    public static final String PROP_OUTENC = "default.output.encoding";
-    public static final String DEF_PORT    = "8181";
-    public static final String PROP_PORT   = "server.port";
+    public static final String CONTEXT_PATH     = "/roosster";
     
     public static final String ARG_MODE    = "output.mode";
+    public static final String ARG_BASEURL = "internal.baseurl";
 
     private static Properties properties = null;
     
@@ -95,7 +98,7 @@ public class ServletMapper extends HttpServlet
             server.addListener(listener);
            
             ServletHttpContext context = (ServletHttpContext) server.getContext("/");
-            context.addServlet("roosster","/roosster/*","org.roosster.mappers.ServletMapper");
+            context.addServlet("roosster", CONTEXT_PATH+"/*","org.roosster.mappers.ServletMapper");
             
             server.start ();
 
@@ -139,6 +142,11 @@ public class ServletMapper extends HttpServlet
         try {
             String commandName = getCommandName(req);
             Map args = parseRequestArguments(req);
+
+            LOG.fine("BASE URL is "+getBaseUrl(req));
+            args.put(ARG_BASEURL, getBaseUrl(req));
+
+            registry.getConfiguration().setRequestArguments(args);
             
             Output output = dispatcher.run(commandName, args);
 
@@ -181,6 +189,12 @@ public class ServletMapper extends HttpServlet
     // ============ private Helper methods ============
 
 
+    private String getBaseUrl(HttpServletRequest req)
+    {
+        return "http://"+ req.getServerName() +":"+ req.getServerPort()+ CONTEXT_PATH+"/" ;
+    }
+
+    
     /**
      *
      */

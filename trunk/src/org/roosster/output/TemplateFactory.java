@@ -137,6 +137,19 @@ public class TemplateFactory implements Plugin
     {
         VelocityContext context = new VelocityContext();
         context.put("stringutil", new StringUtil(registry));
+
+        Configuration conf =  registry.getConfiguration();
+        String[] names = conf.getPropertyNames("internal.");
+
+        for (int i = 0; i < names.length; i++) {
+            String prop = conf.getProperty(names[i]);
+            String argName = names[i].substring("internal.".length());
+
+            LOG.fine("Adding '"+argName+"' with value '"+prop+"' to TemplateContext");
+           
+            context.put(argName, prop);
+        }
+        
         return context;
     }
 

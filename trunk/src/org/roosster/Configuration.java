@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * <b>NOTE:</b> This class must always be thread-safe
@@ -67,7 +68,28 @@ public class Configuration
      */
     public String getProperty(String propName)
     {
-        return properties.getProperty(propName);
+        String returnStr = null;
+
+        if ( propName != null ) {
+
+            Map args = getRequestArguments();
+            if ( args != null )
+                returnStr = (String) args.get(propName);
+
+            if ( returnStr == null )
+                returnStr = properties.getProperty(propName);
+        }
+
+        return returnStr;
+    }
+
+
+    /**
+     * @return
+     */
+    public Map getProperties()
+    {
+        return new HashMap(properties);
     }
 
 
@@ -99,23 +121,27 @@ public class Configuration
     {
         Set names = new HashSet();
 
-        Enumeration propNames = properties.propertyNames();
-        while ( propNames.hasMoreElements() ) {
-            String name = (String) propNames.nextElement();
-            if ( prefix == null || "".equals(prefix) || name.startsWith(prefix) )
-                names.add(name);
-        }
-
-        Map args = getRequestArguments();
-        if ( args != null ) {
-            Iterator keys = args.keySet().iterator();
-            while ( keys.hasNext() ) {
-                String name = (String) keys.next();
-                if ( names.contains(name) )
-                    names.remove(name);
-
-                names.add(name);
+        if ( prefix != null && !"".equals(prefix) )  {
+            
+            Enumeration propNames = properties.propertyNames();
+            while ( propNames.hasMoreElements() ) {
+                String name = (String) propNames.nextElement();
+                if ( name.startsWith(prefix) )
+                    names.add(name);
             }
+
+            Map args = getRequestArguments();
+            if ( args != null ) {
+                Iterator keys = args.keySet().iterator();
+                while ( keys.hasNext() ) {
+                    String name = (String) keys.next();
+                    if ( name.startsWith(prefix) ) {
+                        names.remove(name);
+                        names.add(name);
+                    }
+                }
+            }
+
         }
 
         return (String[]) names.toArray(new String[0]);
@@ -169,6 +195,9 @@ public class Configuration
 
         return homeDir;
     }
+
+    
+    // ============ private Helper methods ============
 
 
     /**
