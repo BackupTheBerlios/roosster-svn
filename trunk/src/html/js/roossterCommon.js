@@ -18,6 +18,7 @@ const TAG_AUTHORS     = 'authors';
 const TAG_TAG         = 'tag';
 const TAG_TAGS        = 'tags';
 const TAG_NOTE        = 'note';
+const TAG_TYPE        = 'type';
 const TAG_TITLE       = 'title';
 const TAG_ISSUED      = 'issued';
 const TAG_MODIFIED    = 'modified';
@@ -31,7 +32,8 @@ const ATTR_EMAIL      = 'email';
 
 const DIV_ID_DEBUGOUT = "debug-out";
 
-const DIV_ID_ENTRIESOUT = "entries-out";
+const DIV_ID_ENTRIESOUT   = "entries-out";
+const FORM_ID_ENTRYFORM   = "entryform";
 
 // global reference to window's document
 var doc = window.document;
@@ -82,11 +84,21 @@ function exception(message) {
 }
 
 
+/**
+ *  @return an Element object that represents a html link (<a href="...">text</a>)
+ */
+function createLink(targetUrl, text) {
+    var aHref = doc.createElement('a');
+    aHref.href = targetUrl;
+    aHref.appendChild( doc.createTextNode(text) );
+    return aHref;
+}
+
 
 /**
  * 
  */
-function w3cDate(){
+function formatW3cDate(dateString){
   var date = new Date();
   
   var day = new String(date.getUTCDate());
@@ -105,15 +117,66 @@ function w3cDate(){
 
 
 /**
- * @param childName name of child element, for which the text should be retrieved
+ * 
+ */
+function parseW3cDate(date) {
+    // TODO implement this
+    return date;
+}
+
+
+/**
+ * 
+ */
+function displayDate(date) {
+    // TODO implement this
+    return date;
+}
+
+
+/**
+ * @param node from which all children should be removed 
+ */
+function removeAllChildren(node) {
+    if ( node == null ) 
+        return;
+    
+    var children = node.childNodes;
+    if ( children != null ) {
+        for(var i = 0; i < children.length; i++) {
+            node.removeChild( children.item(i) );
+        }
+    }
+}
+
+
+/**
+ * returns the contents of child nodes (of type TEXT).
+ * 
+ * @param childName name of child element, for which the text should be retrieved;
+ * @param node the DOM Node on which to perform the action
+ *
+ * @return if there is more than one child node, an array of strings (representing the 
+ * text nodes of the children) is returned; if there is only one child node with 
+ * the specified name, returns only this nodes text; 
+ * null, if the node has no children at all, or there is no node with this name.
  */
 function getChildsText(node, childName) {
     var children = node.childNodes;
-    var text     = "";
-    for(var i = 0; i < children.length; i++) {
-        var child = children.item(i);
-        if ( child.nodeType == 1 && child.nodeName == childName ) // Element Node
-            return getText(child);
+    
+    if ( children != null ) {
+      
+        var childTexts = new Array();
+        for(var i = 0; i < children.length; i++) {
+            var child = children.item(i);
+            if ( child.nodeType == 1 && child.nodeName == childName ) // Element Node
+                childTexts.push( getText(child) );
+        }
+        
+        if ( childTexts.length > 1 ) 
+            return childTexts;
+        else if ( childTexts.length == 1 )
+            return childTexts[0];
     }
     
     return null;
@@ -121,7 +184,7 @@ function getChildsText(node, childName) {
 
 
 /*
- *
+ * @return the value of all Text-type child nodes of the specified node 
  */
 function getText(node) {
     var children = node.childNodes;
@@ -133,4 +196,6 @@ function getText(node) {
     }
     return text;
 }
+
+
 

@@ -20,6 +20,7 @@ function Entry(url) {
     this.title        = '';
     this.note         = '';
     this.tags         = new Array();
+    this.type         = '';
     this.author       = '';
     this.authorEmail  = '';
     this.issuedDate   = null;
@@ -30,46 +31,83 @@ function Entry(url) {
     //methods
     //
     
+    this.toString = function() {
+        return "Entry: \nURL: "+this.url+"\nTitle: "+this.title+"\nTags: "+this.tags.join()+"\n\n";
+    }
+    
     /**
-     * 
+     * fills this object into a form (specified by the node param)
      */
-    this.attach = function(node) {
+    this.fillIntoEditForm = function(node) {    
+        node.url.value = this.url;
+        node.title.value = this.title;
+        node.type.value = this.type;
+        node.tags.value = this.tags.join();
+        node.author.value = this.author;
+        node.authorEmail.value = this.authorEmail;
+        node.issuedDate.value =  displayDate(this.issuedDate);
+        node.modifiedDate.value = displayDate(this.modifiedDate);
+        node.fetchedDate.value = tdisplayDate(this.fetchedDate);
+    }
+    
+    
+    /**
+     * Appends the following structure to the provided node:
+     * 
+     * <ul class="entry">
+     *     <li class="entry-url"><a href="$entry.url">$entry.title</a></li> 
+     *     <li class="entry-content">#truncate($entry.content)<strong>[...]</strong></li> 
+     *     <li class="entry-info">$entry.issued (<a href="#url('entry')?url=$entry.url">show all details</a>)</li>
+     * </ul>
+     */
+    this.attachAsList = function(node) {
+        if ( node == null )
+            exception("Parameter 'node' to method Entry.attachAsList() must be 'not null'");
+      
         var ulEntryList = doc.createElement("ul");
-        ulEntryList.id = 'entry';
+        ulEntryList.className = 'entry';
         
+        // <li class="entry-url">        
         var liEntryUrl = doc.createElement("li");
         liEntryUrl.className = 'entry-url';
-            var aHref = doc.createElement('a');
-            aHref.href = this.url
-            aHref.appendChild( doc.createTextNode(this.title) );
-        liEntryUrl.appendChild( aHref );
+        liEntryUrl.appendChild( createLink("javascript:doEdit('"+this.url+"')", this.title) );
         ulEntryList.appendChild(liEntryUrl);
         
+        // <li class="entry-content">        
         var liEntryContent = doc.createElement("li");
         liEntryContent.className = 'entry-content';
         liEntryContent.appendChild( doc.createTextNode(this.content) );
         ulEntryList.appendChild(liEntryContent);
-        
+
+        // <li class="entry-info">        
         var liEntryInfo = doc.createElement("li");
         liEntryInfo.className = 'entry-info';
-        liEntryInfo.appendChild( doc.createTextNode(this.issued) );
+        
+        var infoLine = doc.createElement('span');
+        infoLine.appendChild( 
+                      doc.createTextNode((this.issued ? displayDate(this.issued) : "(no issued date)")+" tags: ")
+                            );
+        
+        for (var i = 0; i < this.tags.length; i++) {
+            infoLine.appendChild( createLink("javascript:doSearch('tags:"+this.tags[i]+"')", this.tags[i]) );
+            
+            if ( i+1 < this.tags.length )
+                infoLine.appendChild( doc.createTextNode(" | ") );
+        }
+        liEntryInfo.appendChild(infoLine);
         ulEntryList.appendChild(liEntryInfo);
         
         node.appendChild(ulEntryList);
     }
     
-  /*  
-    <ul id="entry-list">
-    #foreach($entry in $entries)
-        <li>
-            <ul class="entry">
-                <li class="entry-url"><a href="$entry.url">$entry.title</a></li> 
-                <li class="entry-content">#truncate($entry.content)<strong>[...]</strong></li> 
-                <li class="entry-info">$entry.issued (<a href="#url('entry')?url=$entry.url">show all details</a>)</li>
-            </ul>
-        </li>
-    #end
-  </ul>
-  */
-    
 }
+
+
+/**
+ * EntryList-Objects
+ */
+function EntryList() {
+}
+
+
+

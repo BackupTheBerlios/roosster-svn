@@ -164,6 +164,9 @@ public class FeedParser
             
             entry.setFileType(fileType);
             entry.setAuthor( feedEntry.getAuthor() == null ? feedAuthor : feedEntry.getAuthor() );
+            
+            // TODO cast to WireFeed and pull out author email
+            
             entry.setTitle( feedEntry.getTitle() == null ? feedTitle : feedEntry.getTitle() );
             
             Date now = new Date();

@@ -14,14 +14,20 @@ const API_ENDPOINT = '$baseurl/api';
 
 var xmlhttp;
 
-var entries = new Array();
+// an associative array of Entry-objects keyed by their respective URL
+var entries = new EntryList();
+
+var currentEntry = null;
+
+// Reference of the current tab being displayed
+var currentTab = "search-tab";
 
 if ( !xmlhttp ) {
     try {
         xmlhttp = new XMLHttpRequest();
     } catch (e) {
         xmlhttp=false;
-        alert("XmlHttp Not supported.");
+        alert("XmlHttp Not supported. Using this application will go horribly wrong!");
     }
 }
 
@@ -29,62 +35,169 @@ if ( !xmlhttp ) {
 /*
  *
  */
-function doSearch() {
-		xmlhttp.open("GET", API_ENDPOINT + "/search?query="+ escape(document.searchform.query.value) , false);
-		//xmlhttp.onreadystatechange = parseFeed;
-		xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
-		xmlhttp.send(null);
-    
-    parseEntries();
-
-    debugConsole.show();
-}
+function init() { showTab(currentTab); }
 
 
-/*
- *
+/**
+ * 
  */
-function parseEntries() {
-    var doc = xmlhttp.responseXML;
-    
-    var list = doc.getElementsByTagName(TAG_ENTRY); // NodeList
-    for (var i = 0; i < list.length; i++) {
-        var entryElem = list.item(i);
-        entries.push( buildEntry(entryElem) );
+function showTab(tabid) {
+    tabid = document.getElementById(tabid);
+    if (tabid) {
+        if (tabid.style)
+            tabid.style.display="block";
+        else
+            tabid.display="block";
     }
-    
-    displayEntries();
-    
-    //buildEntry( new Date() );
 }
 
 
 /**
  * 
  */
-function displayEntries() {
+function hideTab(tabid) {
+    tabid = document.getElementById(tabid);
+    if (tabid) {
+        if (tabid.style) 
+            tabid.style.display="none";
+        else 
+            tabid.display="none";
+    }
+}
+
+
+/**
+ * 
+ */
+function setTab(tabid) {
+    hideTab(currentTab);
+    showTab(tabid);
+    currentTab = tabid;
+    return false;
+}
+
+
+/*
+ *
+ */
+function doSearch(queryString) {
+  
+    // use form value as query string if no explicit value is provided
+    if ( queryString == null || queryString == '' ) 
+        queryString = document.searchform.query.value;
+  
+		xmlhttp.open("GET", API_ENDPOINT + "/search?query="+ escape(queryString) , false);
+		xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
+		xmlhttp.send(null);
+    
+    _parseEntries();
+
+    // display the search term in the input field
+    document.searchform.query.value = queryString;
+    
     if ( entries != null ) {
         var entriesOut = doc.getElementById(DIV_ID_ENTRIESOUT);
         
-        for(var i = 0; i < entries.length; i++) {
-            entries[i].attach(entriesOut);
+        if ( entriesOut == null )
+            exception("Can't find Element '"+DIV_ID_ENTRIESOUT+"' to output entries");
+        
+        removeAllChildren(entriesOut);
+        
+        var ulEntryList = doc.createElement("ul");
+        ulEntryList.id = 'entry-list';
+        entriesOut.appendChild(ulEntryList);
+        
+        for(var i in entries) {
+            var li = doc.createElement("li");
+            ulEntryList.appendChild(li);
+            
+            entries[i].attachAsList(li);
         }
     }
+    
+    setTab('search-tab');
+    
+    debugConsole.show();
 }
+
+
+/**
+ * 
+ */
+function doEdit(url) {
+    if ( url == null && url == '' )
+        exception("You must provide an Entry's URL when you want to edit an Entry");   
+    
+    setTab('edit-tab');
+    currentEntry = entries[url];
+    currentEntry.fillIntoEditForm(document.entryform);
+}
+
+
+// ***********************************************************************
+//
+// private funciton
+//
+// ***********************************************************************
+
+/*
+ *
+ */
+function _parseEntries() {
+    var doc = xmlhttp.responseXML;
+    
+    // clear old entry list
+    entries = new Array();
+    
+    var list = doc.getElementsByTagName(TAG_ENTRY); // NodeList
+    for (var i = 0; i < list.length; i++) {
+        var entryElem = list.item(i);
+        
+        var e = _buildSingleEntry(entryElem);
+        if ( e != null )
+            entries[e.url] = e;
+    }
+}
+
 
 /**
  * Build Entry-Object from an <entry> DOM-Element
  *
  * @param entryElem is of type Element
  */
-function buildEntry(entryElem) {
+function _buildSingleEntry(entryElem) {
   
     if ( entryElem instanceof Element ) {
         var entry = new Entry( entryElem.getAttribute(ATTR_HREF) ); 
         
-        entry.title     = getChildsText(entryElem, TAG_TITLE) || "";
-        entry.content   = getChildsText(entryElem, TAG_CONTENT) || "";
-        entry.note      = getChildsText(entryElem, TAG_NOTE) || "";
+        entry.title       = getChildsText(entryElem, TAG_TITLE) || "";
+        entry.content     = getChildsText(entryElem, TAG_CONTENT) || "";
+        entry.note        = getChildsText(entryElem, TAG_NOTE) || "";
+        entry.type        = getChildsText(entryElem, TAG_TYPE) || "";
+        
+        // TODO get authors here
+        //entry.author      = getChildsText(entryElem, TAG_TYPE) || "";
+        //entry.authorEmail = getChildsText(entryElem, TAG_TYPE) || "";
+        
+        
+        
+        // <entry> is allowed to have only one <tags> childnode
+        var tagsElem = entryElem.getElementsByTagName(TAG_TAGS)[0];
+        
+        if ( tagsElem != null ) {
+            var tags = getChildsText(tagsElem, TAG_TAG)
+            
+            if ( tags instanceof Array ) {
+                entry.tags = tags;
+            } else {
+                entry.tags = tags ? new Array(tags) : new Array();
+            }
+        }
+        
+        // TODO make real dates here 
+        entry.issuedDate    = getChildsText(entryElem, TAG_ISSUED) || "";
+        entry.modifiedDate  = getChildsText(entryElem, TAG_MODIFIED) || "";
+        entry.fetchedDate   = getChildsText(entryElem, TAG_FETCHED) || "";
         
         return entry;
     } else {
@@ -92,8 +205,3 @@ function buildEntry(entryElem) {
     }
 }
 
-
-/*
- *
- */
-function init() {}

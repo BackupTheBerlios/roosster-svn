@@ -1,0 +1,18 @@
+JS Client
+=========
+* finish Entry Parser, handle empty lists
+* find a way to strip HTML from content-tag; implement cachedentry command to return
+  only the cached entry
+* implement tabbed display (search,add,edit,tags)
+* implement Entry.attachAsEditForm() and Entry.asRoossteNode()
+* add a selected entry variable, edit-tab displays always selected entry
+* if selected entry is edited, send to server, parse response into Entry, and 
+  put it back into cached list
+* format entry list as table not unordered list
+
+
+
+
+API
+=========
+* get rid of JDOM use in EntryGenerator

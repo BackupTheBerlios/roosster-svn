@@ -9,14 +9,63 @@
     </head>
     <body onload="init()">
         <div id="head">
+            <a href="$baseurl">Home</a>
+        </div>
+
+        <ul id="tablist">
+            <li><a href="#search" onclick="return setTab('search-tab');">Search</a></li>
+            <li><a href="#edit" onclick="return setTab('edit-tab');">Edit</a></li>
+            <li><a href="#add" onclick="return setTab('add-tab');">Add</a></li>
+            <li><a href="#tags" onclick="return setTab('tags-tab');">Tags</a></li>
+        </ul>
+        
+        <div id="search-tab" class="tab">        
+            <form method="get" name="searchform" >
+              <input type="text" name="query" />
+              <input type="button" value="send" onclick="return doSearch();"/>
+            </form>
+    
+            <div id="entries-out">
+            </div>
         </div>
         
-        <form method="get" name="searchform" >
-          <input type="text" name="query" />
-          <input type="button" value="send" onclick="return doSearch();"/>
-        </form>
+        <div id="edit-tab" class="tab">  
+            <a href="javascript:doSearch('blog')">tets</a>
+            
+            <form name="entryform">
+                <table>
+                    <tr> <td>URL</td>         
+                         <td><input type="text" name="url" /></td> </tr>
+                    <tr> <td>Title</td>       
+                         <td><input type="text" name="title" /></td> </tr>
+                    <tr> <td>Tags</td>        
+                         <td><input type="text" name="tags" /></td> </tr>
+                    <tr> <td valign="top">Note</td>        
+                         <td><textarea name="note"></textarea></td> </tr>
+                    <tr> <td>Type</td>        
+                         <td><input type="text" name="type" /></td> </tr>
+                    <tr> <td>Author</td>      
+                         <td><input type="text" name="author" /></td> </tr>
+                    <tr> <td>Author-Email</td>
+                         <td><input type="text" name="authorEmail" /></td> </tr>
+                    <tr> <td>Issued</td>      
+                         <td><input type="text" name="issuedDate" /></td> </tr>
+                    <tr> <td>Last Modified</td>
+                         <td><input type="text" name="modifiedDate" /></td> </tr>
+                    <tr> <td>Last Fetched</td>
+                         <td><input type="text" name="fetchedDate" /></td> </tr>
+                    <tr> <td colspan="2" align="right">
+                         <input type="button" value="Submit" onclick="return submitEdit();"/></td></tr>
+                </table>
+            </form>            
+        </div>
         
-        <div id="entries-out">
+        <div id="add-tab" class="tab">
+            add        
+        </div>
+        
+        <div id="tags-tab" class="tab">
+            tags        
         </div>
         
         <div id="foot">

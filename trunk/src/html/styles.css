@@ -1,7 +1,34 @@
-#foot {font-size:x-small;}
+#foot           { font-size:x-small; margin-top:20px;}
 
 #entry-list     {margin: 20px,10px,10px,20px; list-style-type:none;}
-.entry          {margin: 10px,0px,10px,0px; list-style-type:none;}
+.entry          {margin: 10px,0px,10px,0px;   list-style-type:none; padding-left:-50px;}
 .entry-url      { font-weight:bold; }
 .entry-content  {}
-.entry-info     { color:#acc9ff; font-size:small;}
+.entry-info     { color:#acc9ff; font-size:small; }
+
+#entry-form     {}
+#entry-form input[type=text],textarea     { width:360px; margin-bottom:5px;}
+#entry-form textarea     { height:100px; }
+
+.tab            { display: none; overflow:auto; height:450px; padding:10px; }
+
+.tab, #tablist  { width: 700px; margin:auto;}
+
+#tablist        { margin: 0 auto; padding: 0 0 2em 0; }
+
+#tablist li {
+    list-style-type: none;
+    float: left;
+    width: 24%;
+    border: 1px solid Black;
+    border-bottom: 2px solid Black;
+    padding: 0;
+    margin: 0 2px 0 0;
+    text-align: center;
+}
+
+
+a               { color:#5F86FF; text-decoration:none; }
+a:hover         {}
+
+
