@@ -104,6 +104,13 @@ public interface Constants
      */
     public static final String PROP_TRUNCLENGTH = "output.truncate.length";
 
+    public static final String PROP_DEF_ENC    = "default.input.encoding";
+    public static final String PROP_PROCESSORS = "fetcher.processors";
+
+    /**
+     */
+    public static final String PROP_INPUT_PROC = "input.processor";
+
 
     // args are used in commands, and only an a request basis (although they could be
     // defined in property files, this wouldn't make much sense

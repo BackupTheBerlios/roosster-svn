@@ -53,15 +53,13 @@ public class UrlFetcher implements Plugin, Constants
 {
     private static Logger LOG = Logger.getLogger(UrlFetcher.class.getName());
 
-    public static final String PROP_DEF_ENC    = "default.input.encoding";
-    public static final String PROP_PROCESSORS = "fetcher.processors";
-
     public static final String USER_AGENT_HEADER = "User-Agent";
     public static final String USER_AGENT        = "Mozilla/5.0 (compatible; roosster - personal search; http://roosster.org/dev)";
     
     private Registry              registry        = null;
     private String                defaultEncoding = null;
     private Map                   processors      = new Hashtable();
+    private Map                   procsByName     = new Hashtable();
     private ContentTypeProcessor  defaultProc     = null;
 
     private boolean  initialized     = false;
@@ -270,13 +268,15 @@ public class UrlFetcher implements Plugin, Constants
                                                                         .newInstance();
                 proc.init(registry);
 
+                procsByName.put(name, proc);
+
                 for (int i = 0; i < types.size(); i++) {
                     processors.put(types.get(i), proc);
                 }
 
                 if ( defProcName.equals(name) )
                     defaultProc = proc;
-
+                
             } catch (ClassCastException ex) {
                 LOG.warn("Processor "+name+" does not implement the "+
                         ContentTypeProcessor.class+" interface", ex);
@@ -301,7 +301,19 @@ public class UrlFetcher implements Plugin, Constants
      */
     private ContentTypeProcessor getProcessor(String contentType)
     {
-        ContentTypeProcessor proc = (ContentTypeProcessor) processors.get(contentType);
+        ContentTypeProcessor proc = null;
+
+        String forcedProc = registry.getConfiguration().getProperty(PROP_INPUT_PROC);
+        if ( forcedProc != null ) {
+            proc = (ContentTypeProcessor) procsByName.get(forcedProc);
+            if ( proc == null )
+                throw new IllegalArgumentException("Wrong input processor "+
+                                                   "specified by "+PROP_INPUT_PROC);
+            else 
+                return proc;
+        }
+        
+        proc = (ContentTypeProcessor) processors.get(contentType);
         if ( proc == null ) 
             return defaultProc;
         else
