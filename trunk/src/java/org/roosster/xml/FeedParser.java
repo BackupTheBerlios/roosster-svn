@@ -63,7 +63,7 @@ public class FeedParser
     
     private static final String MIME_TYPE_TEXT  = "text/plain";
     private static final String MIME_TYPE_HTML  = "text/html";
-    private static final String MIME_TYPE_XHTML = "text/html"; // TODO fix this
+    private static final String MIME_TYPE_XHTML = "application/xhtml+xml"; // TODO fix this
     
     
     /**

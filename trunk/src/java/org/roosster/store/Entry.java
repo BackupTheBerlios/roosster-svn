@@ -59,14 +59,14 @@ public class Entry
     public static final String TAGS         = "tags";
 
 
-    private Date         issued	        = null;
-    private Date         lastModified	= null;
-    private Date         lastFetched	= null;
+    private Date         issued	       = null;
+    private Date         lastModified	 = null;
+    private Date         lastFetched	   = null;
     private URL          url            = null;
     private String       title          = "";
     private String       author         = "";
     private String       authorEmail    = "";
-    private String       fileType	    = "";
+    private String       fileType	     = "";
     private StringBuffer content        = new StringBuffer();
     private StringBuffer note           = new StringBuffer();
     private String[]     tags           = new String[0];

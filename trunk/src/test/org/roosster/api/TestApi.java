@@ -28,7 +28,7 @@ package org.roosster;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.*;
 
 import org.roosster.RoossterTestCase;
 
@@ -36,36 +36,79 @@ import org.roosster.RoossterTestCase;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a> 
  */
-public class TestAtomApiPost extends RoossterTestCase
+public class TestApi extends RoossterTestCase
 {
     protected HttpClient client = null;
     
     protected static final String URL_TO_ADD = "http://blog.nur-eine-i.de/atom.xml";
     
+    protected StringRequestEntity requestBody = null;
+    
     /**
      * 
      */
-    public void setUp() 
+    public void setUp() throws Exception
     {
          client = new HttpClient();
+         
+         requestBody = new StringRequestEntity(TEST_ENTRYXML, "text/xml", "UTF-8");
     }
   
+    
     /**
      * 
      */
     public void testPost() throws Exception
     {
+        System.out.println("Trying to POST '"+URL_TO_ADD+"' as a new entry to "+ API_ENDPOINT);
         
-      
-        System.out.println("Trying to POST '"+URL_TO_ADD+"' as a new entry to "+ ATOM_API_ENDPOINT);
-        
-        PostMethod method = new PostMethod(ATOM_API_ENDPOINT);
+        PostMethod method = new PostMethod(API_ENDPOINT);
         method.addParameter("url", URL_TO_ADD);
         method.addParameter("force", "true");
+
+        method.setRequestEntity(requestBody); 
         
         int statusCode = client.executeMethod(method);
         
         assertEquals("Adding "+URL_TO_ADD+" failed", 200, statusCode);
+        
+        logMethodResponse(method);
     }
+
+
+    /**
+     * 
+     */
+    public void testPut() throws Exception
+    {
+        System.out.println("Trying to PUT '"+TEST_ENTRYXML+"' as a new entry to "+ API_ENDPOINT);
+        
+        PutMethod method = new PutMethod(API_ENDPOINT);
+        method.setRequestEntity(requestBody); 
+        
+        int statusCode = client.executeMethod(method);
+        
+        assertEquals("Adding "+URL_TO_ADD+" failed", 200, statusCode);
+        
+        logMethodResponse(method);
+    }
+
+    
+    /**
+     * 
+     */
+    public void testGet() throws Exception
+    {
+        System.out.println("Trying to GET '"+URL_TO_ADD+"' as a new entry to "+ API_ENDPOINT);
+        
+        GetMethod method = new GetMethod(API_ENDPOINT);
+        
+        int statusCode = client.executeMethod(method);
+        
+        assertEquals("Adding "+URL_TO_ADD+" failed", 200, statusCode);
+        
+        logMethodResponse(method);
+    }
+    
     
 }

@@ -42,7 +42,35 @@ public class EntryList extends AbstractList
     private int limit     = 0;
     private List list = new ArrayList();
 
+    
+    /**
+     * Constructs an <code>EntryList</code> for which there is always:
+     * <pre>
+     * getTotalSize() == size()
+     * </pre>
+     */
+    public EntryList() 
+    {
+        this.totalSize = -1;
+    }
+    
+    
+    /**
+     * Constructs an <code>EntryList</code> for which <code>getTotalSize</code>
+     * will return the value of the param <code>totalSize</code>.
+     * @param totalSize a positive integer, that will be returned when calling
+     * <code>getTotalSize()</code>.
+     * @exception IllegalArgumentException if <code>totalSize</code> is smaller 0
+     */
+    public EntryList(int totalSize) 
+    {
+        if ( totalSize < 0 ) 
+            throw new IllegalArgumentException("totalSize must be a positive number");
+        
+        this.totalSize = totalSize;
+    }
 
+    
     /**
      * @return the <code>Date</code>-object representing the modification time 
      * of the last modified entry in this Object's list.
@@ -73,18 +101,9 @@ public class EntryList extends AbstractList
     /**
      * 
      */
-    public void setTotalSize(int totalSize)
-    {
-        this.totalSize = totalSize;
-    }
-
-
-    /**
-     * 
-     */
     public int getTotalSize()
     {
-        return totalSize;
+        return totalSize == -1 ? size() : totalSize;
     }
 
     

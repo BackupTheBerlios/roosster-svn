@@ -1,0 +1,24 @@
+<!-- 
+  date elements http://www.faqs.org/rfcs/rfc3339.html
+-->
+<entry href="http://example.com/?test">
+  <type><!-- MIME-type / will be determined by server, if not set--></type>
+  <title><!-- NO HTML / will be determined by server, if not set- --></title>
+  <authors>
+    <!-- will be determined by server (if possible), if not set- -->
+    <author name="" email=""/> <!-- Entry.class currently supports only one author -->
+    <author name="" email=""/>
+  </authors>
+  <tags>
+    <tag>test</tag>
+    <tag>cat</tag>
+    <tag>dogs</tag>
+    <tag>home</tag>
+  </tags>
+  <note><!-- NO HTML --></note>
+  
+  
+  <issued><!-- date / read only --></issued>
+  <modified><!-- date / read only --></modified>
+  <fetched><!-- date / read only --></fetched>
+</entry>

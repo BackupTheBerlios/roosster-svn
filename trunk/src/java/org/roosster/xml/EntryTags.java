@@ -24,26 +24,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster;
-
+package org.roosster.xml;
 
 /**
- *
+ * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public interface Constants
+public interface EntryTags
 {
-    public static final String W3C_DATEFORMAT   = "yyyy-MM-dd'T'HH:mm:ssZ";
-
-    public static final String APP_URI          = "http://www.roosster.org";
-    public static final String APP_NAME         = "roosster search";
+    public static final String HREF_ATTR    = "href";
     
-    public static final String PARAM_ENTRIES    = "internal.param.entry";
+    public static final String ENTRY        = "entry";
+    public static final String ENTRYLIST    = "entrylist";
     
+    public static final String TAGS         = "tags";
+    public static final String TAG          = "tag";
+    public static final String NOTE         = "note";
     
-    public static final String CTX_REGISTRY     = "servletcontext.param.registry";
-    public static final String CTX_DISPATCHER   = "servletcontext.param.dispatcher";
-
+    public static final String ISSUED       = "issued";
+    public static final String MODFIED      = "modified";
+    public static final String FETCHED      = "fetched";
     
+    public static final String AUTHORS      = "authors";
+    public static final String AUTHOR       = "author";
+    public static final String NAME_ATTR    = "name";
+    public static final String EMAIL_ATTR   = "email";
     
+    public static final String TYPE         = "type";
+    public static final String TITLE        = "title";
 }

@@ -222,8 +222,7 @@ public class EntryStore implements Plugin
             reader = getReader();
             int numdocs = reader.numDocs();
             
-            entries = new EntryList();
-            entries.setTotalSize(numdocs);
+            entries = new EntryList(numdocs);
             
             int limit  = getLimit();
             int offset = getOffset();
@@ -264,8 +263,7 @@ public class EntryStore implements Plugin
         Hits hits = searcher.search(query);
         int hitsNum = hits.length();
 
-        EntryList entries = new EntryList();
-        entries.setTotalSize(hitsNum);
+        EntryList entries = new EntryList(hitsNum);
 
         int limit  = getLimit();
         int offset = getOffset();

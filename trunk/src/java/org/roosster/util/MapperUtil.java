@@ -56,7 +56,7 @@ public class MapperUtil
 
     private static final String DEF_HOMEDIR      = ".roosster";
     private static String homeDir                = null;
-
+    
     
     /**
      * removes the first element, shortening the array by one
@@ -126,23 +126,25 @@ public class MapperUtil
         InputStream stream = null;
         try {
 
-            String fileName = null;
+            String debugConfFileName = null;
             for(int i = 0; i < arguments.length; i++) {
                 if ( "-v".equals(arguments[i]) ) {
-                    fileName = VERBOSE_LOG_CONF;
+                    debugConfFileName = VERBOSE_LOG_CONF;
                     break;
                 } else if ( "-d".equals(arguments[i]) ) {
-                    fileName = DEBUG_LOG_CONF;
+                    debugConfFileName = DEBUG_LOG_CONF;
                     break;
                 }
             }
 
-            if ( fileName == null )
-                fileName = DEFAULT_LOG_CONF;
+            if ( debugConfFileName == null )
+                debugConfFileName = DEFAULT_LOG_CONF;
 
-            stream = MapperUtil.class.getResourceAsStream(fileName);
+            System.out.println("LOGGING CONFIG "+debugConfFileName);
+            
+            stream = MapperUtil.class.getResourceAsStream(debugConfFileName);
             if ( stream == null )
-                throw new InitializeException("File '"+fileName+"' not on classpath");
+                throw new InitializeException("File '"+debugConfFileName+"' not on classpath");
 
             LogManager.getLogManager().readConfiguration(stream);
 

@@ -28,6 +28,8 @@ package org.roosster;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.httpclient.*;
+
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a> 
@@ -53,16 +55,17 @@ public class RoossterTestCase extends TestCase
     public static final String TEST_TAG3 = "test";
     
     public static final String TEST_ENTRYXML = 
+    "<?xml version=\"1.0\" ?>"+
     "<entry href='http://example.com/?test'>"+
     "<type>"+ TEST_TYPE +"</type>"+
     "<title>"+ TEST_TITLE +"</title>"+
     "<authors> <author name='"+ TEST_AUTHOR +"' email='"+ TEST_EMAIL +"'/> </authors>"+
-    "<tags> <tag>"+TEST_TAG1 +"</tag> <tag>"+TEST_TAG2 +"</tag> tag>"+ TEST_TAG3+"</tag> </tags>"+
+    "<tags> <tag>"+TEST_TAG1 +"</tag> <tag>"+TEST_TAG2 +"</tag> <tag>"+ TEST_TAG3+"</tag> </tags>"+
     "<note>"+ TEST_NOTE +"</note>"+
     "<issued>"+ TEST_ISSUED +"</issued> "+
     "<modified>"+ TEST_MODIFIED +"</modified>"+
     "<fetched>"+ TEST_FETCHED +"</fetched>"+
-    "</entry>"
+    "</entry>";
     
 
     
@@ -72,6 +75,36 @@ public class RoossterTestCase extends TestCase
     public RoossterTestCase() 
     {
         API_ENDPOINT = System.getProperty(SYSPROP_API_ENDPOINT);
+    }
+    
+    
+    /**
+     * 
+     */
+    public void logMethodResponse(HttpMethod method) throws java.io.IOException
+    {
+        if ( method == null ) 
+            throw new IllegalArgumentException("FAILED: Tried to log 'null' method");
+        
+        if ( method.isRequestSent() == false ) 
+            throw new IllegalArgumentException("FAILED: Tried to log 'not-sent' method");
+        
+        System.out.println("++++++++++++++++++++++++ HEADER LOGGING ++++++++++++++++++++++++");
+        
+        StatusLine sline = method.getStatusLine();
+        System.out.println("\nStatusLine: "+sline.getHttpVersion() +" "+sline.getStatusCode() +
+                           " "+ sline.getReasonPhrase() );
+                           
+        System.out.println("\nHeader:\n"); 
+                           
+        Header[] headers = method.getResponseHeaders();
+        for(int i = 0; i < headers.length; i++) {
+            System.out.println(headers[i].toString());
+        }
+                           
+        System.out.println("\nResponseBody:\n"+ method.getResponseBodyAsString() +"\n\n");        
+
+        System.out.println("++++++++++++++++++++++++ HEADER LOGGING ++++++++++++++++++++++++");
     }
     
 }

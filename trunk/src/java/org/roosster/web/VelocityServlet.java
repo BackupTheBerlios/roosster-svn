@@ -49,8 +49,6 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
     
     public static final String CTX_BASEURL     = "baseurl";
     
-    public static final String VELOCITY_PROP   = "org.apache.velocity.properties";
-  
     private ServletContext servletContext = null;
     
     /**
@@ -63,11 +61,11 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
       
         servletContext = config.getServletContext();
         
-        String propFile = config.getInitParameter(VELOCITY_PROP);
+        String propFile = config.getInitParameter(INIT_PROPS_KEY);
         if ( propFile != null )
             propInput = servletContext.getResourceAsStream(propFile);
         else
-            throw new FileNotFoundException("Property "+VELOCITY_PROP+" is not set");
+            throw new FileNotFoundException("Property "+INIT_PROPS_KEY+" is not set");
         
         Properties props = new Properties();
         props.load(propInput);
@@ -132,7 +130,7 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
         if ( path.endsWith(".html") )
             return "text/html";    
         if ( path.endsWith(".js") )
-            return "application/x-javascript";
+            return "text/javascript";
         else if ( path.endsWith(".css") )
             return "text/css";
         else 

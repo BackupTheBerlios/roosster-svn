@@ -43,12 +43,13 @@ import javax.servlet.ServletContext;
 
 import org.roosster.util.MapperUtil;
 import org.roosster.util.ServletUtil;
+import org.roosster.store.EntryStore;
+import org.roosster.commands.CommandNotFoundException;
 import org.roosster.InitializeException;
 import org.roosster.Registry;
 import org.roosster.Output;
 import org.roosster.Dispatcher;
-import org.roosster.store.EntryStore;
-import org.roosster.commands.CommandNotFoundException;
+import org.roosster.Constants;
 
 
 /**
@@ -68,17 +69,21 @@ public class ServletMapper extends HttpServlet
     public static final String DEF_PROPFILE     = "/roosster-web.properties";
 
     public static final String PROP_OUTENC      = "default.output.encoding";
+    public static final String PROP_INENC       = "default.input.encoding";
+    public static final String DEF_ENC          = "UTF-8";
     
     public static final String DEF_CONTENT_TYPE = "text/xml";
     public static final String DEF_OUTPUT_MODE  = "atom";
+    
     public static final String DEF_COMMAND      = "search";
-    public static final String DEF_ENC          = "UTF-8";
-
-    private static Properties properties = null;
+    
+    private Properties properties = null;
     
     private Dispatcher dispatcher     = null;
     private Registry   registry       = null;
-    private String     outputEncoding = null;  
+    
+    protected String     outputEncoding = null;  
+    protected String     inputEncoding  = null;  
     
 
     /**
@@ -97,13 +102,22 @@ public class ServletMapper extends HttpServlet
                 propInput = getClass().getResourceAsStream(DEF_PROPFILE);
             
             properties = MapperUtil.loadProperties(propInput, new HashMap());
-        
+            
+            // Create primary roosster worker objects and ... 
             registry = new Registry(properties); 
             dispatcher = new Dispatcher(registry);
             
+            // ... store them in servlet context, so other servlet can access them
+            config.getServletContext().setAttribute(Constants.CTX_REGISTRY, registry);
+            config.getServletContext().setAttribute(Constants.CTX_DISPATCHER, dispatcher);
+
+
+            // and now get some values, to make our life easier            
             outputEncoding = registry.getConfiguration().getProperty(PROP_OUTENC, DEF_ENC);
+            inputEncoding  = registry.getConfiguration().getProperty(PROP_INENC, DEF_ENC);
 
         } catch(Exception ex) {
+            LOG.log(Level.SEVERE, "Exception while initializing "+getClass(), ex);
             throw new ServletException(ex);
         }
     }
@@ -167,6 +181,11 @@ public class ServletMapper extends HttpServlet
                            throws ServletException, IOException
 
     {
+        if ( LOG.isLoggable(Level.FINEST) ) {
+            LOG.finest("**************************************************");
+            LOG.finest("Processing Request: "+req.getMethod()+" "+req.getPathInfo());
+        }
+        
         try {
             String commandName = getCommandName(method, req);
             Map args = parseRequestArguments(req);
@@ -186,6 +205,11 @@ public class ServletMapper extends HttpServlet
           
             LOG.log(Level.WARNING, ex.getMessage(), ex);
             resp.sendError(resp.SC_NOT_FOUND, ex.getMessage());
+            
+        } catch (IllegalArgumentException ex) {
+          
+            LOG.log(Level.WARNING, ex.getMessage(), ex);
+            resp.sendError(resp.SC_BAD_REQUEST, ex.getMessage());
             
         } catch (Exception ex) {
           
@@ -232,7 +256,7 @@ public class ServletMapper extends HttpServlet
     /**
      * TODO handle multiple value parameters correctly
      */
-    protected Map parseRequestArguments(HttpServletRequest req)
+    protected Map parseRequestArguments(HttpServletRequest req) throws IOException
     {
         Map args = new HashMap();
 

@@ -24,26 +24,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster;
+package org.roosster.xml;
 
+import org.xml.sax.SAXException;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public interface Constants
+public class ParseException extends Exception
 {
-    public static final String W3C_DATEFORMAT   = "yyyy-MM-dd'T'HH:mm:ssZ";
+    public ParseException() {
+        super();
+    }
 
-    public static final String APP_URI          = "http://www.roosster.org";
-    public static final String APP_NAME         = "roosster search";
-    
-    public static final String PARAM_ENTRIES    = "internal.param.entry";
-    
-    
-    public static final String CTX_REGISTRY     = "servletcontext.param.registry";
-    public static final String CTX_DISPATCHER   = "servletcontext.param.dispatcher";
+    public ParseException(String message) {
+        super(message);
+    }
 
-    
-    
+    public ParseException(Throwable cause) {
+        super(cause);
+    }
+
+    public ParseException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+
 }

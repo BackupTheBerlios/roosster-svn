@@ -65,6 +65,7 @@ public class JettyStarter
     {  
         try {
             MapperUtil.initLogging(args);
+            
             Map cmdLine = MapperUtil.parseCommandLineArguments(args);
 
             String port = (String) cmdLine.get(PROP_PORT);
@@ -78,6 +79,8 @@ public class JettyStarter
             File webAppWarFile = new File(webapp);
             if ( !webAppWarFile.exists() && !webAppWarFile.canRead() )
                 throw new FileNotFoundException("Web Application '"+webapp+"' not found");
+            
+            LOG.finest("Starting Server with WebApplication "+webapp);
             
             Server server = new Server();
 
