@@ -24,38 +24,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.util;
+package org.roosster.store;
 
 import java.io.IOException;
-import org.apache.velocity.context.Context;
+import java.util.AbstractList;
 
-import org.roosster.Constants;
-import org.roosster.Registry;
-import org.roosster.store.EntryStore;
-import org.roosster.web.VelocityTemplateUtil;
+import org.apache.lucene.search.Hits;
+import org.apache.log4j.Logger;
 
 /**
- * 
+ *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class VelocityUtil 
+public class EntryHitList extends AbstractList
 {
-    
-    /**
-     * 
+    private static Logger LOG = Logger.getLogger(EntryHitList.class);
+	private Hits hits;
+
+	/**
+     * Creates a new <code>HitList</code> instance.
+     *
+     * @param hits <code>Hits</code> to wrap
      */
-    public static void initContext(Registry registry, Context context) 
+    public EntryHitList(Hits hits)
     {
-        if ( registry == null || context == null )
-            throw new IllegalStateException("Registry and Context are not allowed to be null!");
-        
-        context.put(Constants.VELCTX_TMPLUTIL, new VelocityTemplateUtil(registry));
-        context.put(Constants.VELCTX_APPVERSION, registry.getConfiguration().getProperty(Constants.PROP_APPVERSION));
-        try {
-            EntryStore store = (EntryStore) registry.getPlugin("store");
-            context.put(Constants.VELCTX_INDEXNUM,   String.valueOf(store.getDocNum()) );
-        } catch (IOException ex) {
-            context.put(Constants.VELCTX_INDEXNUM,   "no docs there yet");
-        }
-    }  
+		this.hits = hits;
+	}
+
+    
+	/**
+	 * @return Objects of class Entry
+	 */
+	public Object get(int index)
+    {
+		try {
+			return new Entry(hits.doc(index), hits.score(index));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+    
+	/**
+	 * @see java.util.List#size()
+	 */
+	public int size() 
+    {
+		return hits.length();
+	}
+
 }

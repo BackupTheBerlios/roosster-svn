@@ -97,42 +97,36 @@ public class ApiServletMapper extends ServletMapper
      */
     protected Map parseRequestArguments(HttpServletRequest req) throws Exception
     {
-        try {
-            Map args = super.parseRequestArguments(req);
-           
-            if ( "POST".equals(req.getMethod()) || "PUT".equals(req.getMethod()) ) {
-                InputStream stream = req.getInputStream();
+        Map args = super.parseRequestArguments(req);
+       
+        if ( "POST".equals(req.getMethod()) || "PUT".equals(req.getMethod()) ) {
+            InputStream stream = req.getInputStream();
+            
+            if ( stream != null ) {
+            
+                String bodyEnc = req.getCharacterEncoding();
+                if ( bodyEnc == null ) 
+                    bodyEnc = inputEncoding;
                 
-                if ( stream != null ) {
+                String body = IOUtils.toString(stream, bodyEnc);
                 
-                    String bodyEnc = req.getCharacterEncoding();
-                    if ( bodyEnc == null ) 
-                        bodyEnc = inputEncoding;
+                if ( body != null && !"".equals(body) ) {
+                  
+                    // parse request body through entry parser
+                    EntryList entryList = new EntryParser().parse(body, bodyEnc);
+                    args.put(Constants.PARAM_ENTRIES, entryList);
                     
-                    String body = IOUtils.toString(stream, bodyEnc);
-                    
-                    if ( body != null && !"".equals(body) ) {
-                      
-                        // parse request body through entry parser
-                        EntryList entryList = new EntryParser().parse(body, bodyEnc);
-                        args.put(Constants.PARAM_ENTRIES, entryList);
-                        
-                        if ( LOG.isDebugEnabled() ) {
-                            LOG.debug("**************************************************");
-                            LOG.debug("RequestBody: encoding "+bodyEnc+"\n");
-                            LOG.debug(body);
-                            LOG.debug("**************************************************");
-                        }
+                    if ( LOG.isDebugEnabled() ) {
+                        LOG.debug("**************************************************");
+                        LOG.debug("RequestBody: encoding "+bodyEnc+"\n");
+                        LOG.debug(body);
+                        LOG.debug("**************************************************");
                     }
                 }
             }
-
-            return args;
-            
-        } catch(ParseException ex) {
-            Throwable t = ex.getCause() == null ? ex : ex.getCause();
-            throw new OperationException("Can't parse entry-xml in request", t);
         }
+
+          return args;
     }
     
     

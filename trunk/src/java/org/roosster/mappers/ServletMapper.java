@@ -44,6 +44,7 @@ import org.roosster.util.ServletUtil;
 import org.roosster.util.StringUtil;
 import org.roosster.logging.LogUtil;
 import org.roosster.commands.CommandNotFoundException;
+import org.roosster.xml.ParseException;
 import org.roosster.InitializeException;
 import org.roosster.OperationException;
 import org.roosster.Registry;
@@ -191,6 +192,7 @@ public class ServletMapper extends HttpServlet
                 LOG.debug("Set Content-Type Header field to: "+contentHeader);
     
                 output.setOutputProperty(Constants.VELCTX_BASEURL, getBaseUrl(req));
+                output.setOutputProperty(Constants.VELCTX_HTTPREQ, req);
                 
                 // output everything
                 output.output( resp.getWriter() );
@@ -202,6 +204,16 @@ public class ServletMapper extends HttpServlet
             resp.sendError(resp.SC_NOT_FOUND, 
                            "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
             
+        } catch (ParseException ex) {
+
+            LOG.warn("Sending HTTP Status Code 400: "+ex.getMessage(), ex);
+            resp.sendError(resp.SC_BAD_REQUEST, 
+                           "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+
+            LOG.warn("Sending HTTP Status Code 400: "+ex.getMessage(), ex);
+            resp.sendError(resp.SC_BAD_REQUEST, 
+                           "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
         } catch (Exception ex) {
             
             Throwable t = ex.getCause() == null ? ex : ex.getCause();

@@ -47,14 +47,10 @@ public class SearchCommand extends AbstractCommand implements Command
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        EntryStore store = (EntryStore) registry.getPlugin("store");
-
-        String query = (String) arguments.get(ARG_Q);
+        validateArguments(arguments, new String[] {ARG_Q});
         
-        if ( query != null && !"".equals(query) )
-            output.setEntries( store.search(query) );
-        else
-            output.setEntries( store.getAllEntries() );
+        EntryStore store = (EntryStore) registry.getPlugin("store");
+        output.setEntries( store.search( (String) arguments.get(ARG_Q) ) );
     }
 
 

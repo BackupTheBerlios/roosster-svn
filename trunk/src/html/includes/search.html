@@ -1,0 +1,38 @@
+#parse('includes/head.inc')
+
+<ul>
+  #foreach ( $entry in $entryList)
+  <ul class="entry">
+    <li class="entrylist-entry-url">#if($entry.pub)<img src="$baseurl/images/public.png" class="public-image"/>#end
+    <a href="$entry.url">$entry.title</a>
+    </li> 
+    <li class="entry-content">$util.truncate($entry.content)
+      <a href="$baseurl/cachedentryframeset.html?url=$entry.url" target="_blank">(cached page)</a>
+    </li> 
+    <li class="entry-dates">
+      MODIFIED: <a href="$baseurl/application/search?query=modified:$util.searchableDate($entry.modified)">$util.displayDate($entry.modified)</a>
+      ISSUED: <a href="$baseurl/application/search?query=issued:$util.searchableDate($entry.issued)">$util.displayDate($entry.issued)</a>
+      ADDED: <a href="$baseurl/application/search?query=added:$util.searchableDate($entry.added)">$util.displayDate($entry.added)</a>
+      EDITED: <a href="$baseurl/application/search?query=edited:$util.searchableDate($entry.edited)">$util.displayDate($entry.edited)</a>
+    </li>
+    <li>
+      <table class="entry-tags-table">
+          <tr>
+            <td>tags: 
+              #foreach($tag in $entry.tags)
+              #if( $COUNT > 0 ) | #end <a href="$baseurl/application/search?query=tags:$tag">$tag</a> 
+              #end
+            </td>
+            <!-- TODO URL-escape this-->
+            <td class="entrylist-editlink"> <a href="$baseurl/application/entry?url=$entry.url">Edit this Entry</a></td>
+            <td class="entrylist-deletelink"> <a href="$baseurl/application/delete?url=$entry.url">Delete this Entry</a></td>
+            <td></td>
+          </tr>
+      </table>
+    </li>
+  </ul>
+  #end
+<ul>
+
+#parse('includes/foot.inc')
+

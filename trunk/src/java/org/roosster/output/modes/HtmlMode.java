@@ -53,6 +53,8 @@ import org.roosster.Constants;
 public class HtmlMode extends AbstractOutputMode implements OutputMode, Constants
 {
 
+    public static final String TMPL_ROOT = "includes";
+    
     /**
      *
      */
@@ -74,7 +76,7 @@ public class HtmlMode extends AbstractOutputMode implements OutputMode, Constant
             context.put(name, output.getOutputProperty(name));
         }
         
-        String templateName = output.getCommandName() +".html";
+        String templateName = TMPL_ROOT +"/"+ output.getCommandName() +".html";
         
         try {
             Velocity.getTemplate(templateName).merge(context, writer);

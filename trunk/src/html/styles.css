@@ -35,11 +35,11 @@
 .entry-tags-table             { color:$tagDatesColor; width:100%; font-size:x-small; }
 
 .entrylist-editlink           { width:150px; vertical-align:top; text-align:center;}
-.entrylist-editlink a         { font-size:small; display:block; }
+.entrylist-editlink a         { font-size:small; display:block; padding:2px;}
 .entrylist-editlink a:hover   { background-color:$editLinkColor; }
 
 .entrylist-deletelink         { width:150px; vertical-align:top; text-align:center; }
-.entrylist-deletelink a       { font-size:small; display:block; }
+.entrylist-deletelink a       { font-size:small; display:block; padding:2px; }
 .entrylist-deletelink a:hover { background-color:$deleteLinkColor; }
 
 #entrylist-pager {clear:both;}
@@ -66,7 +66,7 @@
 a       { color:$linkColor; text-decoration:none; }
 a:hover { background-color:$inputFocusColor; }
 dfn     { border-bottom:dotted 1px black; font-style:normal;}
-body    { margin:0pt;padding:0pt; }
+body    { margin:0pt;padding:0pt; font:Arial 1em normal; }
 
 input[type=submit]            { background: url($baseurl/images/button_bg.png) top left repeat-x; }
 input[type=text]              { width:250px; }
@@ -75,7 +75,7 @@ textarea                      { width:350px; }
 input:focus, textarea:focus   { background-color:$inputFocusColor; }
 input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1px solid black; }
 
-.public-image { float:left; margin:10px; } 
+.public-image { float:left; margin:7px; } 
  
 .tab      { display: none; }
 #tabarea  { padding:10px; }
@@ -100,7 +100,7 @@ input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1p
     background: $headerColor url($baseurl/images/header_bg.png) top left repeat-x;
     padding:1px 10px 10px 0px; 
     margin: 0px 0px 10px 0px;
-    height:50px;
+    height:45px;
 }
 .roossterheading  { 
     font-family: Garamond, 'Copperplate Gothic Light', Georgia, 'Times New Roman', Serif;
@@ -120,7 +120,7 @@ input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1p
 #tablist li a { 
     color:$bgColor; 
     width:80px; 
-    height:35px; 
+    height:30px; 
     font-weight:600; 
     display:block; 
     padding-top:5px; 

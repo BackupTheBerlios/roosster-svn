@@ -50,6 +50,10 @@ public class Entry
 
     public static final String TAG_SEPARATOR= Constants.TAG_SEPARATOR;
   
+    // this is used internally, to provide an (disk-) paging iterator
+    // over all entries (every entry has this set 
+    public static final String ENTRY_MARKER = "roosster.entry";
+
     public static final String ALL          = "all";
     public static final String CONTENT      = "content";
     public static final String MODIFIED     = "modified";
@@ -140,6 +144,7 @@ public class Entry
     {
         Document doc = new Document();
 
+        doc.add( Field.Keyword(ENTRY_MARKER,  ENTRY_MARKER) );
         doc.add( Field.Keyword(URL,           url.toString()) );
         doc.add( Field.Keyword(AUTHOR,        author) );
         doc.add( Field.Keyword(AUTHOREMAIL,   authorEmail) );
@@ -179,6 +184,18 @@ public class Entry
     }
 
 
+    /**
+     * two entries are equal if their URLs are equal 
+     */
+    public boolean equals(Object obj)
+    {
+        try {
+            return url.equals( ((Entry) obj).getUrl() );
+        } catch (ClassCastException ex) {
+            return false;
+        }
+    }
+    
     /**
      * 
      */

@@ -55,28 +55,23 @@ var API_ENDPOINT = '$baseurl/api';
  * 
  */
 function parseEntryList(entryListDoc) {
-    
     if ( entryListDoc == null )
         return null;
 
-    if ( entryListDoc instanceof Document ) {
-        var entryListElem = entryListDoc.documentElement;
-        var list = new EntryList(entryListElem.getAttribute(ATTR_TOTAL),
-                                 entryListElem.getAttribute(ATTR_LIMIT),
-                                 entryListElem.getAttribute(ATTR_OFFSET) );
+    var entryListElem = entryListDoc.documentElement;
+    var list = new EntryList(entryListElem.getAttribute(ATTR_TOTAL),
+                             entryListElem.getAttribute(ATTR_LIMIT),
+                             entryListElem.getAttribute(ATTR_OFFSET) );
+    
+    var elemList = entryListElem.getElementsByTagName(TAG_ENTRY); 
+    for (var i = 0; i < elemList.length; i++) {
+        var entryElem = elemList.item(i);
         
-        var elemList = entryListElem.getElementsByTagName(TAG_ENTRY); 
-        for (var i = 0; i < elemList.length; i++) {
-            var entryElem = elemList.item(i);
-            
-            var e = __buildSingleEntry(entryElem);
-            list.put(e.url, e);
-        }
-        
-        return list;
-    } else {
-        __exception("parseEntryList() accepts only parameters of type 'Element'!");
+        var e = __buildSingleEntry(entryElem);
+        list.put(e.url, e);
     }
+    
+    return list;
 }
     
     
@@ -85,46 +80,41 @@ function parseEntryList(entryListDoc) {
  */
 function __buildSingleEntry(entryElem) {
   
-    if ( entryElem instanceof Element ) {
-        var entry = new Entry( entryElem.getAttribute(ATTR_HREF) );
-        
-        entry.title       = entryElem.getAttribute(ATTR_TITLE) || "";
-        entry.type        = entryElem.getAttribute(ATTR_TYPE) || "";
-        entry.pub         = entryElem.getAttribute(ATTR_PUBLIC) == 'true' ? true : false;
+    var entry = new Entry( entryElem.getAttribute(ATTR_HREF) );
+    
+    entry.title       = entryElem.getAttribute(ATTR_TITLE) || "";
+    entry.type        = entryElem.getAttribute(ATTR_TYPE) || "";
+    entry.pub         = entryElem.getAttribute(ATTR_PUBLIC) == 'true' ? true : false;
 
-        // TODO make real dates here 
-        entry.issuedDate    = parseW3cDate(entryElem.getAttribute(ATTR_ISSUED));
-        entry.modifiedDate  = parseW3cDate(entryElem.getAttribute(ATTR_MODIFIED));
-        entry.addedDate     = parseW3cDate(entryElem.getAttribute(ATTR_ADDED));
-        entry.editedDate    = parseW3cDate(entryElem.getAttribute(ATTR_EDITED));
+    // TODO make real dates here 
+    entry.issuedDate    = parseW3cDate(entryElem.getAttribute(ATTR_ISSUED));
+    entry.modifiedDate  = parseW3cDate(entryElem.getAttribute(ATTR_MODIFIED));
+    entry.addedDate     = parseW3cDate(entryElem.getAttribute(ATTR_ADDED));
+    entry.editedDate    = parseW3cDate(entryElem.getAttribute(ATTR_EDITED));
+    
+    // <content> and <note>
+    entry.content     = XmlGetChildsText(entryElem, TAG_CONTENT) || "";
+    entry.note        = XmlGetChildsText(entryElem, TAG_NOTE) || "";
+    
+    // <author>
+    var authorList = entryElem.getElementsByTagName(TAG_AUTHOR);
+    if ( authorList != null && authorList.length > 0) {
+        var authorElem = authorList.item(0);
         
-        // <content> and <note>
-        entry.content     = XmlGetChildsText(entryElem, TAG_CONTENT) || "";
-        entry.note        = XmlGetChildsText(entryElem, TAG_NOTE) || "";
-        
-        // <author>
-        var authorList = entryElem.getElementsByTagName(TAG_AUTHOR);
-        if ( authorList != null && authorList.length > 0) {
-            var authorElem = authorList.item(0);
-            
-            entry.author      = authorElem.getAttribute(ATTR_NAME) || "";
-            entry.authorEmail = authorElem.getAttribute(ATTR_EMAIL) || "";
-        }
-        
-        // <tag>
-        var tags = XmlGetChildsText(entryElem, TAG_TAG)
-        if ( tags instanceof Array ) 
-            entry.tags = tags;
-        else 
-            entry.tags = tags ? new Array(tags) : new Array();
-        
-        debugConsole.addMsg("Parsed Entry: "+entry.toString() +" "+entry.pub);
-        
-        return entry;
-        
-    } else {
-        __exception("__buildEntry() accepts only parameters of type 'Element'!");
+        entry.author      = authorElem.getAttribute(ATTR_NAME) || "";
+        entry.authorEmail = authorElem.getAttribute(ATTR_EMAIL) || "";
     }
+    
+    // <tag>
+    var tags = XmlGetChildsText(entryElem, TAG_TAG)
+    if ( tags instanceof Array ) 
+        entry.tags = tags;
+    else 
+        entry.tags = tags ? new Array(tags) : new Array();
+    
+    debugConsole.addMsg("Parsed Entry: "+entry.toString() +" "+entry.pub);
+    
+    return entry;
 }
 
 

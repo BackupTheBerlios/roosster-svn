@@ -54,6 +54,7 @@ public class Output
     private static Logger LOG = Logger.getLogger(Dispatcher.class.getName());
 
     private String       commandName    = null;
+    private String       jumpTo         = null;
     private Registry     registry       = null;
     private OutputMode   mode           = null;
     private EntryList    entries        = new EntryList();
@@ -100,6 +101,24 @@ public class Output
     public Collection getOutputPropertyNames()
     {
         return properties.keySet();
+    }
+    
+
+    /**
+     * 
+     */
+    public String getJumpTo()
+    {
+        return jumpTo;
+    }
+    
+
+    /**
+     * 
+     */
+    public void setJumpTo(String jumpTo)
+    {
+        this.jumpTo = jumpTo; 
     }
     
 

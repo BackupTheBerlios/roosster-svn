@@ -43,7 +43,7 @@ public class EntryList extends AbstractList
     private static Logger LOG = Logger.getLogger(EntryList.class);
 
     private int totalSize   = 0;
-    private int offset	     = 0;
+    private int offset	    = 0;
     private int limit       = -1;
     private List list       = new ArrayList();
 
@@ -57,6 +57,21 @@ public class EntryList extends AbstractList
     public EntryList() 
     {
         this.totalSize = -1;
+    }
+    
+    
+    /**
+     * Constructs an <code>EntryList</code> for which there is always:
+     * <pre>
+     * getTotalSize() == size()
+     * </pre>
+     */
+    public EntryList(List list) 
+    {
+        this();
+        
+        if ( list != null )
+            this.list.addAll(list);
     }
     
     

@@ -6,6 +6,7 @@ JS Client
 * add select box for selecting sort order
 * add authentication option
 * make extended search interface
+* make image for non-public entries
 * LATER mass delete
 
 * DONE add link to URL to every view of Entry
@@ -54,9 +55,19 @@ General
 * implement property to enable forcing of a certain ContentTypeProcessor
 * rewrite raw content to reflect image locations ...
 * finish SyncDeliciousCommand
-* add public/private flag to Entry.class
+* implement HitList (see Otis mail) and make it return Entry objects
+  (instantiated on the fly), use this in EntryList.class
+* EntryList.class should only use HitList, for this always add offset
+  to requested index (and throw IndexOutOfBoundsException, when
+  requested index+offset is greater than limit)
+* add property for HtmlMode template suffix/prefix
+* use file locking in Configuration.persist() ?
 * LATER Thinlet GUI http://thinlet.sf.net/ GUI Editor http://thing.sourc eforge.net/
 
+* DONE add property delicious.api.endpoint
+* DONE implement get/setJumpTo in Output.class
+* DONE overload EntryStore.getAllEntries() 
+* DONE add public/private flag to Entry.class
 * DONE add setOutputProperty(String, Object) and respective getter to Output.class
   and use it to pass request to Templates in HtmlMode
 * DONE make logging configurable by CLI switch

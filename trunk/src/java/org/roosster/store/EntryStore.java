@@ -40,19 +40,10 @@ import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.search.Searcher;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.RangeQuery;
+import org.apache.lucene.search.*;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.TermDocs;
-import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.*;
 
 import org.roosster.util.StringUtil;
 import org.roosster.*;
@@ -218,11 +209,20 @@ public class EntryStore implements Plugin, Constants
         return numdocs; 
     }
     
-      
     /**
-     *
+     * 
      */
     public EntryList getAllEntries() throws IOException
+    {
+        return getAllEntries(getOffset(), getLimit());
+    }
+
+
+    /**
+     * provides unsorted, sequential access to all Entries (based on
+     * Lucene's document number).
+     */
+    public EntryList getAllEntries(int offset, int limit) throws IOException
     {
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
@@ -235,10 +235,6 @@ public class EntryStore implements Plugin, Constants
             
             entries = new EntryList(numdocs);
             
-            int limit  = getLimit();
-            int offset = getOffset();
-            LOG.info("Total number of Entries is "+numdocs);
-          
             if ( numdocs > offset ) {
                 int lastElem = numdocs >= offset+limit ? offset+limit : numdocs;
 
@@ -252,9 +248,9 @@ public class EntryStore implements Plugin, Constants
             
         } finally {
             if ( reader != null ) 
-                reader.close();          
+                reader.close(); 
         }
-          
+
         return entries;
     }
     
@@ -299,6 +295,9 @@ public class EntryStore implements Plugin, Constants
         if ( before == null )
             before = new Date();
         
+        // TODO wrap this in a try/finally, to ensure IndexSearcher is
+        // always closed
+        
         LOG.debug("Getting Entries edited after "+after+" and before "+before);
         
         Term afterTerm = new Term(Entry.EDITED, StringUtil.formatEntryDate(after));
@@ -314,7 +313,7 @@ public class EntryStore implements Plugin, Constants
 
         LOG.info("Found "+hits.length()+" matches for query: <"+query+">");
         
-        return fillEntryList(hits);
+        return fillEntryList(hits, 0, Integer.MAX_VALUE);
     }
     
 
@@ -473,6 +472,8 @@ public class EntryStore implements Plugin, Constants
         } finally {
             if  ( closeReader && reader != null )
                 reader.close();
+
+            persistLastUpdate();
         }
     }
 
@@ -526,6 +527,8 @@ public class EntryStore implements Plugin, Constants
 
             if ( reader != null )
                 reader.close();
+
+            persistLastUpdate();
         }
     }
 
@@ -630,6 +633,15 @@ public class EntryStore implements Plugin, Constants
      */
     private EntryList fillEntryList(Hits hits) throws IOException
     {
+        return fillEntryList(hits, getOffset(), getLimit());
+    }
+
+    
+    /**
+     * 
+     */
+    private EntryList fillEntryList(Hits hits, int offset, int limit) throws IOException
+    {
         if ( hits == null ) 
             throw new IllegalArgumentException("Parameter 'hits' is not allowed to be null");
       
@@ -637,8 +649,6 @@ public class EntryStore implements Plugin, Constants
 
         EntryList entries = new EntryList(hitsNum);
 
-        int limit  = getLimit();
-        int offset = getOffset();
         LOG.debug("Offset is : "+offset+" / Limit is: "+limit);
 
         entries.setLimit(limit);
@@ -659,6 +669,16 @@ public class EntryStore implements Plugin, Constants
     }
 
 
+    /**
+     *
+     */
+    private void persistLastUpdate() throws IOException
+    {
+        registry.getConfiguration().setRequestProperty(LAST_UPDATE, System.currentTimeMillis() +"");
+        registry.getConfiguration().persist(new String[] {LAST_UPDATE});
+    }
+
+    
     /**
      *
      */

@@ -35,6 +35,9 @@ public interface Constants
 {
     public static final String ENTRY_DATE_FORMAT_SHORT = "yyyyMMddHHmm";
     public static final String ENTRY_DATE_FORMAT_LONG  = "yyyyMMdd";
+        
+    // TODO make this configurable
+    public static final String DISPLAY_DATE_FORMAT  = "dd/MM/yyyy HH:mm";
     
     public static final String TAG_SEPARATOR    = ",";
   
@@ -53,12 +56,17 @@ public interface Constants
     public static final String VELCTX_INDEXNUM    = "roossterIndexContains";    
     public static final String VELCTX_COMMAND     = "commandName";    
     public static final String VELCTX_ENTRYLIST   = "entryList";    
+    public static final String VELCTX_TMPLUTIL    = "util";    
+    public static final String VELCTX_HTTPREQ     = "req";    
     
     // for internal use only
     public static final String PARAM_ENTRIES    = "internal.param.entry";
     
     // Command-Line switch only
     public static final String CLI_LOGGING      = "roosster.log";
+
+    // determines last time of update
+    public static final String LAST_UPDATE      = "roosster.last.update";
     
     // props can be specified in properties or as request parameter
     public static final String PROP_LIMIT       = "output.limit";
@@ -70,6 +78,17 @@ public interface Constants
     public static final String PROP_DELICIOUS_USER       = "delicious.username";
     public static final String PROP_DELICIOUS_PASS       = "delicious.password";
     public static final String PROP_DELICIOUS_LASTSYNC   = "delicious.lastsync";
+    
+    public static final String PROP_DELICIOUS_APIENDPOINT= "delicious.api.endpoint";
+    public static final String DEF_DELICIOUS_APIENDPOINT = "http://del.icio.us/api/";
+
+    // one of 'delicious' or 'roosster', determines which entries are
+    // overwritten, by which
+    public static final String PROP_DELICIOUS_SYNCMASTER = "delicious.sync.master";
+
+    // determines, if entries not present in master but in slave
+    // system, will be deleted from slave system
+    public static final String PROP_DELICIOUS_DELETESLAVE= "delicious.sync.deletefromslave";
     
     public static final String PROP_APPVERSION  = "roosster.app.version";
 

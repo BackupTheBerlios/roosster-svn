@@ -15,7 +15,7 @@
 // =========================================================================
 
 
-var DEBUG = true;
+var DEBUG = false;
 var DIV_ID_DEBUGOUT = "debug-out";
 
 

@@ -1,0 +1,51 @@
+#parse('includes/head.inc')
+
+#set ( $entry = $entryList[0])
+<form name="entryform" action="$baseurl/application/putentries" method="post">
+<table>
+  <tr> 
+    <td><label for="url"><dfn title="not-editable">URL</dfn></label></td>         
+    <td>
+      <input type="text" name="url" style="width:500px;"/>
+      <span id="entry-url-link"></span>
+    </td> 
+  </tr>
+  <tr> <td><label for="title">Title</label></td>       
+       <td><input type="text" name="title" /></td> </tr>
+  <tr> <td><label for="tags"><dfn title="comma-separated list of words">Tags</dfn></label></td>        
+       <td><input type="text" name="tags" /></td> </tr>
+  <tr> <td valign="top"><label for="note">Note</label></td>        
+       <td><textarea name="note"></textarea></td> </tr>
+  <tr> <td><label for="type">Type</label></td>        
+       <td><input type="text" name="type" /></td> </tr>
+  <tr> <td><label for="author">Author</label></td>      
+       <td><input type="text" name="author" /></td> </tr>
+  <tr> <td><label for="authorEmail">Author-Email</label></td>
+       <td><input type="text" name="authorEmail" /></td> </tr>
+  <tr> <td>
+         <label for="pub">
+         <dfn title="determines if this entry gets synced with public services like del.icio.us and simpy">Public</dfn>
+         </label>
+       </td>
+       <td><input type="checkbox" name="pub" value="true" /></td> </tr>
+  <tr> <td>Issued</td>      
+       <td><input type="text" name="issuedDate" readonly="readonly"/></td> </tr>
+  <tr> <td>Modified</td>
+       <td><input type="text" name="modifiedDate" readonly="readonly"/></td> </tr>
+      <tr> <td>Added</td>
+           <td><input type="text" name="addedDate" readonly="readonly"/></td> </tr>
+      <tr> <td>Last Edited</td>
+           <td><input type="text" name="editedDate" readonly="readonly"/></td> </tr>
+      <tr> <td>View Cached Page</td>
+           <td><div id="cachedentrylink"></div></td> </tr>
+      <tr> <td valign="top">Indexed Content<br/>
+               <a href="#" onclick="return toggleDisplay('indexedcontent');" style="font-size:x-small;">
+               show &frasl; hide</a>
+           </td>
+           <td><textarea name="content" id="indexedcontent"></textarea></td> </tr>
+      <tr> <td></td><td align="left">
+           <input type="submit" value="Submit" /></td></tr>
+    </table>
+</form>    
+#parse('includes/foot.inc')
+

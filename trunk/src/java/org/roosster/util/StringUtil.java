@@ -59,6 +59,23 @@ public class StringUtil
     /**
      * 
      */
+    public static String formatDisplayDate(Date date)
+    {
+        if ( date == null )
+            return "";
+        
+        try {
+            return XmlUtil.getDateFormat(Constants.DISPLAY_DATE_FORMAT).format(date);
+        } catch (Exception ex) {
+            LOG.warn("Exception while converting Date to String", ex);
+            return "";
+        }
+    }
+    
+    
+    /**
+     * 
+     */
     public static String formatEntryDate(Date date)
     {
         if ( date == null )
