@@ -43,8 +43,6 @@ API
 
 General
 =========
-* add setOutputProperty(String, Object) and respective getter to Output.class
-  and use it to pass request to Templates in HtmlMode
 * look at all TODO comments in sourcecode
 * update roosster.app.version property
 * move to MultiFieldQueryParser, remove Entry.ALL
@@ -56,8 +54,9 @@ General
 * rewrite raw content to reflect image locations ...
 * finish SyncDeliciousCommand
 * add public/private flag to Entry.class
-* allow adding of HttpServletRequest to velocity context
 
+* DONE add setOutputProperty(String, Object) and respective getter to Output.class
+  and use it to pass request to Templates in HtmlMode
 * DONE make logging configurable by CLI switch
 * DONE FIX THE FUCKING LOGGING ... I HATE COMMONS LOGGING
 * DONE extend Entry so that content field contains only meaningful (no

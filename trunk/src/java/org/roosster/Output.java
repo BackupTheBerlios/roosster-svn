@@ -29,10 +29,12 @@ package org.roosster;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 import org.roosster.store.Entry;
@@ -56,6 +58,7 @@ public class Output
     private OutputMode   mode           = null;
     private EntryList    entries        = new EntryList();
     private List         outputMessages = new ArrayList();
+    private Map          properties     = new HashMap();
     private boolean      truncation     = true;
 
     /**
@@ -72,6 +75,33 @@ public class Output
         loadOutputMode(outputMode, registry);
     }
 
+
+    /**
+     */
+    public void setOutputProperty(String name, Object obj)
+    {
+        if ( name != null && !"".equals(name) )
+            properties.put(name, obj);
+    }
+    
+
+    /**
+     * 
+     */
+    public Object getOutputProperty(String name)
+    {
+        return properties.get(name);
+    }
+    
+
+    /**
+     * 
+     */
+    public Collection getOutputPropertyNames()
+    {
+        return properties.keySet();
+    }
+    
 
     /**
      * 

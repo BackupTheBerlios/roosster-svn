@@ -28,6 +28,8 @@ package org.roosster.output.modes;
 
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Iterator;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.Template;
@@ -36,6 +38,7 @@ import org.apache.velocity.context.Context;
 import org.roosster.store.Entry;
 import org.roosster.store.EntryList;
 import org.roosster.util.VelocityUtil;
+import org.roosster.util.ServletUtil;
 import org.roosster.Output;
 import org.roosster.output.OutputMode;
 import org.roosster.OperationException;
@@ -65,6 +68,12 @@ public class HtmlMode extends AbstractOutputMode implements OutputMode, Constant
         context.put(VELCTX_COMMAND, output.getCommandName());
         context.put(VELCTX_ENTRYLIST, entries);         
 
+        Iterator iter = output.getOutputPropertyNames().iterator();
+        while ( iter.hasNext() ) {
+            String name = (String) iter.next();
+            context.put(name, output.getOutputProperty(name));
+        }
+        
         String templateName = output.getCommandName() +".html";
         
         try {

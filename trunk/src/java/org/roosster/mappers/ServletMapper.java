@@ -174,19 +174,10 @@ public class ServletMapper extends HttpServlet
             Map args = parseRequestArguments(req);
             
             // add request arguments to configuration
-            Configuration conf = registry.getConfiguration();
-            conf.setRequestArguments(args);
-            
-            // if no output mode is specified in request, then use html
-            /*
-            String outputMode = args.containsKey(Constants.PROP_OUTPUTMODE) 
-                                      ? getOutputMode()
-                                      : DEF_OUTPUT_MODE;
-            */                          
-            String outputMode = getOutputMode();
+            registry.getConfiguration().setRequestArguments(args);
             
             // run commands            
-            Output output = dispatcher.run(commandName, outputMode, args);
+            Output output = dispatcher.run(commandName, getOutputMode(), args);
 
             if ( output.entriesSize() < 1 ) {
                 resp.setStatus(resp.SC_NO_CONTENT);
@@ -199,6 +190,8 @@ public class ServletMapper extends HttpServlet
                 
                 LOG.debug("Set Content-Type Header field to: "+contentHeader);
     
+                output.setOutputProperty(Constants.VELCTX_BASEURL, getBaseUrl(req));
+                
                 // output everything
                 output.output( resp.getWriter() );
             }

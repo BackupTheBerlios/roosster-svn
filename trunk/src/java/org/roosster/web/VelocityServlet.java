@@ -120,10 +120,8 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
         if ( registry == null )
             throw new IllegalStateException("Servlet Environment not properly initialized! No Registry!");
         
-        
         VelocityUtil.initContext(registry, context);
-        
-        context.put(VELCTX_BASEURL,    ServletUtil.getBaseUrl(req));
+        context.put(Constants.VELCTX_BASEURL, ServletUtil.getBaseUrl(req));
     }
     
     

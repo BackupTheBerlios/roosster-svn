@@ -1,4 +1,4 @@
-#parse( 'macros.inc' ) 
+#parse( 'includes/macros.inc' ) 
 #set( $searchFieldDefault = 'search ...') 
 <html>
 <head>
