@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+
+<!--
+    This file is part of ROOSSTER.
+    Copyright 2004, Benjamin Reitzammer <benjamin@roosster.org>
+    All rights reserved.
+
+    ROOSSTER is free software; you can redistribute it and/or modify
+    it under the terms of the Artistic License.
+
+    You should have received a copy of the Artistic License
+    along with ROOSSTER; if not, go to
+    http://www.opensource.org/licenses/artistic-license.php for details
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND
+    CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+    EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+    AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+    STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+    ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<project name="roosster" default="compile" basedir=".">
+
+    <target name="init">
+        <tstamp/>
+        <echo>+ ============================================= +</echo>
+        <echo>+ Load configuration - Roosster                 +</echo>
+        <echo>+ ============================================= +</echo>
+        <property environment="env"/>
+
+        <property name="roosster.version" value="0.1" />
+
+        <property name="lib.dir"  location="${basedir}/lib" />
+        <property name="src.dir"  location="${basedir}/src" />
+        <property name="res.dir"  location="${basedir}/resources" />
+        <property name="doc.dir"  location="${basedir}/doc" />
+        <property name="tmpl.dir" location="${basedir}/templates" />
+
+        <property name="build.dir" location="${basedir}/build" />
+        <property name="dist.dir" location="${basedir}/dist" />
+
+        <property name="libs.unpacked.file" value="LIBS_UNPACKED" />
+        <available file="${dist.dir}/LIBS_UNPACKED" property="libs.unpacked"/>
+
+        <property name="cli.jar.file" value="roosster.jar" />
+        <property name="web.jar.file" value="roosster-web.jar" />
+        <property name="dist.file" value="${ant.project.name}-${roosster.version}.tar.gz" />
+
+        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${build.dir}" />
+
+    </target>
+
+
+    <target name="compile" depends="init" description="Compiles all source files">
+        <javac srcdir="${src.dir}"
+               destdir="${build.dir}"
+               debug="true"
+               deprecation="true"
+               >
+           <classpath>
+               <fileset dir="${lib.dir}/web" includes="**/*.jar" />
+               <fileset dir="${lib.dir}/common" includes="**/*.jar" />
+               <fileset dir="${lib.dir}/cli" includes="**/*.jar" />
+           </classpath>
+       </javac>
+    </target>
+
+
+    <target name="unjar-libs"
+            depends="init"
+            unless="libs.unpacked"
+            description="unpacks all *.jar files in ./lib, for convenient packaging into rosster's jar-file">
+
+        <mkdir dir="${dist.dir}/lib/common" />
+        <mkdir dir="${dist.dir}/lib/cli" />
+        <mkdir dir="${dist.dir}/lib/web" />
+
+        <unjar dest="${dist.dir}/lib/common">
+            <fileset dir="${lib.dir}/common" includes="*.jar" />
+        </unjar>
+        <unjar dest="${dist.dir}/lib/web">
+            <fileset dir="${lib.dir}/web" includes="*.jar" />
+        </unjar>
+        <unjar dest="${dist.dir}/lib/cli">
+            <fileset dir="${lib.dir}/cli" includes="*.jar" />
+        </unjar>
+        <touch file="${dist.dir}/${libs.unpacked.file}"/>
+    </target>
+
+
+    <target name="jar-web"
+            depends="compile, unjar-libs"
+            description="Builds the .jar file for the standalone web distribution" >
+
+        <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+
+        <jar destfile="${dist.dir}/${web.jar.file}" compress="true">
+            <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+            <fileset dir="${dist.dir}/lib/common" includes="**/*" />
+            <fileset dir="${dist.dir}/lib/web" includes="**/*" />
+            <fileset dir="${build.dir}" includes="org/roosster/**" />
+            <fileset dir="${res.dir}/common" includes="**/*" />
+            <fileset dir="${res.dir}/web" includes="**/*" />
+            <fileset dir="${tmpl.dir}" includes="**/*" />
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="org.roosster.mappers.ServletMapper"/>
+                <attribute name="Class-Path" value="."/>
+                <section name="org.roosster">
+                    <attribute name="Specification-Title" value="${ant.project.name}"/>
+                    <attribute name="Specification-Version" value="${roosster.version}"/>
+                    <attribute name="Specification-Vendor" value="http://roosster.org"/>
+                    <attribute name="Implementation-Title" value="${ant.project.name}"/>
+                    <attribute name="Implementation-Version" value="${roosster.version} ${TODAY}"/>
+                    <attribute name="Implementation-Vendor" value="http://roosster.org"/>
+                </section>
+            </manifest>
+          </jar>
+    </target>
+
+    <target name="jar-cli"
+            depends="compile, unjar-libs"
+            description="Builds the .jar file for the CLI distribution" >
+
+        <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+
+        <jar destfile="${dist.dir}/${cli.jar.file}" compress="true">
+            <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+            <fileset dir="${dist.dir}/lib/common" includes="**/*" />
+            <fileset dir="${dist.dir}/lib/cli" includes="**/*" />
+            <fileset dir="${build.dir}" includes="org/roosster/**" />
+            <fileset dir="${res.dir}/cli" includes="**/*" />
+            <fileset dir="${res.dir}/common" includes="**/*" />
+            <fileset dir="${tmpl.dir}" includes="**/*" />
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="org.roosster.mappers.CliMapper"/>
+                <attribute name="Class-Path" value="."/>
+                <section name="org.roosster">
+                    <attribute name="Specification-Title" value="${ant.project.name}"/>
+                    <attribute name="Specification-Version" value="${roosster.version}"/>
+                    <attribute name="Specification-Vendor" value="http://roosster.org"/>
+                    <attribute name="Implementation-Title" value="${ant.project.name}"/>
+                    <attribute name="Implementation-Version" value="${roosster.version} ${TODAY}"/>
+                    <attribute name="Implementation-Vendor" value="http://roosster.org"/>
+                </section>
+            </manifest>
+          </jar>
+    </target>
+
+    <target name="clean" depends="init" description="Removes 'dist' and 'build' directories">
+        <delete dir="${dist.dir}" />
+        <delete dir="${build.dir}" />
+    </target>
+
+</project>

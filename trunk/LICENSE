@@ -1,0 +1,13 @@
+The original code and all accompanied  of ROOSSTER is placed under the ARTISTIC license.
+See the file ARTISTIC.txt in this directory for details about this license.
+
+ROOSSTER uses code from other open source projects which are governed
+by their respective licenses.
+
+All external code is located in the ./lib subdirectory in the form of jar files
+
+Used projects:
+* Jakarta Lucene - http://jakarta.apache.org/lucene
+* Jakarta Commons IO - http://jakarta.apache.org/commons/io
+* KXML - http://www.kxml.org
+

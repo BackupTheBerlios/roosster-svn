@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed version="0.3" xmlns="http://purl.org/atom/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xml:lang="en" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+<title>things to write home about</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/"/>
+<modified>2004-10-21T08:00:51Z</modified>
+<tagline/>
+<id>tag:blog.nur-eine-i.de,2004://1</id>
+<generator url="http://www.movabletype.org/" version="3.11">Movable Type</generator>
+<copyright>Copyright (c) 2004, Benjamin</copyright>
+<entry>
+<title>Flickr Architecture</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/flickr_architec.html"/>
+<modified>2004-10-21T08:00:51Z</modified>
+<issued>2004-10-21T07:51:35Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.34</id>
+<created>2004-10-21T07:51:35Z</created>
+<summary type="text/plain">Now that's a presentation I would have liked to attend. One of the Flickr developers, Cal Henderson to be exact, gave a presentation about the architecture of the Flickr website. I've been wondering sometimes already, how such a site would...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>webapps</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[<p>Now that's a presentation I would have liked to attend. One of the <a href="http://www.flickr.com" class="extlink">Flickr</a> developers, <a href="http://www.ludicorp.com/team_member.php?id=15" class="extlink">Cal Henderson</a> to be exact, gave a presentation about the architecture of the <a href="http://www.flickr.com" class="extlink">Flickr</a> website. I've been wondering sometimes already, how such a site would be built. I mean, they must be handling some serious loads. </p>
+<p><a href="http://www.niallkennedy.com/blog/archives/2004/10/flickr_architec.html" class="extlink">Niall Kennedy</a> has a pdf version of the slides. A good read for everyone remotely interested in technical details of webapps.</p>
+<p>Via: <a href="http://weblogtoolscollection.com/archives/2004/10/20/niall-kennedys-weblog-flickr-architecture/" class="extlink">weblogtoolscollection.com</a></p>
+]]>
+
+</content>
+</entry>
+<entry>
+<title>Mark is gone</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/mark_is_gone.html"/>
+<modified>2004-10-20T19:55:16Z</modified>
+<issued>2004-10-20T19:37:05Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.33</id>
+<created>2004-10-20T19:37:05Z</created>
+<summary type="text/plain">Mark Pilgrim, of feedparser and feedvalidator fame, has stopped blogging. At least it seems so. His final post is rather short and his site no longer provides any kind of feeds. One could say it's no real surprise, since he...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+<![CDATA[<p><a href="http://diveintomark.org" class="extlink">Mark Pilgrim</a>, of <a href="http://feedparser.org" class="extlink">feedparser</a> and <a href="http://feedvalidator.org" class="extlink">feedvalidator</a> fame, has stopped blogging. </p>
+<p>At least it seems so. His <a href="http://diveintomark.org/archives/2004/10/18/exit" class="extlink">final post</a> is rather short and his site no longer provides any kind of feeds. One could say it's no real surprise, since he made some <a href="http://diveintomark.org/archives/2004/08/06/vacation" class="extlink">hints</a> in the <a href="http://diveintomark.org/archives/2004/10/15/white-lights" class="extlink">past</a>, and his post frequency was rather low in the last months.</p>
+<p>Either way, I think that's rather sad. I really liked his writing style and his views on technical topics were always good for some new perspective and interesting insights.</p>
+<p>I would really like to know, if he just stopped blogging, or if he stepped back from all his computer involvements (his column on <a href="http://www.xml.com" class="extlink">xml.com</a>, feedparser, Atom ...).</p>
+<p>Whatever the case. Have more fun, Mark.</p>
+]]>
+
+</content>
+</entry>
+<entry>
+<title>You Never Know ... </title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/you_never_know.html"/>
+<modified>2004-10-20T07:40:14Z</modified>
+<issued>2004-10-20T07:30:36Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.32</id>
+<created>2004-10-20T07:30:36Z</created>
+<summary type="text/plain">... what you're going to get, when reading weblogs! I think I should frame that. To remind me why I'm doing this. Reading so much weblogs (and other "syndicated content"), can be laborious at times. However, the reason I'm writing...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+
+</content>
+</entry>
+<entry>
+<title>I'm Starting To Miss Windows</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/im_starting_to.html"/>
+<modified>2004-10-14T19:19:11Z</modified>
+<issued>2004-10-14T18:59:29Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.31</id>
+<created>2004-10-14T18:59:29Z</created>
+<summary type="text/plain">Well, I never thought I would, but when I read about Google Desktop today, I really thought about using a Windows computer again. For a short time only, I assure you. I just can't believe how cool this is. Having...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+
+</content>
+</entry>
+<entry>
+<title>API Design</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/api_design.html"/>
+<modified>2004-10-13T07:47:30Z</modified>
+<issued>2004-10-13T07:06:30Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.30</id>
+<created>2004-10-13T07:06:30Z</created>
+<summary type="text/plain">
+</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>development</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+
+</content>
+</entry>
+<entry>
+<title>du - Displaying Disk Usage Statistics</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/du_displaying_d_1.html"/>
+<modified>2004-10-09T23:25:32Z</modified>
+<issued>2004-10-09T23:15:19Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.29</id>
+<created>2004-10-09T23:15:19Z</created>
+<summary type="text/plain">While having fun with my iBook, I used du quite extensively, and without it, the whole thing would have taken even more time. That's why I post about du alone, to show other people, what a great help this can...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>mac</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+</content>
+</entry>
+<entry>
+<title>NGTD - Not Getting Things Done</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/ngtd_not_gettin.html"/>
+<modified>2004-10-09T23:05:54Z</modified>
+<issued>2004-10-09T22:43:56Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.28</id>
+<created>2004-10-09T22:43:56Z</created>
+<summary type="text/plain">Computers are great. There's no doubt about it. When I bought my iBook, some 4 months ago, I thought a 30 GB hard drive would be more than enough. How I erred. While ripping some of my CDs this afternoon...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>mac</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+</content>
+</entry>
+<entry>
+<title>Great Music Video</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/great_music_vid.html"/>
+<modified>2004-10-10T00:03:09Z</modified>
+<issued>2004-10-09T21:47:56Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.27</id>
+<created>2004-10-09T21:47:56Z</created>
+<summary type="text/plain">This video is really great. And it's a great song. Go see it. You'll need iTunes to watch it. But trust me the video alone is a reason to download and install iTunes. Via: Tim Bray...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+
+</content>
+</entry>
+<entry>
+<title>Blog Move</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/blog_move.html"/>
+<modified>2004-10-08T09:08:17Z</modified>
+<issued>2004-10-08T08:20:11Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.26</id>
+<created>2004-10-08T08:20:11Z</created>
+<summary type="text/plain">Ok, I did it again. Sorry for making it hard to follow my 'oh so interesting' notes. But this time the switch will last, which means the form of this blog will last. For some time at least. I had...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>blogging</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+
+</content>
+</entry>
+<entry>
+<title>Rojo Review</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/10/rojo_review.html"/>
+<modified>2004-10-05T12:26:07Z</modified>
+<issued>2004-10-02T20:13:49Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.6</id>
+<created>2004-10-02T20:13:49Z</created>
+<summary type="text/plain">There's a new social-software, feed-reading web application on the block, called Rojo. It's in beta-testing stage right now, and similar to Gmail you can only get an account by receiving an invitation. I have been invited by Kevin Burton, Co-founder...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>webapps</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+</content>
+</entry>
+<entry>
+<title>Developer Braindump</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/09/developer_brain.html"/>
+<modified>2004-10-09T07:34:55Z</modified>
+<issued>2004-09-27T09:59:14Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.5</id>
+<created>2004-09-27T09:59:14Z</created>
+<summary type="text/plain">Please forgive my crude writing style in this post. But, hey, it's a wiki (well, kind of). Just a braindump of the ideas/wishes that formed in my mind during the last days, so I can get on with my life...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+
+</content>
+</entry>
+<entry>
+<title>Interessanter Kunst-Terror</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/09/interessanter_k.html"/>
+<modified>2004-10-05T11:51:40Z</modified>
+<issued>2004-09-25T10:26:42Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.7</id>
+<created>2004-09-25T10:26:42Z</created>
+<summary type="text/plain">Tja, manchmal kann es doch ganz nett sein, Zeitung zu lesen, statt sich immer nur übers Internet zu informieren. Heute morgen hab ich dann etwas sehr interessantes gelesen: Ein Student der Hochschule für Gestaltung Karlsruhe hat am Mittwoch den 22.09....</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>life</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+
+</content>
+</entry>
+<entry>
+<title>iBook TV Cable Mess</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/09/ibook_tv_cable.html"/>
+<modified>2004-10-05T11:50:57Z</modified>
+<issued>2004-09-22T05:49:54Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.8</id>
+<created>2004-09-22T05:49:54Z</created>
+<summary type="text/plain">Just in case anyone of you plans to hook up an iBook (the ones without external reset button; which means the newest at the date of writing this in September 2004) to a TV, there's a small but significant gap...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>mac</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+
+</content>
+</entry>
+<entry>
+<title>Java Feed Parsers</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/09/java_feed_parse.html"/>
+<modified>2004-10-06T12:08:24Z</modified>
+<issued>2004-09-19T11:53:23Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.9</id>
+<created>2004-09-19T11:53:23Z</created>
+<summary type="text/plain">You know, since I learned about the UniversalFeedParser I was always a bit jealous about the Python guys for having such a cool piece of software. But my jealousy seems to come to an end. Enter Rome. Rome is a...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+
+</content>
+</entry>
+<entry>
+<title>Google Labs - Interesting stuff</title>
+<link rel="alternate" type="text/html" href="http://blog.nur-eine-i.de/archives/2004/09/google_labs_int.html"/>
+<modified>2004-10-05T12:27:48Z</modified>
+<issued>2004-09-19T10:38:47Z</issued>
+<id>tag:blog.nur-eine-i.de,2004://1.10</id>
+<created>2004-09-19T10:38:47Z</created>
+<summary type="text/plain">I've stumbled upon Google Labs recently. They've got some cool stuff running there. Especially the Webquotes feature is really helpful. One of the first things, one should learn, when using the web in some serious manner, is: "Trust no single...</summary>
+<author>
+<name>Benjamin</name>
+<url>http://bloiki.nur-eine-i.de</url>
+<email>benjamin@bloiki.nur-eine-i.de</email>
+</author>
+<dc:subject>webapps</dc:subject>
+<content type="text/html" mode="escaped" xml:lang="en" xml:base="http://blog.nur-eine-i.de/">
+
+
+</content>
+</entry>
+
+</feed>
