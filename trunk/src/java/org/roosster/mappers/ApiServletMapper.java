@@ -62,24 +62,27 @@ public class ApiServletMapper extends ServletMapper
      */
     protected String getCommandName(int method, HttpServletRequest req)
     {
-        String commandName = SEARCH_CMD;
-        
-        switch (method) {
-            case GET:
-                commandName = super.getCommandName(method, req);
-                if ( !ENTRY_CMD.equals(commandName) && !SEARCH_CMD.equals(commandName) )
-                    commandName = null;
-                
-                break;
-            case PUT:
-                commandName = PUTENTRY_CMD;
-                break;
-            case POST:
-                commandName = ADD_CMD;
-                break;
-            case DELETE:
-                commandName = DEL_CMD;
-                break;
+        String commandName = super.getCommandName(method, req); 
+       
+        if ( ENTRY_CMD.equals(commandName) ) {
+            switch (method) {
+                case GET:
+                    commandName = ENTRY_CMD;
+                    break;
+                case PUT:
+                    commandName = PUTENTRY_CMD;
+                    break;
+                case POST:
+                    commandName = ADD_CMD;
+                    break;
+                case DELETE:
+                    commandName = DEL_CMD;
+                    break;
+            }
+        } else if ( SEARCH_CMD.equals(commandName) && method == GET ) {
+            return SEARCH_CMD;
+        } else {
+            commandName = null;
         }
         
         return commandName;
@@ -92,32 +95,34 @@ public class ApiServletMapper extends ServletMapper
     {
         try {
             Map args = super.parseRequestArguments(req);
-            
-            InputStream stream = req.getInputStream();
-            
-            if ( stream != null ) {
-            
-                String bodyEnc = req.getCharacterEncoding();
-                if ( bodyEnc == null ) 
-                    bodyEnc = inputEncoding;
+           
+            if ( "POST".equals(req.getMethod()) || "PUT".equals(req.getMethod()) ) {
+                InputStream stream = req.getInputStream();
                 
-                String body = IOUtils.toString(stream, bodyEnc);
+                if ( stream != null ) {
                 
-                if ( body != null && !"".equals(body) ) {
-                  
-                    // parse request body through entry parser
-                    EntryList entryList = new EntryParser().parse(body, bodyEnc);
-                    args.put(Constants.PARAM_ENTRIES, entryList);
+                    String bodyEnc = req.getCharacterEncoding();
+                    if ( bodyEnc == null ) 
+                        bodyEnc = inputEncoding;
                     
-                    if ( LOG.isDebugEnabled() ) {
-                        LOG.debug("**************************************************");
-                        LOG.debug("RequestBody: encoding "+bodyEnc+"\n");
-                        LOG.debug(body);
-                        LOG.debug("**************************************************");
+                    String body = IOUtils.toString(stream, bodyEnc);
+                    
+                    if ( body != null && !"".equals(body) ) {
+                      
+                        // parse request body through entry parser
+                        EntryList entryList = new EntryParser().parse(body, bodyEnc);
+                        args.put(Constants.PARAM_ENTRIES, entryList);
+                        
+                        if ( LOG.isDebugEnabled() ) {
+                            LOG.debug("**************************************************");
+                            LOG.debug("RequestBody: encoding "+bodyEnc+"\n");
+                            LOG.debug(body);
+                            LOG.debug("**************************************************");
+                        }
                     }
                 }
             }
-            
+
             return args;
             
         } catch(ParseException ex) {

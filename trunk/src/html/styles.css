@@ -98,7 +98,7 @@ input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1p
     background-color:$headerColor; 
     padding:1px 10px 10px 0px; 
     margin: 0px 0px 10px 0px;
-    height:50px;
+    height:40px;
 }
 .roossterheading  { font-size:16px; font-weight:900; margin:10px 0px 0px 20px; padding:10px 0px 0px 0px;}
 
