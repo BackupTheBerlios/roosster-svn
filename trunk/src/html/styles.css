@@ -19,6 +19,7 @@
 #set ($deleteLinkColor  = '#FFAFAF')
 #set ($textColor        = 'black')
 #set ($bgColor          = 'white')
+#set ($headerFontColor  = 'white')
  
 /*
  * Search Tab
@@ -66,7 +67,9 @@
 a       { color:$linkColor; text-decoration:none; }
 a:hover { background-color:$inputFocusColor; }
 dfn     { border-bottom:dotted 1px black; font-style:normal;}
-body    { margin:0pt;padding:0pt; font:Arial 1em normal; }
+body    { margin:0px;padding:0px; font:Arial 1em normal; }
+
+#content {padding:10px;}
 
 input[type=submit]            { background: url($baseurl/images/button_bg.png) top left repeat-x; }
 input[type=text]              { width:250px; }
@@ -75,7 +78,7 @@ textarea                      { width:350px; }
 input:focus, textarea:focus   { background-color:$inputFocusColor; }
 input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1px solid black; }
 
-.public-image { float:left; margin:7px; } 
+.entry-image { float:left; margin:7px; } 
  
 .tab      { display: none; }
 #tabarea  { padding:10px; }
@@ -108,6 +111,7 @@ input,textarea                { margin: 0px 5px 5px 5px; padding:2px;  border:1p
     font-weight:900; 
     margin:10px 0px 0px 20px; 
     padding:10px 0px 0px 0px;
+    color:$headerFontColor;
 }
 
 #tablist li {
