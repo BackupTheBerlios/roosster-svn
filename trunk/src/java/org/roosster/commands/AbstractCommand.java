@@ -32,7 +32,7 @@ import org.roosster.OperationException;
 import org.roosster.Command;
 import org.roosster.Registry;
 import org.roosster.Output;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 /**
  *
