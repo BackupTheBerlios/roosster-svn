@@ -39,6 +39,7 @@ import org.roosster.store.EntryList;
 
 
 /**
+ * TODO throw out that AVL_MODES stuff 
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
@@ -48,13 +49,14 @@ public class Output
 
     private static final String[] AVL_MODES = new String[] {"atom", "html", "text"};
 
-    /** if this is set to a value below zero, no output is truncated
+    /** if the value of this property is set to a value below zero, no output is truncated
      */
     private static final String PROP_TRUNCLENGTH = "output.truncate.length";
 
     private Registry    registry       = null;
     private OutputMode  mode           = null;
     private EntryList   entries        = new EntryList();
+    private String      templateName   = null;
     private int         truncateLength = -1;
 
     /**
@@ -68,6 +70,24 @@ public class Output
         this.registry = registry;
         String truncLength = registry.getConfiguration().getProperty(PROP_TRUNCLENGTH, "-1");
         truncateLength = Integer.valueOf(truncLength).intValue();
+    }
+
+
+    /**
+     *
+     */
+    public void setTemplateName(String name)
+    {
+        templateName = name;
+    }
+
+
+    /**
+     *
+     */
+    public String getTemplateName()
+    {
+        return templateName;
     }
 
 

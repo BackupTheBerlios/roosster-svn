@@ -44,8 +44,8 @@ import org.roosster.util.StringUtil;
 
 /**
  * TODO move contenttype stuff into abstract class
+ *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
- * @version $Id: HtmlMode.java,v 1.1 2004/12/03 14:30:14 firstbman Exp $
  */
 public class HtmlMode implements OutputMode
 {
@@ -68,7 +68,13 @@ public class HtmlMode implements OutputMode
 
         TemplateFactory tmplFactory = (TemplateFactory) registry.getPlugin("templates");
         try {
-            Template tmpl = tmplFactory.getTemplate(ENTRY_TMPL);
+            String tmplName = output.getTemplateName();
+            if ( tmplName == null )
+                tmplName = ENTRY_TMPL;
+            
+            LOG.fine("Using Template: "+tmplName);
+            
+            Template tmpl = tmplFactory.getTemplate(tmplName);
             
             tmpl.set("css_string", tmplFactory.getTemplateContent(CSS_TMPL));
             tmpl.set("num", new Integer(entries.length));

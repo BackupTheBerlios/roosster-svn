@@ -52,6 +52,10 @@ public class Dispatcher
 
     /**
      */
+    private Map commandChains = new HashMap();
+
+    /**
+     */
     private Map commands = new HashMap();
 
     
@@ -80,7 +84,11 @@ public class Dispatcher
         Configuration conf = registry.getConfiguration();
 
         try {
-            List classes = (List) commands.get(commandName);
+            // command chains have precedence over normal command definitions
+            List classes = (List) commandChains.get(commandName);
+            if ( classes == null )
+                classes = (List) commands.get(commandName);
+            
             if ( classes == null || classes.size() < 1 )
                 throw new IllegalArgumentException("No class found for command "+ commandName);
 
@@ -112,6 +120,7 @@ public class Dispatcher
         String[] names = conf.getPropertyNames("command.");
         
         for (int i = 0; i < names.length; i++) {
+            boolean isChain = false;
             
             List tmp = new ArrayList();
             String commandName = null;
@@ -120,6 +129,8 @@ public class Dispatcher
                 LOG.fine("Trying to load command "+names[i]);
                         
                 if ( names[i].endsWith(".chain") ) {
+                    isChain = true;
+
                     String value = conf.getProperty(names[i]);
                     if ( value == null )
                         throw new IllegalArgumentException("No chain value for chain: "+names[i]);
@@ -154,11 +165,13 @@ public class Dispatcher
             int lastPoint  = names[i].lastIndexOf("."); 
 
             commandName = names[i].substring(firstPoint+1, lastPoint);
-            
-            commands.put(commandName, tmp);
+           
+            if ( isChain ) 
+                commandChains.put(commandName, tmp);
+            else
+                commands.put(commandName, tmp);
         }
 
-        LOG.fine("Commands :"+ commands);
     }
 
 

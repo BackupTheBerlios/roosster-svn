@@ -199,13 +199,13 @@ public class EntryStore implements Plugin
 
         IndexSearcher searcher = new IndexSearcher(indexDir);
         Hits hits = searcher.search(query);
+        int hitsNum = hits.length();
 
         EntryList entries = new EntryList();
         entries.setTotalSize(hitsNum);
 
         int limit  = getLimit();
         int offset = getOffset();
-        int hitsNum = hits.length();
         LOG.info("Found "+hitsNum+" matches for query: <"+query+">");
         LOG.finest("Offset is : "+offset+" / Limit is: "+limit);
 
