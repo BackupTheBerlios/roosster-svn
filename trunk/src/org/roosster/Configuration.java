@@ -41,13 +41,14 @@ import java.util.Map;
  */
 public class Configuration
 {
-
+    private static final String DEF_HOMEDIR = ".roosster";
     private static ThreadLocal reqArgs = new ThreadLocal();
     
     /**
      */
     private Properties properties = null;
 
+    private String homeDir = null;
 
     /**
      *
@@ -148,6 +149,29 @@ public class Configuration
     }
 
 
+    /**
+     * This method returns the roosster home directory, where the
+     * default location for index directory and other settings is.
+     * By default this location is <code>$HOME/.roosster</code>. For
+     * determining <code>$HOME</code>, the system property 
+     * <code>user.home</code> is used. If this is <code>null</code>,
+     * the current directory is used.
+     * @return a String that never ends with a slash &quot;/&quot;
+     */
+    public String getHomeDir()
+    {
+        if ( homeDir == null ) {
+            homeDir = System.getProperty("user.home");    
+            if ( homeDir == null ) 
+                homeDir = DEF_HOMEDIR;
+            else 
+                homeDir += homeDir.endsWith("/") ? DEF_HOMEDIR : "/"+DEF_HOMEDIR;
+        } 
+            
+        return homeDir;
+    }
+
+    
     /**
      */
     private Map getRequestArguments()

@@ -66,7 +66,7 @@ public class EntryStore implements Plugin
     public static final String PROP_ANALYZER  = "store.analyzerclass";
     public static final String PROP_CREATEIND = "store.createindex";
 
-    public static final String DEF_INDEXDIR   = "roosster/index";
+    public static final String DEF_INDEXDIR   = "index";
 
     private static final String URLHASH    = "urlhash";
 
@@ -115,9 +115,9 @@ public class EntryStore implements Plugin
         // determine indexDir and check if it exists
         indexDir = conf.getProperty(PROP_INDEXDIR);
         if ( indexDir == null || "".equals(indexDir) ) {
-            String homeDir = System.getProperty("user.home");    
-            if ( homeDir != null && !"".equals(homeDir) ) 
-                indexDir = homeDir.endsWith("/") ?  homeDir+"."+DEF_INDEXDIR : homeDir+"/."+DEF_INDEXDIR;
+            String homeDir = conf.getHomeDir();    
+            if ( homeDir != null ) 
+                indexDir = homeDir+"/"+DEF_INDEXDIR;
             else
                 indexDir = DEF_INDEXDIR;
         }
