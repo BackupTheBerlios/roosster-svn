@@ -93,8 +93,7 @@ public class CliMapper
 
         Map cmdLine = MapperUtil.parseCommandLineArguments(arguments);
 
-        InputStream propInput = getClass().getResourceAsStream(PROP_FILE);
-        Registry registry = new Registry( MapperUtil.loadProperties(propInput, cmdLine) );
+        Registry registry = new Registry(getClass().getResourceAsStream(PROP_FILE), cmdLine);
 
         String outputMode = registry.getConfiguration().getProperty(Constants.PROP_OUTPUTMODE, 
                                                                     DEF_OUTPUT_MODE);

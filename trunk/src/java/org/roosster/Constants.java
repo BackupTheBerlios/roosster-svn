@@ -56,6 +56,11 @@ public interface Constants
     public static final String PROP_SORTFIELD   = "output.sortfield";
     public static final String PROP_OUTPUTMODE  = "output.mode";
     
+    // Properties specific for SyncDeliciousCommand
+    public static final String PROP_DELICIOUS_USER       = "delicious.username";
+    public static final String PROP_DELICIOUS_PASS       = "delicious.password";
+    public static final String PROP_DELICIOUS_LASTUPDATE = "delicious.lastupdate";
+    
     public static final String PROP_APPVERSION  = "roosster.app.version";
 
     /** if the value of this property is set to a value below zero, no output is truncated.

@@ -33,6 +33,14 @@ import java.util.Properties;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.HashMap;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import org.apache.log4j.Logger;
+
+import org.roosster.InitializeException;
 
 /**
  * <b>NOTE:</b> This class must always be thread-safe
@@ -41,24 +49,36 @@ import java.util.HashMap;
  */
 public class Configuration
 {
+    private static Logger LOG = Logger.getLogger(Configuration.class);
+    
     private static ThreadLocal reqArgs = new ThreadLocal();
+    
+    public static final String PROP_FILE_ARG     = "conf";
+  
 
     /**
      */
     private Properties properties = null;
+    
+    private String standardPropFileName = null;
 
-    private String homeDir = null;
 
     /**
      *
      */
-    public Configuration(Properties properties) throws IllegalArgumentException
+    public Configuration(InputStream stream, Map commandLine) 
+                  throws IllegalArgumentException, InitializeException
     {
-        if ( properties == null )
+        if ( stream == null )
             throw new IllegalArgumentException("Can't create configuration with "+
-                                               "'null' configuration");
+                                               "'null' configuration stream");
 
-        this.properties = properties;
+        try {          
+            standardPropFileName = getHomeDir() + File.separator + "roosster.properties";
+            this.properties = loadProperties(stream, commandLine);
+        } catch (IOException ex) {
+            throw new InitializeException("Exception while loading configuration", ex);
+        }
     }
 
 
@@ -197,5 +217,87 @@ public class Configuration
         return org.roosster.util.MapperUtil.getHomeDir();
     }
 
+    
+    /**
+     * @param propNames array of property names which should be persisted, 
+     * if this is null or empty, the method returns without executing any action
+     */
+    public synchronized void persist(String[] propNames) throws IOException
+    {
+        if ( propNames == null || propNames.length < 1 )
+            return;
+      
+        Properties props = new Properties();
+
+        File file = new File(standardPropFileName);
+        if ( file.exists()  ) {
+            // keep old persisted properties
+            props.load(new FileInputStream(file));
+        }
+
+        // overwrite with new ones
+        for(int i = 0; i < propNames.length; i++) {
+            String tmp = getProperty(propNames[i]);
+            if ( tmp != null ) {
+                props.put(propNames[i], tmp);
+                
+                // make sure, the current properties are updated, if it was a request arg
+                properties.put(propNames[i], tmp);
+            }
+        }
+
+        // not what you'd call a transaction, I know, but works for now
+        FileOutputStream outFile = new FileOutputStream(file, false);
+        props.store(outFile, "Written programmatically by roosster at");
+        outFile.flush();
+        outFile.close();
+    }
+    
+    
+    // ============ private Helper methods ============
+    
+    
+    /**
+     */
+    public Properties loadProperties(InputStream propInput, Map cmdLine)
+                              throws IOException, IllegalArgumentException
+    {
+        if ( propInput == null )
+            throw new IllegalArgumentException("Properties inputStream is not allowed to be null");
+
+        Properties props = new Properties();
+        props.load(propInput);      
+
+        // try to load user defines properties
+        String propFileName =  (String) cmdLine.get(PROP_FILE_ARG);
+
+        if ( propFileName == null ) 
+            propFileName = standardPropFileName;
+        
+        File propFile = new File(propFileName);
+
+        if ( propFile.exists() && propFile.canRead() ) {
+            System.out.println("Overriding default setting with user defined settings");
+            propInput = new FileInputStream(propFile);
+            props.load(propInput);
+        } else {
+            System.out.println("Can't use secondary configuration file: "+propFileName);
+        }
+
+        // now override with commandline parameters
+        //props.putAll(cmdLine);
+        setRequestArguments(cmdLine);
+
+        if ( cmdLine.containsKey("-d") ) {
+            Iterator keys = props.keySet().iterator();
+            while ( keys.hasNext() ) {
+                Object key = keys.next();
+                System.out.println(key +" => "+ props.get(key));
+            }
+
+        }
+
+        return props;
+    }    
     
 }

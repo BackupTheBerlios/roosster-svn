@@ -1,4 +1,8 @@
 
+Revision XX / 2005-03-XX / Benjamin Reitzammer
+
+* removed obsolete junk from Registry
+
 Revision 53 / 2005-03-14 / Benjamin Reitzammer
 
 * added entriesSize() method to Output.class

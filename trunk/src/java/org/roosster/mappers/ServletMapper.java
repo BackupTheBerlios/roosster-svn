@@ -100,10 +100,10 @@ public class ServletMapper extends HttpServlet
             else 
                 propInput = getClass().getResourceAsStream(DEF_PROPFILE);
             
-            properties = MapperUtil.loadProperties(propInput, new HashMap());
+            //properties = MapperUtil.loadProperties(propInput, new HashMap());
             
             // Create primary roosster worker objects and ... 
-            registry = new Registry(properties); 
+            registry = new Registry(propInput, new HashMap()); 
             dispatcher = new Dispatcher(registry);
             
             // ... store them in servlet context, so other servlet can access them

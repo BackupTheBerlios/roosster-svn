@@ -50,6 +50,8 @@ General
 * implement ContentTypeProcessor chains, should be triggered when certain 
   mime types are encountered
 * implement property to enable forcing of a certain ContentTypeProcessor
+* rewrite raw content to reflect image locations ...
+* finish SyncDeliciousCommand
 
 * DONE boost title field, optimize indexing
 * DONE extend Entry so that content field contains only meaningful (no

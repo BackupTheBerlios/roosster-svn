@@ -25,7 +25,8 @@
  */ 
 #entry-list     {  margin: 0px,10px,10px,20px; list-style-type:none;}
 .entry          { list-style-type:none; }
-.entrylist-entry-url        { font-weight:bold; padding-left:0px; margin-left:-30px; }
+.entrylist-entry-url   { font-weight:bold; margin:5px 5px 5px -30px; }
+.entrylist-entry-url a { display:block; padding:5px;  }
 
 .entry-content  {} 
 .entry-dates    { color:$tagDatesColor; font-size:x-small; margin: 3px 3px 3px -30px;}

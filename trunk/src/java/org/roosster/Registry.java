@@ -31,6 +31,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+import java.io.InputStream;
 import java.sql.Connection;
 import org.apache.log4j.Logger;
 import java.util.logging.Level;
@@ -47,14 +48,6 @@ public class Registry
     private static Logger LOG = Logger.getLogger(Registry.class.getName());
 
     private Map plugins    = new Hashtable();
-    private Map properties = new Hashtable();
-
-    /** Denotes actions that can be performed on plugins
-     */
-    public static final int PLUGIN_INIT        = 1;
-    public static final int PLUGIN_SHUTDOWN    = 2;
-    public static final int PLUGIN_PREPROCESS  = 3;
-    public static final int PLUGIN_POSTPROCESS = 4;
 
     public static final String PROP_PLUGIN = "plugins";
 
@@ -62,25 +55,25 @@ public class Registry
      */
     private Configuration conf       = null;
 
-    /** This field should only be set in the constructor and
-      * shutdownPlugins
+    /** This field should only be set in the constructor and shutdownPlugins
      */
     private boolean initialized = false;
 
     /**
      *
      */
-    public Registry(Properties properties) throws InitializeException, IllegalArgumentException
+    public Registry(InputStream stream, Map commandLine) throws InitializeException, IllegalArgumentException
     {
-        if ( properties == null )
+        if ( stream == null )
             throw new IllegalArgumentException("Can't initialize Registry with 'null' properties");
 
-        conf = new Configuration(properties);
 
         try {
             MapperUtil.getHomeDir();
+
+            conf = new Configuration(stream, commandLine);
             
-            callPlugins(PLUGIN_INIT);
+            initPlugins();
             initialized = true;
         } catch (Exception ex) {
             throw new InitializeException("Exception while initializing Registry", ex);
@@ -94,28 +87,6 @@ public class Registry
     public Configuration getConfiguration()
     {
         return conf;
-    }
-    
-
-    /**
-     *
-     */
-    public Object getProperty(String key)
-    {
-        if ( key != null && !"".equals(key) )
-            return properties.get(key);
-        else
-            return null;
-    }
-
-
-    /**
-     *
-     */
-    public void setProperty(String key, Object obj)
-    {
-        if ( key != null && !"".equals(key) && obj != null )
-            properties.put(key, obj);
     }
 
 
@@ -142,33 +113,13 @@ public class Registry
     {
         if ( initialized ) {
             LOG.info("Registry shutting down NOW!");
-            callPlugins(PLUGIN_SHUTDOWN);
+            shutdownPlugins();
             initialized = false;
         }
     }
 
 
     // ============ private Helper methods ============
-
-    /**
-     *
-     */
-    private void callPlugins(int command) throws Exception
-    {
-        switch (command)
-        {
-            case 1: //init
-                initPlugins();
-                break;
-
-            case 2: // shutdown
-                shutdownPlugins();
-                break;
-
-            default:
-                throw new IllegalArgumentException("Illegal plugin command "+command);
-        }
-    }
 
 
     /**

@@ -40,9 +40,7 @@ import org.roosster.Output;
  */
 public class DeleteEntryCommand extends AbstractCommand implements Command
 {
-
     public static final String ARG_URL = "url";
-
 
     /**
      *

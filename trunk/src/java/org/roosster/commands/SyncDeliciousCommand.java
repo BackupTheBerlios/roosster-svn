@@ -27,10 +27,11 @@
 package org.roosster.commands;
 
 import java.util.Map;
-import java.net.URL;
+import java.util.Date;
 
 import org.roosster.store.EntryStore;
 import org.roosster.store.Entry;
+import org.roosster.Constants;
 import org.roosster.Command;
 import org.roosster.Registry;
 import org.roosster.Output;
@@ -39,27 +40,16 @@ import org.roosster.Output;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class GetEntryCommand extends AbstractCommand implements Command
+public class SyncDeliciousCommand extends AbstractCommand implements Command, Constants
 {
-    public static final String ARG_URL = "url";
-    
+
     /**
      *
      */
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        validateArguments(arguments, new String[] {ARG_URL});
-
-        EntryStore store = (EntryStore) registry.getPlugin("store");
-        Entry entry = store.getEntry( new URL((String) arguments.get(ARG_URL)) );
-
-        LOG.info("Found entry: "+entry);
-
-        if ( entry != null ) {
-            output.addEntry(entry);
-            output.setTruncation(false); // disable truncation
-        }
+        registry.getConfiguration().persist(new String[] {"store.class"});
     }
 
 
@@ -67,7 +57,7 @@ public class GetEntryCommand extends AbstractCommand implements Command
      */
     public String getName()
     {
-        return "Entry";
+        return "Sync with del.icio.us";
     }
 
 }

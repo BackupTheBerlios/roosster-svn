@@ -40,9 +40,6 @@ import org.roosster.InitializeException;
  */
 public class MapperUtil
 {
-
-    public static final String PROP_FILE_ARG     = "conf";
-
     private static final String DEF_HOMEDIR      = ".roosster";
     private static String homeDir                = null;
     
@@ -107,69 +104,13 @@ public class MapperUtil
 
 
     /**
-     * @param fileName name of standard property file name
-     */
-    public static Properties loadProperties(InputStream propInput, Map cmdLine)
-                               throws IOException, IllegalArgumentException
-    {
-        if ( propInput == null )
-            throw new IllegalArgumentException("Properties inputStream is not allowed to be null");
-
-        Properties props = new Properties();
-        props.load(propInput);      
-
-        // try to load user defines properties
-        String propFileName =  (String) cmdLine.get(PROP_FILE_ARG);
-
-        if ( propFileName == null ) {
-            // if the user didn't specify a file, use standard file in $HOME/.roosster
-            propFileName = getHomeDir() + File.separator + "roosster.properties"; 
-        }
-        
-        File propFile = new File(propFileName);
-
-        if ( propFile.exists() && propFile.canRead() ) {
-            System.out.println("Overriding default setting with user defined settings");
-            propInput = new FileInputStream(propFile);
-            props.load(propInput);
-        } else {
-            System.out.println("Can't use secondary configuration file: "+propFileName);
-        }
-
-        // now override with commandline parameters
-        props.putAll(cmdLine);
-
-        if ( props.containsKey("-d") ) {
-            Iterator keys = props.keySet().iterator();
-            while ( keys.hasNext() ) {
-                Object key = keys.next();
-                System.out.println(key +" => "+ props.get(key));
-            }
-
-        }
-
-        return props;
-    }
-      
-    
-    /**
-     * @param fileName name of standard property file name
-     */
-    public static Properties loadProperties(File file, Map cmdLine)
-                               throws IOException, IllegalArgumentException
-    {
-        return loadProperties(new FileInputStream(file), cmdLine);
-    }
-    
-
-    /**
      * This method returns the roosster home directory, where the
      * default location for index directory and other settings is.
      * By default this location is <code>$HOME/.roosster</code>. For
      * determining <code>$HOME</code>, the system property
      * <code>user.home</code> is used. If this is <code>null</code>,
      * the current directory is used.
-     * @return a String that never ends with a slash &quot;/&quot;
+     * @return a String that never ends with a slash &quot;/&quot;, never null
      */
     public static String getHomeDir()
     {
