@@ -43,6 +43,6 @@ public class ServletUtil
      */
     public static String getBaseUrl(HttpServletRequest req)
     {
-        return "http://"+ req.getServerName() +":"+ req.getServerPort()+ req.getContextPath()+"/" ;
+        return "http://"+ req.getServerName() +":"+ req.getServerPort()+ req.getContextPath() ;
     }    
 }

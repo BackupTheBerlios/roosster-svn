@@ -37,6 +37,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
  
+import org.roosster.util.ServletUtil;
 
 /**
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
@@ -46,7 +47,9 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
     private static Logger LOG = Logger.getLogger(VelocityServlet.class.getName());
     
     
-    public static final String VELOCITY_PROP = "org.apache.velocity.properties";
+    public static final String CTX_BASEURL     = "baseurl";
+    
+    public static final String VELOCITY_PROP   = "org.apache.velocity.properties";
   
     private ServletContext servletContext = null;
     
@@ -81,13 +84,19 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
                                   Context context)
                            throws java.lang.Exception
     {
-        String path = req.getServletPath();
-        if (  path == null || "/".equals(path) )
-            path = "index.html";
-        
+        initContext(req, context);
+      
+        String path = getPath(req);
+
+        if ( Velocity.resourceExists(path) ) {
+            return getTemplate(path);
+        }
+          
         InputStream inStream = servletContext.getResourceAsStream(path);
         if ( inStream != null ) {
             LOG.fine("Evaluating template "+path+" for servletPath "+req.getServletPath());
+            
+            resp.setContentType( getContentType(req)+"; charset=UTF-8");
             Velocity.evaluate(context, resp.getWriter(), path, new InputStreamReader(inStream));
         } else {
             LOG.warning("Velocity: Can't load '"+path+"' for request "+
@@ -97,6 +106,49 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
         }
         
         return null;
+    }
+    
+    
+    /**
+     * 
+     */
+    protected void initContext(HttpServletRequest req, Context context)
+    {
+        context.put(CTX_BASEURL, ServletUtil.getBaseUrl(req));
+    }
+    
+    
+    // ============ private Helper methods ============
+    
+    
+    /**
+     * 
+     */
+    private String getContentType(HttpServletRequest req)
+    {
+        String path = getPath(req);
+        
+        if ( path.endsWith(".html") )
+            return "text/html";    
+        if ( path.endsWith(".js") )
+            return "application/x-javascript";
+        else if ( path.endsWith(".css") )
+            return "text/css";
+        else 
+            return "text/plain";
+    }
+    
+    
+    /**
+     * 
+     */
+    private String getPath(HttpServletRequest req)
+    {
+        String path = req.getServletPath();
+        if (  path == null || "/".equals(path) )
+            path = "index.html";
+        
+        return path;
     }
 
   
