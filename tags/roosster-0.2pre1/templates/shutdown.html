@@ -1,0 +1,14 @@
+<h3>Shutdown Web Server</h3>
+
+<p>
+#if ( $prop.get('confirm.shutdown') == 'true' )
+  <span style="color:red">The server is shutting down. Bye!</span>
+#else
+  <form action="#url('shutdown')" method="get">
+      <input type="hidden" name="confirm.shutdown" value="true" />  
+      Do you want to shutdown the currently running webserver <br />
+      <input type="submit" value="Yes" />
+  </form>
+  <a href="#url('')">Cancel</a>
+#end
+</p>

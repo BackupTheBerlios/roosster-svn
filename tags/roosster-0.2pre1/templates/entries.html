@@ -1,0 +1,16 @@
+<h3>Result for Query: <strong>$!{props.get("query")}</strong></h3>
+
+#parse("pagerbar.html")
+
+<ul id="entry-list">
+    #foreach($entry in $entries)
+        <li>
+            <ul class="entry">
+                <li class="entry-url"><a href="$entry.url">$entry.title</a></li> 
+                <li class="entry-content">#truncate($entry.content)<strong>[...]</strong></li> 
+                <li class="entry-info">$entry.issued (<a href="#url('entry')?url=$entry.url">show all details</a>)</li>
+            </ul>
+        </li>
+    #end
+</ul>
+

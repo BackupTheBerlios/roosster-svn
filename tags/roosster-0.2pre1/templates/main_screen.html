@@ -1,0 +1,37 @@
+<html>
+    <head>
+      <title>roosster</title>
+      <style type="text/css">
+          <!--
+          #include("styles.css") 
+          //-->
+      </style>
+    </head>
+    <body>
+        <div id="head">
+          <h1>roosster - personal search</h1>
+        </div>
+        
+        #parse("navigation.html")
+        
+        #if ( $output_messages.size() > 0 )
+          <div id="output-message">
+              <ul>
+                #foreach( $msg in $output_messages )
+                  <li class="out-msg">$msg</li>
+                #end
+              </ul>
+          </div>
+        #end
+        
+        <div id="content">
+          #parse( $content_template )
+        </div>
+        
+        <div id="foot">
+          powered by <a href="http://roosster.org/">roosster - personal search</a>
+          | <a href="#url('shutdown')">shutdown webserver</a></em>
+          | <em>index contains <a href="#url('listall')">$!{props.get("internal.docnum")} Entries</a></em>
+        </div>
+    </body>
+</html>
