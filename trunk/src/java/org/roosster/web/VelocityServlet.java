@@ -47,7 +47,7 @@ import org.roosster.Registry;
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
 public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet 
-                          implements Constants
+                          implements VelocityConstants, ServletConstants
 {
     private static Logger LOG = Logger.getLogger(VelocityServlet.class.getName());
 
@@ -115,13 +115,13 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
      */
     protected void initContext(HttpServletRequest req, Context context) throws Exception
     {
-        Registry registry = (Registry) servletContext.getAttribute(Constants.CTX_REGISTRY);
+        Registry registry = (Registry) servletContext.getAttribute(CTX_REGISTRY);
         
         if ( registry == null )
             throw new IllegalStateException("Servlet Environment not properly initialized! No Registry!");
         
         VelocityUtil.initContext(registry, context);
-        context.put(Constants.VELCTX_BASEURL, ServletUtil.getBaseUrl(req));
+        context.put(VELCTX_BASEURL, ServletUtil.getBaseUrl(req));
     }
     
     

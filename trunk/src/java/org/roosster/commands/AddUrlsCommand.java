@@ -58,11 +58,9 @@ public class AddUrlsCommand extends AbstractCommand implements Command, Constant
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        validateArguments(arguments, new String[] {PARAM_ENTRIES});
-
         EntryList entryList = (EntryList) arguments.get(PARAM_ENTRIES);
         
-        if ( entryList.size() > 0 ) {
+        if ( entryList != null && entryList.size() > 0 ) {
           
             // shall existing entries get overwritten, or an exception thrown?
             String forceStr = (String) arguments.get(ARG_FORCE);

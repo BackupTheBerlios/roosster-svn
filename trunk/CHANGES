@@ -1,4 +1,8 @@
 
+Revision XX / 2005-04-XX / Benjamin Reitzammer
+
+* splitted Constants.class into multiple interfaces
+
 Revision 64 / 2005-03-30 / Benjamin Reitzammer
 
 * added 'public' property to Entry.class and updated everything affected (API, 

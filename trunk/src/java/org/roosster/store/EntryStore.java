@@ -405,6 +405,23 @@ public class EntryStore implements Plugin, Constants
     }
 
 
+    /**
+     *
+     */
+    public int deleteEntries(Entry[] entries) throws IOException
+    {
+        if ( entries == null )
+            throw new IllegalArgumentException("Parameter 'entries' is not allowed to be null!");
+      
+        List urls = new ArrayList();
+        for (int i = 0; i < entries.length; i++) {
+            if ( entries[i] != null )
+                urls.add(entries[i].getUrl());
+        }
+        return deleteEntries((URL[]) urls.toArray(new URL[0]), null);
+    }
+
+
     // ============ protected Helper methods ============
 
 

@@ -72,7 +72,7 @@ public class PutEntriesCommand extends AbstractCommand implements Command, Const
                 
                 if ( storedEntry != null ) {
                   
-                    storedEntry.overwrite(entry);
+                    storedEntry = storedEntry.overwrite(entry);
                     
                     LOG.debug("Updated Entry, now trying to store it");
                     

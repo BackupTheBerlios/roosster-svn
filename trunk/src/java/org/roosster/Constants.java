@@ -33,78 +33,84 @@ package org.roosster;
  */
 public interface Constants
 {
+    /**
+     */
+    public static final String APP_URI      = "http://www.roosster.org";
+    
+    /**
+     */
+    public static final String APP_NAME     = "roosster search";
+
+    /**
+     */
+    public static final String APP_VERSION  = "roosster.app.version";
+
+    /**
+     */
     public static final String ENTRY_DATE_FORMAT_SHORT = "yyyyMMddHHmm";
+
+    /**
+     */
     public static final String ENTRY_DATE_FORMAT_LONG  = "yyyyMMdd";
         
-    // TODO make this configurable
+    /** TODO make this configurable
+     */
     public static final String DISPLAY_DATE_FORMAT  = "dd/MM/yyyy HH:mm";
     
-    public static final String TAG_SEPARATOR    = ",";
-  
+    /**
+     */
     public static final String W3C_DATEFORMAT   = "yyyy-MM-dd'T'HH:mm:ssZ";
 
-    public static final String APP_URI          = "http://www.roosster.org";
-    public static final String APP_NAME         = "roosster search";
+    /**
+     */
+    public static final String TAG_SEPARATOR    = ",";
     
-    // keys for objects that are stored in ServletContext
-    public static final String CTX_REGISTRY     = "servletcontext.param.registry";
-    public static final String CTX_DISPATCHER   = "servletcontext.param.dispatcher";
-
-    // velocity specific constants 
-    public static final String VELCTX_BASEURL     = "baseurl";
-    public static final String VELCTX_APPVERSION  = "roossterVersion";
-    public static final String VELCTX_INDEXNUM    = "roossterIndexContains";    
-    public static final String VELCTX_COMMAND     = "commandName";    
-    public static final String VELCTX_ENTRYLIST   = "entryList";    
-    public static final String VELCTX_TMPLUTIL    = "util";    
-    public static final String VELCTX_HTTPREQ     = "req";    
-    public static final String VELCTX_LASTQUERY   = "lastQuery";
-    
-    // 
+    /**
+     */
     public static final String OUTPUTMSG_LEVEL_INFO  = "info";
+
+    /**
+     */
     public static final String OUTPUTMSG_LEVEL_ERROR = "error";
     
-    // names of request attributes
-    public static final String REQ_OUTPUT_MESSAGES = "http.request.outputmessages";
-
-    // for internal use only
+    /** for internal use only
+     */
     public static final String PARAM_ENTRIES    = "internal.param.entry";
     
-    // Command-Line switch only
+    /** Command-Line switch only
+     */
     public static final String CLI_LOGGING      = "roosster.log";
 
-    // determines last time of update
+    /**
+     */
     public static final String LAST_UPDATE      = "roosster.last.update";
     
-    // props can be specified in properties or as request parameter
+    /**
+     */
     public static final String PROP_LIMIT       = "output.limit";
+
+    /**
+     */
     public static final String PROP_OFFSET      = "output.offset";
+
+    /**
+     */
     public static final String PROP_SORTFIELD   = "output.sortfield";
+
+    /**
+     */
     public static final String PROP_OUTPUTMODE  = "output.mode";
     
-    // Properties specific for SyncDeliciousCommand
-    public static final String PROP_DELICIOUS_USER       = "delicious.username";
-    public static final String PROP_DELICIOUS_PASS       = "delicious.password";
-    public static final String PROP_DELICIOUS_LASTSYNC   = "delicious.lastsync";
-    
-    public static final String PROP_DELICIOUS_APIENDPOINT= "delicious.api.endpoint";
-    public static final String DEF_DELICIOUS_APIENDPOINT = "http://del.icio.us/api/";
-
-    // one of 'delicious' or 'roosster', determines which entries are
-    // overwritten, by which
-    public static final String PROP_DELICIOUS_SYNCMASTER = "delicious.sync.master";
-
-    // determines, if entries not present in master but in slave
-    // system, will be deleted from slave system
-    public static final String PROP_DELICIOUS_DELETESLAVE= "delicious.sync.deletefromslave";
-    
-    public static final String PROP_APPVERSION  = "roosster.app.version";
-
     /** if the value of this property is set to a value below zero, no output is truncated.
      */
     public static final String PROP_TRUNCLENGTH = "output.truncate.length";
 
+    /**
+     */
     public static final String PROP_DEF_ENC    = "default.input.encoding";
+
+    /**
+     */
     public static final String PROP_PROCESSORS = "fetcher.processors";
 
     /**

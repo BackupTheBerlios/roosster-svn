@@ -28,6 +28,8 @@ package org.roosster.util;
 
 import java.util.regex.PatternSyntaxException;
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
@@ -132,11 +134,16 @@ public class StringUtil
     {
         try {
             if ( str != null && regex != null ) {
+                List returnStrings = new ArrayList();
+              
                 String[] strings = str.split(regex);
                 for (int i = 0; i < strings.length; i++) {
                     strings[i] = strings[i].trim();
+                    if ( !"".equals(strings[i]) )
+                        returnStrings.add(strings[i]);
                 }
-                return strings;
+                
+                return (String[]) returnStrings.toArray(new String[0]);
             }
         } catch (PatternSyntaxException ex) {
             LOG.warn("Exception while splitting string", ex);

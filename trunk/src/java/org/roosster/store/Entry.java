@@ -513,9 +513,10 @@ public class Entry
      * Overwrites this Entry with the values of the specified object, but only, 
      * if they are not null, and not empty
      * @param that not allowed to be null
+     * @return the overwritten object (aka, <code>this</code>)
      * @exception IllegalArgumentException if <code>that</code> is null
      */
-    public void overwrite(Entry that)
+    public Entry overwrite(Entry that)
     { 
         if ( that == null )
             throw new IllegalArgumentException("that-Entry-object not allowed to be null");
@@ -557,6 +558,8 @@ public class Entry
             setTags(tags);
         
         setPublic(that.getPublic());
+        
+        return this;
     }
     
 }

@@ -50,6 +50,8 @@ import org.roosster.logging.LogUtil;
 import org.roosster.commands.CommandNotFoundException;
 import org.roosster.store.DuplicateEntryException;
 import org.roosster.xml.ParseException;
+import org.roosster.web.ServletConstants;
+import org.roosster.web.VelocityConstants;
 import org.roosster.InitializeException;
 import org.roosster.OperationException;
 import org.roosster.Registry;
@@ -97,8 +99,8 @@ public class ServletMapper extends HttpServlet
     {
         try {
             // ... pull out certain objects from servlet context
-            registry = (Registry) config.getServletContext().getAttribute(Constants.CTX_REGISTRY);
-            dispatcher = (Dispatcher) config.getServletContext().getAttribute(Constants.CTX_DISPATCHER);
+            registry = (Registry) config.getServletContext().getAttribute(ServletConstants.CTX_REGISTRY);
+            dispatcher = (Dispatcher) config.getServletContext().getAttribute(ServletConstants.CTX_DISPATCHER);
 
             // and now get some values, to make our life easier            
             outputEncoding = registry.getConfiguration().getProperty(PROP_OUTENC, DEF_ENC);
@@ -336,7 +338,7 @@ public class ServletMapper extends HttpServlet
     protected void addMessageToRequest(HttpServletRequest req, String level, String msgStr)
     {
         List msg = Arrays.asList(new String[] { level, msgStr} );
-        req.setAttribute(Constants.REQ_OUTPUT_MESSAGES, Arrays.asList(new List[] {msg}));
+        req.setAttribute(ServletConstants.REQ_OUTPUT_MESSAGES, Arrays.asList(new List[] {msg}));
     }
 
     
@@ -357,11 +359,11 @@ public class ServletMapper extends HttpServlet
         
         LOG.debug("Set Content-Type Header field to: "+contentHeader);
     
-        output.setOutputProperty(Constants.VELCTX_BASEURL,  getBaseUrl(req));
-        output.setOutputProperty(Constants.VELCTX_HTTPREQ,  req);
+        output.setOutputProperty(VelocityConstants.VELCTX_BASEURL,  getBaseUrl(req));
+        output.setOutputProperty(VelocityConstants.VELCTX_HTTPREQ,  req);
         
         // add output messages, stored in request
-        List outputMessages = (List) req.getAttribute(Constants.REQ_OUTPUT_MESSAGES);
+        List outputMessages = (List) req.getAttribute(ServletConstants.REQ_OUTPUT_MESSAGES);
         if ( outputMessages != null ) {
             LOG.debug("Preserving output messages from request: "+outputMessages);
             for (int i = 0; i < outputMessages.size(); i++) {

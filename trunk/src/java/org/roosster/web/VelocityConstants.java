@@ -24,39 +24,50 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.util;
+package org.roosster.web;
 
-import java.io.IOException;
-import org.apache.velocity.context.Context;
-
-import org.roosster.Registry;
-import org.roosster.Constants;
-import org.roosster.store.EntryStore;
-import org.roosster.web.VelocityTemplateUtil;
-import org.roosster.web.VelocityConstants;
 
 /**
- * 
+ *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class VelocityUtil 
+public interface VelocityConstants
 {
-    
-    /**
-     * 
+
+    /** 
      */
-    public static void initContext(Registry registry, Context context) 
-    {
-        if ( registry == null || context == null )
-            throw new IllegalStateException("Registry and Context are not allowed to be null!");
-        
-        context.put(VelocityConstants.VELCTX_TMPLUTIL, new VelocityTemplateUtil(registry));
-        context.put(VelocityConstants.VELCTX_APPVERSION, registry.getConfiguration().getProperty(Constants.APP_VERSION));
-        try {
-            EntryStore store = (EntryStore) registry.getPlugin("store");
-            context.put(VelocityConstants.VELCTX_INDEXNUM,   String.valueOf(store.getDocNum()) );
-        } catch (IOException ex) {
-            context.put(VelocityConstants.VELCTX_INDEXNUM,   "no docs there yet");
-        }
-    }  
+    public static final String VELCTX_BASEURL     = "baseurl";
+
+    /** 
+     */
+    public static final String VELCTX_APPVERSION  = "roossterVersion";
+
+    /** 
+     */
+    public static final String VELCTX_INDEXNUM    = "roossterIndexContains";    
+
+    /** 
+     */
+    public static final String VELCTX_COMMAND     = "commandName";    
+
+    /** 
+     */
+    public static final String VELCTX_ENTRYLIST   = "entryList";    
+
+    /** 
+     */
+    public static final String VELCTX_TMPLUTIL    = "util";    
+
+    /** 
+     */
+    public static final String VELCTX_HTTPREQ     = "req";
+
+    /** 
+     */
+    public static final String VELCTX_LASTQUERY   = "lastQuery";
+
+    /** 
+     */
+    public static final String VELCTX_OUTPUTMSG   = "messages";
+    
 }

@@ -72,6 +72,12 @@ General
 * extend XmlProcessor.class to use EntryParser.class
 * implement InvalidRequestException to give meaningful error messages in case of 
   wrong/missing arguments
+* only sync public entries
+* use BufferedStreams in input/ouput classes
+* use HttpClient in UrlFetcher to set timeout for connections
+* IMPORTANT retain entry's date information with finer granularity (down to 
+  seconds) and be sure to keep timezone information and output this information
+  in roossterxml
 
 * DONE add property delicious.api.endpoint
 * DONE implement get/setJumpTo in Output.class

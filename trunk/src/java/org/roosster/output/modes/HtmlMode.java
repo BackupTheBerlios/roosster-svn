@@ -30,11 +30,14 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.log4j.Logger;
+
+import org.roosster.web.VelocityConstants;
 import org.roosster.store.Entry;
 import org.roosster.store.EntryList;
 import org.roosster.util.VelocityUtil;
@@ -50,7 +53,7 @@ import org.roosster.Constants;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class HtmlMode extends AbstractOutputMode implements OutputMode, Constants
+public class HtmlMode extends AbstractOutputMode implements OutputMode, VelocityConstants
 {
     private static Logger LOG = Logger.getLogger(HtmlMode.class);
     
@@ -79,7 +82,7 @@ public class HtmlMode extends AbstractOutputMode implements OutputMode, Constant
         }
         
         // determine which template to use
-        String jumpToCommand = getRegistry().getConfiguration().getProperty(ARG_JUMPTO);
+        String jumpToCommand = getRegistry().getConfiguration().getProperty(Constants.ARG_JUMPTO);
         String nextCommand = jumpToCommand == null ? output.getCommandName() : jumpToCommand;
         
         String templateName = TMPL_ROOT +"/"+ nextCommand +".html";

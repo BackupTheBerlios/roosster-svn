@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import org.roosster.util.MapperUtil;
 import org.roosster.util.ServletUtil;
 import org.roosster.util.StringUtil;
+import org.roosster.web.ServletConstants;
 import org.roosster.logging.LogUtil;
 import org.roosster.commands.CommandNotFoundException;
 import org.roosster.InitializeException;
@@ -80,8 +81,8 @@ public class ServletContextListener implements javax.servlet.ServletContextListe
             Dispatcher dispatcher = new Dispatcher(registry);
             
             // ... store them in servlet context, so other servlet can access them
-            context.setAttribute(Constants.CTX_REGISTRY, registry);
-            context.setAttribute(Constants.CTX_DISPATCHER, dispatcher);
+            context.setAttribute(ServletConstants.CTX_REGISTRY, registry);
+            context.setAttribute(ServletConstants.CTX_DISPATCHER, dispatcher);
 
 
         } catch(Exception ex) {
