@@ -48,18 +48,17 @@ import org.roosster.logging.VelocityLogSystem;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class TemplateFactory implements Plugin
+public class AuthenticationPlugin implements Plugin
 {
-    private static Logger LOG = Logger.getLogger(TemplateFactory.class.getName());
+    private static Logger LOG = Logger.getLogger(AuthenticationPlugin.class.getName());
 
-    private static final String VELOCITY_PROP_FILE = "/velocity.properties";
-    private static final String PROP_TMPL_PATH     = "templates.path";
-    
-    private static final String DEF_TMPL_PATH      = "templates";
+    private static final String PROP_PASSWORD     = "authentication.password";
+    private static final String PROP_USERNAME     = "authentication.username";
     
     private Registry  registry    = null;
     private boolean   initialized = false;
 
+    
     /**
      */
     public void init(Registry registry) throws InitializeException
@@ -67,26 +66,6 @@ public class TemplateFactory implements Plugin
         LOG.finest("Initializing "+getClass());
 
         this.registry = registry;
-
-        try {
-            Properties props = new Properties();
-            props.load(getClass().getResourceAsStream(VELOCITY_PROP_FILE));
-            
-            Configuration conf = registry.getConfiguration();
-            String path = conf.getProperty(PROP_TMPL_PATH);
-
-            if ( path == null || "".equals(path) ) 
-                path = conf.getHomeDir() + "/"+DEF_TMPL_PATH;
-
-            LOG.finest("Setting template path to '"+path+"'");
-            props.setProperty("file.resource.loader.path", path);
-            
-            Velocity.setProperty("runtime.log.logsystem", new VelocityLogSystem());
-            Velocity.init(props);
-
-        } catch (Exception ex) {
-            throw new InitializeException(ex);
-        }
         
         initialized = true;
     }
@@ -111,8 +90,6 @@ public class TemplateFactory implements Plugin
 
     
     /**
-     * This method is called once for every request, just before the actual 
-     * command chain is executed.
      */
     public void preProcess(Map requestArgs) throws OperationException
     {
@@ -120,53 +97,9 @@ public class TemplateFactory implements Plugin
 
     
     /**
-     * This method is called once for every request, just before the OutputMode
-     * object is selected and called to generate the actual output.<br/>
-     * Could be used to filter out certain entries from output, or to hardcode 
-     * a certain <code>OutputMode</code>.
      */
     public void postProcess(Map requestArgs, Output output) throws OperationException
     {
-    }
-
-
-    /**
-     */
-    public Template getTemplate(String fileName) throws Exception
-    {
-        org.apache.velocity.Template tmpl = Velocity.getTemplate(fileName);
-        
-        if ( tmpl == null )
-            throw new FileNotFoundException("Can't find template file "+fileName);
-        
-        return new Template(tmpl, getContext());
-    }
-
-    
-    /**
-     */
-    public String getTemplateContent(String fileName) throws Exception
-    {
-        StringWriter writer = new StringWriter();
-        Velocity.getTemplate(fileName).merge(getContext(), writer);
-        return writer.toString();
-    }
-
-    
-    // ============ private Helper methods ============
-
-    
-    /**
-     * used to construct the default application Context
-     */
-    private VelocityContext getContext()
-    {
-        VelocityContext context = new VelocityContext();
-        context.put("stringutil", new StringUtil(registry));
-
-        context.put("props", registry.getConfiguration().getProperties());
-        
-        return context;
     }
 
 }

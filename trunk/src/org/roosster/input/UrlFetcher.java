@@ -39,6 +39,7 @@ import org.roosster.OperationException;
 import org.roosster.InitializeException;
 import org.roosster.Registry;
 import org.roosster.Plugin;
+import org.roosster.Output;
 import org.roosster.Configuration;
 import org.roosster.Constants;
 import org.roosster.store.Entry;
@@ -107,6 +108,19 @@ public class UrlFetcher implements Plugin, Constants
 
         }
     }
+
+
+    /**
+     * 
+     */
+    public void preProcess(Map requestArgs) throws OperationException
+    {}
+
+    
+    /**
+     */
+    public void postProcess(Map requestArgs, Output output) throws OperationException
+    {}
 
 
     /**

@@ -48,6 +48,7 @@ import org.roosster.Registry;
 import org.roosster.Output;
 import org.roosster.Dispatcher;
 import org.roosster.store.EntryStore;
+import org.roosster.commands.CommandNotFoundException;
 
 
 /**
@@ -171,8 +172,16 @@ public class ServletMapper extends HttpServlet
             writer = resp.getWriter();
             output.output(writer);
             
+        } catch (CommandNotFoundException ex) {
+          
+            LOG.log(Level.WARNING, ex.getMessage(), ex);
+            resp.sendError(resp.SC_NOT_FOUND, ex.getMessage());
+            
         } catch (Exception ex) {
-            throw new ServletException(ex);
+          
+            LOG.log(Level.WARNING, ex.getMessage(), ex);
+            resp.sendError(resp.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
+            
         }
     }
 

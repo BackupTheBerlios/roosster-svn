@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 
+import org.roosster.commands.CommandNotFoundException;
 
 /**
  *
@@ -90,7 +91,7 @@ public class Dispatcher
                 classes = (List) commands.get(commandName);
             
             if ( classes == null || classes.size() < 1 )
-                throw new IllegalArgumentException("No class found for command "+ commandName);
+                throw new CommandNotFoundException(commandName);
 
             Output output = new Output(registry);
             for(int i = 0; i < classes.size(); i++) {
