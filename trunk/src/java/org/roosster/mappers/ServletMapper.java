@@ -42,10 +42,12 @@ import org.apache.log4j.Logger;
 import org.roosster.util.MapperUtil;
 import org.roosster.util.ServletUtil;
 import org.roosster.util.StringUtil;
+import org.roosster.logging.LogUtil;
 import org.roosster.commands.CommandNotFoundException;
 import org.roosster.InitializeException;
 import org.roosster.OperationException;
 import org.roosster.Registry;
+import org.roosster.Configuration;
 import org.roosster.Output;
 import org.roosster.Dispatcher;
 import org.roosster.Constants;
@@ -56,30 +58,27 @@ import org.roosster.Constants;
  */
 public class ServletMapper extends HttpServlet
 {
-    private static Logger LOG = Logger.getLogger(ServletMapper.class);
+    private static Logger LOG = Logger.getLogger(ServletMapper.class);     
     
     public static final int PUT     = 1;
     public static final int POST    = 2;
     public static final int GET     = 3;
     public static final int DELETE  = 4;
-    
 
-    public static final String PROP_PROPFILE    = "roosster.properties";
-    public static final String DEF_PROPFILE     = "/roosster-web.properties";
 
     public static final String PROP_OUTENC      = "default.output.encoding";
     public static final String PROP_INENC       = "default.input.encoding";
     public static final String DEF_ENC          = "UTF-8";
     
-    public static final String DEF_CONTENT_TYPE = "text/xml";
+    public static final String DEF_CONTENT_TYPE = "text/html";
     public static final String DEF_OUTPUT_MODE  = "html";
     
     public static final String DEF_COMMAND      = "search";
     
     private Properties properties = null;
     
-    private Dispatcher dispatcher     = null;
-    private Registry   registry       = null;
+    protected Dispatcher dispatcher     = null;
+    protected Registry   registry       = null;
     
     protected String     outputEncoding = null;  
     protected String     inputEncoding  = null;  
@@ -91,30 +90,14 @@ public class ServletMapper extends HttpServlet
     public void init(ServletConfig config) throws ServletException
     {
         try {
-            InputStream propInput = null;
-            
-            // load default properties from classpath if no location is given in web.xml
-            String propFile = config.getInitParameter(PROP_PROPFILE);
-            if ( propFile != null )
-                propInput = config.getServletContext().getResourceAsStream(propFile);
-            else 
-                propInput = getClass().getResourceAsStream(DEF_PROPFILE);
-            
-            //properties = MapperUtil.loadProperties(propInput, new HashMap());
-            
-            // Create primary roosster worker objects and ... 
-            registry = new Registry(propInput, new HashMap()); 
-            dispatcher = new Dispatcher(registry);
-            
-            // ... store them in servlet context, so other servlet can access them
-            config.getServletContext().setAttribute(Constants.CTX_REGISTRY, registry);
-            config.getServletContext().setAttribute(Constants.CTX_DISPATCHER, dispatcher);
-
+            // ... pull out certain objects from servlet context
+            registry = (Registry) config.getServletContext().getAttribute(Constants.CTX_REGISTRY);
+            dispatcher = (Dispatcher) config.getServletContext().getAttribute(Constants.CTX_DISPATCHER);
 
             // and now get some values, to make our life easier            
             outputEncoding = registry.getConfiguration().getProperty(PROP_OUTENC, DEF_ENC);
             inputEncoding  = registry.getConfiguration().getProperty(PROP_INENC, DEF_ENC);
-
+            
         } catch(Exception ex) {
             LOG.fatal("Exception while initializing "+getClass(), ex);
             throw new ServletException(ex);
@@ -183,6 +166,7 @@ public class ServletMapper extends HttpServlet
         if ( LOG.isDebugEnabled() ) {
             LOG.debug("======================================================");
             LOG.debug("Processing Request: "+req.getMethod()+" "+req.getPathInfo());
+            LOG.debug("Using: "+this);
         }
         
         try {
@@ -190,13 +174,17 @@ public class ServletMapper extends HttpServlet
             Map args = parseRequestArguments(req);
             
             // add request arguments to configuration
-            registry.getConfiguration().setRequestArguments(args);
+            Configuration conf = registry.getConfiguration();
+            conf.setRequestArguments(args);
             
             // if no output mode is specified in request, then use html
+            /*
             String outputMode = args.containsKey(Constants.PROP_OUTPUTMODE) 
                                       ? getOutputMode()
                                       : DEF_OUTPUT_MODE;
-                                      
+            */                          
+            String outputMode = getOutputMode();
+            
             // run commands            
             Output output = dispatcher.run(commandName, outputMode, args);
 

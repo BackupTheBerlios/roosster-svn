@@ -57,6 +57,9 @@ public interface Constants
     // for internal use only
     public static final String PARAM_ENTRIES    = "internal.param.entry";
     
+    // Command-Line switch only
+    public static final String CLI_LOGGING      = "roosster.log";
+    
     // props can be specified in properties or as request parameter
     public static final String PROP_LIMIT       = "output.limit";
     public static final String PROP_OFFSET      = "output.offset";

@@ -83,6 +83,24 @@ public class Configuration
 
 
     /**
+     * Updates or sets the property specified by <code>propName</code>
+     * @param propName not allowed to be null or empty
+     * @param value not allowed to be null 
+     */
+    public void setRequestProperty(String propName, String value)
+    {
+        if ( propName == null || "".equals(propName) || value == null)
+            throw new IllegalArgumentException("Paramter 'propName' or 'value' is not allowed to be null");
+        
+        Map args = getRequestArguments();
+        if ( args == null )
+            args = new HashMap();
+          
+        args.put(propName, value);           
+    }
+    
+    
+    /**
      * @return null if there is no such property
      */
     public String getProperty(String propName)

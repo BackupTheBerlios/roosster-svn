@@ -64,18 +64,6 @@ public class ApiServletMapper extends ServletMapper
     /**
      *
      */
-    public void init(ServletConfig config) throws ServletException
-    {
-        Registry registry = (Registry) config.getServletContext().getAttribute(Constants.CTX_REGISTRY);
-        
-        if ( registry == null || !registry.isInitialized() )
-            super.init(config);
-    }
-    
-    
-    /**
-     *
-     */
     protected String getCommandName(int method, HttpServletRequest req)
     {
         String commandName = super.getCommandName(method, req); 
@@ -147,6 +135,14 @@ public class ApiServletMapper extends ServletMapper
         }
     }
     
+    
+    /**
+     *
+     */
+    protected String getOutputMode()
+    {
+        return "roossterxml";
+    }
     
 }
 

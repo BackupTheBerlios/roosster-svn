@@ -35,6 +35,7 @@ import org.mortbay.jetty.servlet.ServletHttpContext;
 
 import org.roosster.InitializeException;
 import org.roosster.util.MapperUtil;
+import org.roosster.Constants;
 
 /**
  *
@@ -107,6 +108,10 @@ public class JettyStarter
             server.addListener(listener);
            
             server.addWebApplication(contextPath, webapp);
+            
+            // pass logging switch to servlet via a System property
+            String logProp = (String) cmdLine.get(Constants.CLI_LOGGING);
+            System.setProperty(Constants.CLI_LOGGING, logProp == null ? "" : logProp);
             
             server.start();
 

@@ -36,6 +36,7 @@ import java.io.InputStream;
 import org.apache.log4j.Logger;
 
 import org.roosster.output.OutputMode;
+import org.roosster.logging.LogUtil;
 import org.roosster.util.MapperUtil;
 import org.roosster.OperationException;
 import org.roosster.InitializeException;
@@ -51,7 +52,7 @@ import org.roosster.Constants;
  */
 public class CliMapper
 {
-    private static Logger LOG = Logger.getLogger(CliMapper.class);
+    private static Logger LOG;
     
     private static final String PROP_FILE       = "/roosster-cli.properties";
 
@@ -91,8 +92,14 @@ public class CliMapper
         List args = Arrays.asList(arguments);
         arguments = (String[]) args.subList(1, args.size()).toArray(new String[0]);
 
+        // parse command line
         Map cmdLine = MapperUtil.parseCommandLineArguments(arguments);
 
+        // configure and initialize Logging
+        LogUtil.configureLogging( (String) cmdLine.get(Constants.CLI_LOGGING) );
+        LOG = Logger.getLogger(CliMapper.class);
+        
+        // now on with the action
         Registry registry = new Registry(getClass().getResourceAsStream(PROP_FILE), cmdLine);
 
         String outputMode = registry.getConfiguration().getProperty(Constants.PROP_OUTPUTMODE, 
@@ -102,9 +109,6 @@ public class CliMapper
     }
 
 
-    // ============ private Helper methods ============
-
-    
     /**
      *
      */
@@ -113,4 +117,8 @@ public class CliMapper
         System.out.println("USAGE: <to be defined>");
     }
 
+
+    // ============ private Helper methods ============
+
+    
 }

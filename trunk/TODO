@@ -32,6 +32,8 @@ API
 =========
 * implement tag fetching
 * configurable authentication
+* make sure response codes are correct 
+* PUT is allowed for creating resource too, SHOULD return 201 then
 
 * DONE implement api method to retrieve number of entries (integrated in entrylist)
 * DONE implement command to fetch only raw contents of entry
@@ -41,7 +43,8 @@ API
 
 General
 =========
-* make logging configurable by CLI switch
+* add setOutputProperty(String, Object) and respective getter to Output.class
+  and use it to pass request to Templates in HtmlMode
 * look at all TODO comments in sourcecode
 * update roosster.app.version property
 * move to MultiFieldQueryParser, remove Entry.ALL
@@ -55,7 +58,8 @@ General
 * add public/private flag to Entry.class
 * allow adding of HttpServletRequest to velocity context
 
-* DONE boost title field, optimize indexing
+* DONE make logging configurable by CLI switch
+* DONE FIX THE FUCKING LOGGING ... I HATE COMMONS LOGGING
 * DONE extend Entry so that content field contains only meaningful (no
   markup) text, while adding a new (unindexed, stored) field to
   Entry.class text, Return this "raw" field when cached contents is

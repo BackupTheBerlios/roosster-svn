@@ -28,12 +28,17 @@ package org.roosster.commands;
 
 import java.util.Map;
 import java.util.Date;
+import java.util.List;
+
+import del.icio.us.Delicious;
+import org.apache.log4j.Logger;
 
 import org.roosster.store.EntryStore;
 import org.roosster.store.Entry;
 import org.roosster.Constants;
 import org.roosster.Command;
 import org.roosster.Registry;
+import org.roosster.Configuration;
 import org.roosster.Output;
 
 /**
@@ -42,14 +47,42 @@ import org.roosster.Output;
  */
 public class SyncDeliciousCommand extends AbstractCommand implements Command, Constants
 {
-
+    private static Logger LOG = Logger.getLogger(SyncDeliciousCommand.class);
+    
     /**
      *
      */
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        registry.getConfiguration().persist(new String[] {"store.class"});
+        Configuration conf = registry.getConfiguration();
+      
+        String timeMillisString = conf.getProperty(PROP_DELICIOUS_LASTUPDATE);
+        
+        Delicious delicious = new Delicious(conf.getProperty(PROP_DELICIOUS_USER), 
+                                            conf.getProperty(PROP_DELICIOUS_PASS));
+        
+        List posts = null;
+        if ( timeMillisString == null ) {
+            // if last update time of roosster is null, then roosster was never synced 
+            // with del.icio.us so we get all posts and say a big "Sorry Joshua"
+            
+            LOG.info("Never synced before with del.icio.us, so this may take some time! Go, get yourself a coffee!");
+            
+        } else {
+            // ok we synced once, now ask del.icio.us if something changed since 
+            // then; if something changed, then get all posts since the roosster
+            // last update time
+            
+            Date lastSync = new Date(Long.parseLong(timeMillisString));
+            Date delLastUpdate = delicious.getLastUpdate();
+            
+            LOG.info("Last sync was "+lastSync+", del.icio.us' last update was "+delLastUpdate);            
+        }
+            
+      
+        conf.setRequestProperty(PROP_DELICIOUS_LASTUPDATE, System.currentTimeMillis() +"");
+        conf.persist(new String[] {PROP_DELICIOUS_LASTUPDATE});
     }
 
 

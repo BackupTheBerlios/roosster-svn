@@ -1,8 +1,11 @@
 
-Revision XX / 2005-03-XX / Benjamin Reitzammer
+Revision 58 / 2005-03-21 / Benjamin Reitzammer
 
+* moved initialization in servlet env into ServletContextListener, that's much cleaner
+* added capabilities for defining coarse grained logging level via Command-Line
 * removed obsolete junk from Registry, and added isInitialized() method
 * implemented HtmlMode.class (again ;) )
+* implemented Output.getCommandName()
 * fixed situation, where servlet initialization was executed twice
 * implemented new build target to build jar file with templates, to fix error in
   velocity resource loader usage 

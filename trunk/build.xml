@@ -136,7 +136,7 @@
     </target>
 
     
-    <target name="merge-properties" depends="compile">
+    <target name="process-properties" depends="compile">
        <echo>+ ============================================= +</echo>
        <echo>+ Roosster - Merge Properties                   +</echo>
        <echo>+ ============================================= +</echo>
@@ -160,11 +160,15 @@
             <arg value="${baseres.dir}/${cli.prop.file}"/>
             <arg value="${res.dir}/${cli.prop.file}"/>
         </java>
+        
+        <copy todir="${build.dir}">
+            <fileset dir="${src.dir}" includes="**/*.properties" />
+        </copy>
     </target>
 
     
     <target name="dist-jar-minimal"
-            depends="compile, merge-properties"
+            depends="compile, process-properties"
             description="Builds the .jar file which contains only the compiled roosster classes and resources" >
 
         <echo>+ ============================================= +</echo>
@@ -211,7 +215,7 @@
 
     
     <target name="dist-jar-starter"
-            depends="compile, prepare-libs, merge-properties"
+            depends="compile, prepare-libs, process-properties"
             description="Builds the .jar file that starts and embedded jetty server with the .war file" >
 
         <echo>+ ============================================= +</echo>
@@ -228,6 +232,7 @@
                 <include name="org/roosster/util/JettyStarter.class" />
                 <include name="org/roosster/InitializeException.class" />
                 <include name="org/roosster/logging/VelocityLogSystem.class" />
+                <include name="org/roosster/Constants.class" />
             </fileset>
             <fileset dir="${res.dir}/common" includes="**/*" />
             <manifest>
@@ -248,7 +253,7 @@
 
     
     <target name="dist-jar-cli"
-            depends="compile, prepare-libs, merge-properties"
+            depends="compile, prepare-libs, process-properties"
             description="Builds the .jar file for the CLI distribution" >
 
         <echo>+ ============================================= +</echo>
@@ -261,7 +266,7 @@
             <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
             <fileset dir="${dist.dir}/lib/common" includes="**/*" />
             <fileset dir="${dist.dir}/lib/cli" includes="**/*" />
-            <fileset dir="${build.dir}" includes="org/roosster/**" />
+            <fileset dir="${build.dir}" includes="org/roosster/**/*" />
             <fileset dir="${res.dir}/cli" includes="**/*" />
             <fileset dir="${res.dir}/common" includes="**/*" />
             <fileset file="${res.dir}/${cli.prop.file}"  />

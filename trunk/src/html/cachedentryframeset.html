@@ -5,5 +5,5 @@
 #set ( $url = $req.getParameter('url') )
 <frameset rows="75,*">
   <frame src="$baseurl/cachedentrynotice.html?url=${url}" name="notice" scrolling="no" />
-  <frame src="$baseurl/api/entry?url=${url}&output.mode=raw" name="rawcontent" />
+  <frame src="$baseurl/application/entry?url=${url}&output.mode=raw" name="rawcontent" />
 </frameset>
