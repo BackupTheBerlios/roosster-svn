@@ -40,11 +40,11 @@
 
         <!-- directory definitions-->
         <property name="lib.dir"      location="${basedir}/lib" />
-        <property name="src.dir"      location="${basedir}/src" />
-        <property name="res.dir"      location="${basedir}/resources" />
-        <property name="baseres.dir"  location="${basedir}/resources/base-res" />
+        <property name="src.dir"      location="${basedir}/src/java" />
+        <property name="res.dir"      location="${basedir}/src/resources" />
+        <property name="baseres.dir"  location="${basedir}/src/resources/base-res" />
+        <property name="metadata.dir" location="${basedir}/src/metadata" />
         <property name="doc.dir"      location="${basedir}/doc" />
-        <property name="tmpl.dir"     location="${basedir}/templates" />
 
         <property name="build.dir" location="${basedir}/build" />
         <property name="dist.dir" location="${basedir}/dist" />
@@ -86,7 +86,7 @@
     </target>
 
 
-    <target name="unjar-libs"
+    <target name="prepare-libs"
             depends="init"
             unless="libs.unpacked"
             description="unpacks all *.jar files in ./lib, for convenient packaging into rosster's jar-file">
@@ -132,7 +132,7 @@
 
     
     <target name="jar-web"
-            depends="compile, unjar-libs, merge-properties"
+            depends="compile, prepare-libs, merge-properties"
             description="Builds the .jar file for the standalone web distribution" >
 
         <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
@@ -144,7 +144,6 @@
             <fileset dir="${build.dir}" includes="org/roosster/**" />
             <fileset dir="${res.dir}/common" includes="**/*" />
             <fileset dir="${res.dir}/web" includes="**/*" />
-            <fileset dir="${tmpl.dir}" includes="**/*" />
             <fileset file="${res.dir}/${web.prop.file}"  />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
@@ -164,7 +163,7 @@
 
     
     <target name="jar-cli"
-            depends="compile, unjar-libs, merge-properties"
+            depends="compile, prepare-libs, merge-properties"
             description="Builds the .jar file for the CLI distribution" >
 
         <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
@@ -176,7 +175,6 @@
             <fileset dir="${build.dir}" includes="org/roosster/**" />
             <fileset dir="${res.dir}/cli" includes="**/*" />
             <fileset dir="${res.dir}/common" includes="**/*" />
-            <fileset dir="${tmpl.dir}" includes="**/*" />
             <fileset file="${res.dir}/${cli.prop.file}"  />
             <fileset file="ARTISTIC.txt" />
             <fileset file="LICENSE" />
@@ -208,7 +206,6 @@
             <fileset dir="${res.dir}/cli"         includes="**/*" />
             <fileset dir="${res.dir}/web"         includes="**/*" />
             <fileset dir="${res.dir}/common"      includes="**/*" />
-            <fileset dir="${tmpl.dir}"            includes="**/*" />
             <fileset file="${res.dir}/${cli.prop.file}"  />
             <fileset file="${res.dir}/${web.prop.file}"  />
             <fileset file="ARTISTIC.txt" />
@@ -227,6 +224,27 @@
                 </section>
             </manifest>
         </jar>
+    </target>
+    
+    
+    <target name="dist-war" 
+            depends="jar-all"
+            description="">
+            
+        <property name="lib.tmp.dir" value="${lib.dir}/tmp" />
+        <mkdir dir="${lib.tmp.dir}" />
+        <copy todir="${lib.tmp.dir}" file="${dist.dir}/${all.jar.file}" />
+        <copy todir="${lib.tmp.dir}" flatten="true">
+            <fileset dir="${lib.dir}">
+                <include name="web/*.jar" />
+                <include name="common/*.jar" />
+            </fileset>
+        </copy>
+            
+        <war destfile="${dist.dir}/roosster.war" webxml="src/metadata/web.xml">
+            <fileset dir="src/html/" />
+            <lib dir="${lib.tmp.dir}" includes="*.jar" />
+        </war>
     </target>
     
     <target name="clean" depends="init" description="Removes 'dist' and 'build' directories">
