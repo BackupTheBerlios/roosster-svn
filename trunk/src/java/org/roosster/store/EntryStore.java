@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Date;
 import java.security.*;
 
 import org.apache.log4j.Logger;
@@ -489,9 +490,13 @@ public class EntryStore implements Plugin, Constants
             }
 
             writer = getWriter();
+            
+            Date now = new Date();
             for (int i = 0; i < entries.length; i++ ) {
                 LOG.debug("Adding Entry to index: "+ entries[i].getUrl().toString());
 
+                entries[i].setLastEdited(now);
+                
                 Document doc = entries[i].getDocument();
                 doc.add( Field.Keyword(URLHASH, computeHash(entries[i].getUrl().toString())) );
                 writer.addDocument(doc);

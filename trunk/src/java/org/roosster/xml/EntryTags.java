@@ -32,29 +32,30 @@ package org.roosster.xml;
  */
 public interface EntryTags
 {
+    public static final String ENTRYLIST    = "entrylist";
+    public static final String ENTRY        = "entry";
+
+    public static final String CONTENT      = "content";
+    public static final String TAG          = "tag";
+    public static final String NOTE         = "note";
+    public static final String AUTHOR       = "author";
+
+    // <entrylist> attributes    
     public static final String TOTAL_ATTR   = "total";
     public static final String OFFSET_ATTR  = "offset";
     public static final String LIMIT_ATTR   = "limit";
     
+    // <entry> attributes
     public static final String HREF_ATTR    = "href";
+    public static final String ISSUED_ATTR  = "issued";
+    public static final String MODIFIED_ATTR= "modified";
+    public static final String FETCHED_ATTR = "fetched";
+    public static final String EDITED_ATTR  = "edited";
+    public static final String TYPE_ATTR    = "type";
+    public static final String TITLE_ATTR   = "title";
     
-    public static final String ENTRY        = "entry";
-    public static final String ENTRYLIST    = "entrylist";
-    
-    public static final String CONTENT      = "content";
-    public static final String TAGS         = "tags";
-    public static final String TAG          = "tag";
-    public static final String NOTE         = "note";
-    
-    public static final String ISSUED       = "issued";
-    public static final String MODIFIED     = "modified";
-    public static final String FETCHED      = "fetched";
-    
-    public static final String AUTHORS      = "authors";
-    public static final String AUTHOR       = "author";
+    // <author> attributes
     public static final String NAME_ATTR    = "name";
     public static final String EMAIL_ATTR   = "email";
     
-    public static final String TYPE         = "type";
-    public static final String TITLE        = "title";
 }

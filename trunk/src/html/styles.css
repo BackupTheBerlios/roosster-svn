@@ -1,18 +1,26 @@
 #foot           { font-size:x-small; margin-top:20px;}
 
 #entry-list     {margin: 20px,10px,10px,20px; list-style-type:none;}
-.entry          {margin: 10px,0px,10px,0px;   list-style-type:none; padding-left:-50px;}
+.entry          {margin: 10px,0px,10px,-30px;   list-style-type:none; padding-left:-50px;}
 .entry-url      { font-weight:bold; }
 .entry-content  {}
 .entry-info     { color:#acc9ff; font-size:small; }
 
 #entry-form     {}
-#entry-form input[type=text],textarea     { width:360px; margin-bottom:5px;}
 #entry-form textarea     { height:100px; }
 
-.tab            { display: none; overflow:auto; height:450px; padding:10px; }
+input[type=text]              { width:250px; }
+textarea                      { width:350px; }
+input:focus, textarea:focus   { background-color:#EFEFEF; }
+input,textarea                {  margin: 0px 5px 5px 5px;  border:1px solid black; }
+
+.tab            { display: none; }
 
 .tab, #tablist  { width: 700px; margin:auto;}
+
+#tabarea        { overflow:auto; height:450px; padding:10px;  }
+
+#output-messages {}
 
 #tablist        { margin: 0 auto; padding: 0 0 2em 0; }
 

@@ -100,7 +100,9 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
     public void endElement(String nsURI, String localName, String qName)
                     throws SAXException
     {
-        if ( TAGS.equals(qName) ) {
+        if ( ENTRY.equals(qName) && currentEntry != null ) {
+            entries.add(currentEntry);
+            
             currentEntry.setTags( (String[]) tagList.toArray(new String[0]) );
             tagList.clear();
         }
@@ -108,27 +110,11 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
         else if ( TAG.equals(qName) )
             tagList.add(currentText.toString());
         
-        else if ( ENTRY.equals(qName) && currentEntry != null ) 
-            entries.add(currentEntry);
-        
         else if ( NOTE.equals(qName) )
             currentEntry.setNote(currentText.toString());
         
-        else if ( TITLE.equals(qName) )
-            currentEntry.setTitle(currentText.toString());
-        
-        else if ( TYPE.equals(qName) )
-            currentEntry.setFileType(currentText.toString());
-        
-        else if ( ISSUED.equals(qName) ) 
-            currentEntry.setIssued( parseDate(currentText.toString()) );
-        
-        else if ( MODIFIED.equals(qName) ) 
-            currentEntry.setLastModified( parseDate(currentText.toString()) );
-        
-        else if ( FETCHED.equals(qName) ) 
-            currentEntry.setLastFetched( parseDate(currentText.toString()) );
-          
+        else if ( CONTENT.equals(qName) )
+            currentEntry.setContent(currentText.toString());
         
         LOG.debug("PARSE: <-- Pop <"+qName+"> from element stack");
         elementStack.removeLast();
@@ -179,7 +165,17 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
     private void processEntryTag(Attributes atts) throws SAXException
     {
         try {
+            // EDITED_ATTR and FETCHED_ATTR are ignored by server, 
+            // these can't be set/modfied by client
+          
             currentEntry = new Entry(new URL( atts.getValue(HREF_ATTR) ));
+            
+            currentEntry.setTitle( atts.getValue(TITLE_ATTR) );
+            currentEntry.setFileType( atts.getValue(TYPE_ATTR) );
+            
+            currentEntry.setIssued( parseDate(atts.getValue(ISSUED_ATTR)) );
+            currentEntry.setLastModified( parseDate(atts.getValue(MODIFIED_ATTR)) );
+        
         } catch(java.net.MalformedURLException ex) {
             throwException("Not a valid URL in "+ENTRY, ex);
         }
@@ -212,8 +208,8 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
         
         // author
         else if ( AUTHOR.equals(currentTag) ) {
-            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, AUTHORS, AUTHOR} ) )
-                throwException(AUTHOR+" must be child Element of "+ENTRY+"/"+AUTHORS);
+            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, AUTHOR} ) )
+                throwException(AUTHOR+" must be child Element of "+ENTRY);
         }
         
         // note
@@ -222,46 +218,16 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
                 throwException(NOTE+" must be child Element of "+ENTRY);
         }
         
-        // tags
-        else if ( TAGS.equals(currentTag) ) {
-            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, TAGS} ) )
-                throwException(TAGS+" must be child Element of "+ENTRY);
+        // note
+        else if ( CONTENT.equals(currentTag) ) {
+            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, CONTENT} ) )
+                throwException(CONTENT+" must be child Element of "+ENTRY);
         }
         
         // tag
         else if ( TAG.equals(currentTag) ) {
-            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, TAGS, TAG} ) )
-                throwException(TAG+" must be child Element of "+ENTRY+"/"+TAGS);
-        }
-        
-        // issued
-        else if ( ISSUED.equals(currentTag) ) {
-            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, ISSUED} ) )
-                throwException(ISSUED+" must be child Element of "+ENTRY);
-        }
-        
-        // modified
-        else if ( MODIFIED.equals(currentTag) ) {
-            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, MODIFIED} ) )
-                throwException(MODIFIED+" must be child Element of "+ENTRY);
-        }
-        
-        // fetched
-        else if ( FETCHED.equals(currentTag) ) {
-            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, FETCHED} ) )
-                throwException(FETCHED+" must be child Element of "+ENTRY);
-        }
-        
-        // type
-        else if ( TYPE.equals(currentTag) ) {
-            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, TYPE} ) )
-                throwException(TYPE+" must be child Element of "+ENTRY);
-        }
-        
-        // title
-        else if ( TITLE.equals(currentTag) ) {
-            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, TITLE} ) )
-                throwException(TITLE+" must be child Element of "+ENTRY);
+            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, TAG} ) )
+                throwException(TAG+" must be child Element of "+ENTRY);
         }
     }
 

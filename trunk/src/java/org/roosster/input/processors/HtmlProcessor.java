@@ -28,19 +28,34 @@ package org.roosster.input.processors;
 
 import java.net.URL;
 import java.util.Date;
+import java.util.LinkedList;
 import java.io.InputStream;
-import org.apache.commons.io.IOUtils;
+import java.io.Writer;
+import java.io.StringWriter;
+import java.io.StringReader;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
+
+import org.ccil.cowan.tagsoup.Parser;
+
+import org.apache.commons.io.CopyUtils;
+import org.apache.log4j.Logger;
+
 import org.roosster.store.Entry;
 import org.roosster.Registry;
 import org.roosster.InitializeException;
 import org.roosster.input.ContentTypeProcessor;
+import org.roosster.util.StringUtil;
 
 /**
- *
+ * TODO respect img-alt-tags
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
 public class HtmlProcessor implements ContentTypeProcessor
 {
+    public static final String FILE_TYPE = "text/html";
 
     /**
      *
@@ -71,10 +86,120 @@ public class HtmlProcessor implements ContentTypeProcessor
      */
     public Entry[] process(URL url, InputStream stream, String encoding) throws Exception
     {
-        Entry entry = new Entry(IOUtils.toString(stream, encoding), url);
+        Entry entry = new Entry(url);
+
+        // set some basic properties
+        entry.setFileType(FILE_TYPE);
         entry.setLastFetched(new Date());
+        
+        // copy raw contents before processing stream
+        Writer rawContents = new StringWriter();
+        CopyUtils.copy(stream, rawContents);
+        
+        String rawString = rawContents.toString();
+        entry.setRaw(rawString);
+
+        // now process stream, and fill content
+        HtmlParser parser = new HtmlParser(entry);
+        parser.parse(new InputSource(new StringReader(rawString)));
+        
         return new Entry[] { entry };
     }
 
+    
+    /**
+     * Fills content and title of this Entry with the content
+     */
+    public static class HtmlParser extends org.ccil.cowan.tagsoup.Parser
+    {
+        private static Logger LOG = Logger.getLogger(HtmlParser.class.getName());
+        
+        private Entry entry = null;
+        
+        private LinkedList  elementStack       = new LinkedList();
+        
+        private String      currentTag         = null;
+        
+        private StringBuffer currentText       = new StringBuffer();
+        
+        private boolean isBody                 = false;
+        private boolean isScript               = false;
+        private boolean isStyle                = false;
+        
+        
+        /**
+         */
+        public HtmlParser(Entry entry)
+        {
+            if ( entry == null )
+                throw new IllegalArgumentException("Parameter 'entry' is not allowed to be null");
+            
+            this.entry = entry;
+        }
+        
+        
+        /**
+         */
+        public Entry getEntry() { return entry; }
+        
+        
+        /**
+         * 
+         */
+        public void startElement(String nsURI, String localName, String qName, Attributes atts)
+                          throws SAXException
+        {
+            //LOG.debug("HTMLPARSE: --> Push <"+qName+"> onto element stack");
+    
+            elementStack.add(qName);
+            
+            currentTag = qName;
+            
+            if ( "body".equalsIgnoreCase(qName) ) 
+                isBody = true;
+            else if ( "style".equalsIgnoreCase(qName) ) 
+                isStyle = true;
+            if ( "script".equalsIgnoreCase(qName) ) 
+                isScript = true;
+        }
+        
+        
+        /**
+         * 
+         */
+        public void endElement(String nsURI, String localName, String qName)
+                        throws SAXException
+        {
+            //LOG.debug("HTMLPARSE: <-- Pop <"+qName+"> from element stack");
+            
+            if ( "body".equalsIgnoreCase(qName) ) 
+                isBody = false;
+            else if ( "style".equalsIgnoreCase(qName) ) 
+                isStyle = false;
+            if ( "script".equalsIgnoreCase(qName) ) 
+                isScript = false;
 
+
+            elementStack.removeLast();
+        
+            currentTag = elementStack.isEmpty() ? null : (String) elementStack.getLast();
+            currentText = new StringBuffer();
+        }
+        
+        
+        /**
+         * 
+         */
+        public void characters(char[] text, int start, int length) throws SAXException 
+        {
+            if ( isBody && !isScript && !isStyle ) {
+                String str = StringUtil.strip(new String(text, start, length)).trim();
+                if ( !"".equals(str) ) {
+                    entry.appendContent(str);
+                    entry.appendContent(" ");
+                }
+            }
+        }
+    }
+    
 }

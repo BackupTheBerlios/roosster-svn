@@ -181,7 +181,7 @@ public class ServletMapper extends HttpServlet
 
     {
         if ( LOG.isDebugEnabled() ) {
-            LOG.debug("**************************************************");
+            LOG.debug("======================================================");
             LOG.debug("Processing Request: "+req.getMethod()+" "+req.getPathInfo());
         }
         
@@ -198,22 +198,25 @@ public class ServletMapper extends HttpServlet
             resp.setContentType(contentType+"; charset="+outputEncoding);
 
             // output everything
-            output.output( getOutputMode(args), resp.getWriter() );
+            output.output( getOutputMode(), resp.getWriter() );
             
         } catch (CommandNotFoundException ex) {
           
             LOG.warn(ex.getMessage(), ex);
-            resp.sendError(resp.SC_NOT_FOUND, ex.getMessage());
+            resp.sendError(resp.SC_NOT_FOUND, 
+                           "RoossterException: <"+ex.getClass()+"> "+ex.getMessage());
             
         } catch (IllegalArgumentException ex) {
           
             LOG.warn(ex.getMessage(), ex);
-            resp.sendError(resp.SC_BAD_REQUEST, ex.getMessage());
+            resp.sendError(resp.SC_BAD_REQUEST, 
+                           "RoossterException: <"+ex.getClass()+"> "+ex.getMessage());
             
         } catch (Exception ex) {
           
             LOG.warn(ex.getMessage(), ex);
-            resp.sendError(resp.SC_INTERNAL_SERVER_ERROR, ex.getMessage());
+            resp.sendError(resp.SC_INTERNAL_SERVER_ERROR, 
+                           "RoossterException: <"+ex.getClass()+"> "+ex.getMessage());
             
         }
     }
@@ -244,11 +247,10 @@ public class ServletMapper extends HttpServlet
     /**
      *
      */
-    protected String getOutputMode(Map args)
+    protected String getOutputMode()
     {
-        String mode = (String) args.get(Constants.PROP_OUTPUTMODE);
-        return mode == null || "".equals(mode) ? DEF_OUTPUT_MODE : mode ;
-
+        return registry.getConfiguration()
+                       .getProperty(Constants.PROP_OUTPUTMODE, DEF_OUTPUT_MODE);
     }
     
     

@@ -1,24 +1,47 @@
 <!--
-  date elements must be empty or in the format of http://www.w3.org/TR/NOTE-datetime
+  
 -->
-<entry href="http://example.com/?test">
-  <type><!-- MIME-type / will be determined by server, if not set--></type>
-  <title><!-- NO HTML / will be determined by server, if not set- --></title>
-  <authors>
-    <!-- will be determined by server (if possible), if not set- -->
-    <author name="" email=""/> <!-- Entry.class currently supports only one author -->
+<entrylist total="" offset="" limit="">
+  <entry href="http://example.com/?test" 
+         issued="...w3cdate..."
+         modified="...w3cdate..."
+         fetched="...w3cdate..." 
+         edited="...w3cdate..."
+         type=".."  
+         title="...">
     <author name="" email=""/>
-  </authors>
-  <tags>
+    <author name="" email=""/>
     <tag>test</tag>
     <tag>cat</tag>
     <tag>dogs</tag>
     <tag>home</tag>
-  </tags>
-  <note><!-- NO HTML --></note>
+    <note>...</note>
+    <content>...</content>
+  </entry>
+</entrylist>
+
+
+<!-- 
+
+  Only set by server, if contained in client-generated streams, it's ignored: 
+    total = determines number of total items (e.g. of search result), if paging is used
+    limit = number of entries in current list
+    offset = offset of current result "portion" in number of total entries
+
+  href = act as primary key
+  type = MIME-type / will be determined by server, if not set
+  issued = date
+  modified = date
+  fetched = date
+  edited = date, read only
+  title = if not set, or server can't determine one URL is used
+  author = on entry can have multiple authors, though the app will currently only 
+           recognize one
+  note =  NO HTML
+  content = NO HTML
+  tag = multiple tags are recognized
   
-  <content><!-- only truncated --></content>
-  <issued><!-- date / read only --></issued>
-  <modified><!-- date / read only --></modified>
-  <fetched><!-- date / read only --></fetched>
-</entry>
+  
+  * date elements must be empty or in the format of http://www.w3.org/TR/NOTE-datetime
+           
+-->

@@ -1,79 +1,87 @@
 <html>
-    <head>
-      <title>roosster</title>
-      <style type="text/css"> @import url($baseurl/styles.css); </style>
-      <script type="text/javascript" src="$baseurl/js/XmlUtil.js" />
-      <script type="text/javascript" src="$baseurl/js/roossterCommon.js" />
-      <script type="text/javascript" src="$baseurl/js/roossterClasses.js" />
-      <script type="text/javascript" src="$baseurl/js/roossterClient.js" />
-    </head>
-    <body onload="init()">
-        <div id="head">
-            <a href="$baseurl">Home</a>
-        </div>
+<head>
+  <title>roosster</title>
+  <style type="text/css"> @import url($baseurl/styles.css); </style>
+  <script type="text/javascript" src="$baseurl/js/BrowserDetect.js" />
+  <script type="text/javascript" src="$baseurl/js/RoossterUtil.js" />
+  <script type="text/javascript" src="$baseurl/js/RoossterApi.js" />
+  <script type="text/javascript" src="$baseurl/js/RoossterClient.js" />
+</head>
+<body onload="initClient();">
+  <div id="head">
+      <a href="$baseurl">Home</a>
+  </div>
 
-        <ul id="tablist">
-            <li><a href="#search" onclick="return setTab('search-tab');">Search</a></li>
-            <li><a href="#edit" onclick="return setTab('edit-tab');">Edit</a></li>
-            <li><a href="#add" onclick="return setTab('add-tab');">Add</a></li>
-            <li><a href="#tags" onclick="return setTab('tags-tab');">Tags</a></li>
-        </ul>
-        
-        <div id="search-tab" class="tab">        
-            <form method="get" name="searchform" >
-              <input type="text" name="query" />
-              <input type="button" value="send" onclick="return doSearch();"/>
-            </form>
+  <ul id="tablist">
+      <li><a href="#search" onclick="return setTab('search-tab');">Search</a></li>
+      <li><a href="#edit" onclick="return setTab('edit-tab');">Edit</a></li>
+      <li><a href="#add" onclick="return setTab('add-tab');">Add</a></li>
+      <li><a href="#tags" onclick="return setTab('tags-tab');">Tags</a></li>
+  </ul>
+  
+  <div id="tabarea">
+    <div id="output-messages">
+    </div>
+  
+    <div id="search-tab" class="tab">        
+      <form onsubmit="doSearch(getById('queryStr').value); return false;" >
+        <input type="text" id="queryStr" name="queryStr" />
+        <input type="submit" value="send" />
+      </form>
+
+      <div id="entries-out">
+      </div>
+    </div>
     
-            <div id="entries-out">
-            </div>
-        </div>
-        
-        <div id="edit-tab" class="tab">  
-            <a href="javascript:doSearch('blog')">tets</a>
-            
-            <form name="entryform">
-                <table>
-                    <tr> <td>URL</td>         
-                         <td><input type="text" name="url" /></td> </tr>
-                    <tr> <td>Title</td>       
-                         <td><input type="text" name="title" /></td> </tr>
-                    <tr> <td>Tags</td>        
-                         <td><input type="text" name="tags" /></td> </tr>
-                    <tr> <td valign="top">Note</td>        
-                         <td><textarea name="note"></textarea></td> </tr>
-                    <tr> <td>Type</td>        
-                         <td><input type="text" name="type" /></td> </tr>
-                    <tr> <td>Author</td>      
-                         <td><input type="text" name="author" /></td> </tr>
-                    <tr> <td>Author-Email</td>
-                         <td><input type="text" name="authorEmail" /></td> </tr>
-                    <tr> <td>Issued</td>      
-                         <td><input type="text" name="issuedDate" /></td> </tr>
-                    <tr> <td>Last Modified</td>
-                         <td><input type="text" name="modifiedDate" /></td> </tr>
-                    <tr> <td>Last Fetched</td>
-                         <td><input type="text" name="fetchedDate" /></td> </tr>
-                    <tr> <td colspan="2" align="right">
-                         <input type="button" value="Submit" onclick="return submitEdit();"/></td></tr>
-                </table>
-            </form>            
-        </div>
-        
-        <div id="add-tab" class="tab">
-            add        
-        </div>
-        
-        <div id="tags-tab" class="tab">
-            tags        
-        </div>
-        
-        <div id="foot">
-          powered by <a href="http://roosster.org/">roosster - personal search</a>
-          | TODO <em>index contains num Entries</em>
-        </div>
-        
-        <div id="debug-out">
-        </div>
-    </body>
+    <div id="edit-tab" class="tab">  
+      <form name="entryform" onsubmit="postEdit(); return false;">
+        <table>
+          <tr> <td>URL</td>         
+               <td><input type="text" name="url" /></td> </tr>
+          <tr> <td>Title</td>       
+               <td><input type="text" name="title" /></td> </tr>
+          <tr> <td>Tags</td>        
+               <td><input type="text" name="tags" /></td> </tr>
+          <tr> <td valign="top">Note</td>        
+               <td><textarea name="note"></textarea></td> </tr>
+          <tr> <td>Type</td>        
+               <td><input type="text" name="type" /></td> </tr>
+          <tr> <td>Author</td>      
+               <td><input type="text" name="author" /></td> </tr>
+          <tr> <td>Author-Email</td>
+               <td><input type="text" name="authorEmail" /></td> </tr>
+          <tr> <td>Issued</td>      
+               <td><input type="text" name="issuedDate" /></td> </tr>
+          <tr> <td>Last Modified</td>
+               <td><input type="text" name="modifiedDate" /></td> </tr>
+          <tr> <td>Last Fetched</td>
+               <td><input type="text" name="fetchedDate" /></td> </tr>
+          <tr> <td>Last Edited</td>
+               <td><input type="text" name="editedDate" /></td> </tr>
+          <tr> <td colspan="2" align="right">
+               <input type="submit" value="Submit" /></td></tr>
+        </table>
+      </form>            
+    </div>
+    
+    <div id="add-tab" class="tab">
+      <form name="addform"onsubmit="doAdd(getById('newurl').value); return false;" >
+        URL to Add <input type="text" name="url" id="newurl" /> 
+        <input type="submit" value="send"/>
+      </form>
+    </div>
+    
+    <div id="tags-tab" class="tab">
+        not implemented yet, look out for next version        
+    </div>
+  </div>
+  
+  <div id="foot">
+    powered by <a href="http://roosster.org/">roosster - personal search</a>
+    v$roossterVersion | 
+  </div>
+  
+  <div id="debug-out">
+  </div>
+</body>
 </html>

@@ -74,7 +74,11 @@ public class UrlFetcher implements Plugin, Constants
         defaultEncoding = registry.getConfiguration().getProperty(PROP_DEF_ENC);
         if ( defaultEncoding == null )
             throw new InitializeException("Must provide default encoding via "+PROP_DEF_ENC);
-            
+        
+        LOG.info("Initialized UrlFetcher: \ndefaultEncoding: "+defaultEncoding +
+                 "\ndefaultProcessor: "+defaultProc +
+                 "\nContentTypeProcessors: "+processors );
+        
         initialized = true;
     }
 
@@ -152,11 +156,16 @@ public class UrlFetcher implements Plugin, Constants
 
         long modified = con.getLastModified();
         String contentType = con.getContentType();
+        if ( contentType != null && contentType.indexOf(";") > -1 ) {
+            LOG.debug("Content-type string ("+contentType+") contains charset; strip it!");
+            contentType = contentType.substring(0, contentType.indexOf(";")).trim();
+        }
+        
         String contentEnc  = con.getContentEncoding() != null ?  con.getContentEncoding() 
                                                               : defaultEncoding; 
 
         ContentTypeProcessor proc = getProcessor(contentType); 
-        LOG.debug("ContentType: "+contentType+" - ContentEncoding: "+contentEnc);
+        LOG.debug("ContentType: '"+contentType+"' - ContentEncoding: "+contentEnc);
         LOG.debug("Using Processor "+proc);
 
         Entry[] entries = proc.process(url, con.getInputStream(), contentEnc);
@@ -175,18 +184,22 @@ public class UrlFetcher implements Plugin, Constants
             Date modDate = new Date(modified);
             if ( entries[i].getLastModified() == null )
                 entries[i].setLastModified(modDate);
+            
             if ( entries[i].getIssued() == null ) 
                 entries[i].setIssued(modDate);
 
             URL entryUrl = entries[i].getUrl();
+            
             String fileType = entries[i].getFileType();
             if ( fileType == null || "".equals(fileType) ) {
+              
                 int dotIndex = entryUrl.getPath().lastIndexOf(".");
                 if ( dotIndex != -1 ) {
                     String type = entryUrl.getPath().substring(dotIndex+1);
                     entries[i].setFileType(type.toLowerCase());
                     LOG.debug("Filetype is subsequently set to '"+type+"'");
                 }
+                
             }
 
             String title = entries[i].getTitle();
@@ -225,7 +238,6 @@ public class UrlFetcher implements Plugin, Constants
         if ( defProcName == null || "".equals(defProcName) )
             throw new InitializeException("No default processor defined");
 
-        LOG.debug("Default ContentTypeProcessor is: "+defProcName);
         StringTokenizer tok = new StringTokenizer(procNames.trim(), " ");
         while ( tok.hasMoreTokens() ) {
             String name  = tok.nextToken();

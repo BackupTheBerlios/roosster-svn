@@ -16,6 +16,7 @@
     <servlet>
         <servlet-name>api</servlet-name>
         <servlet-class>org.roosster.mappers.ApiServletMapper</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
     
     <servlet>
@@ -28,11 +29,12 @@
       <load-on-startup>100</load-on-startup>
     </servlet>
     
-  
+    <!--
     <servlet-mapping>
         <servlet-name>roosster</servlet-name>
         <url-pattern>/application/*</url-pattern>
     </servlet-mapping>
+    -->
    
     <servlet-mapping>
         <servlet-name>api</servlet-name>

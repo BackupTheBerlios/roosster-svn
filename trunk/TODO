@@ -3,37 +3,66 @@ JS Client
 * finish Entry Parser, handle empty lists
 * find a way to strip HTML from content-tag; implement cachedentry command to return
   only the cached entry
-* implement tabbed display (search,add,edit,tags) DONE
-* implement Entry.attachAsEditForm() DONE and Entry.asRoossteNode()
-* add a selected entry variable, edit-tab displays always selected entry DONE
 * if selected entry is edited, send to server, parse response into Entry, and 
   put it back into cached list
 * format entry list as table not unordered list
-* use init() to jump directly into a tab
 * make bookmarklet, to add a url (server fetches content and stores
   it), then jump directly to edit tab
-* place only url text input field onto add-tab
 * refactor API connecting code into standalone-lib
-* catch pressing enter keys in form to not esnd page
-* catch pressing enter keys in form to not esnd page
+* catch pressing enter keys in form to not send page
+* why is the onreadystatechanged handler called multiple times in one request?
+* add output messages facility
+* handle exceptions better (DuplicateEntryException),
+- display pager in search, implement EntryList for that
+- don't add added entries to entries array
+- display "no selected entry" in edit tab (or don't display tab at all?)
+- add "edited" date to entries, and update it, when entry is edited
+- implement RoossterAPI class in JS along with Entry and EntryList
+- implement
+ EntryList RoossterAPI.search(query)
+ Entry RoossterAPI.put(Entry)
+ Entry RoossterAPI.post(Entry)
+ Entry RoossterAPI.del(Entry)
+ RawEntry RoossterAPI.cached(Entry)
+- move all JS helper functions to RoossterUtil.class
+- show textarea with content of URL (hide it by default, but offer switch to show 
+  and edit it)
+- implement date parsing lib
+- implement event listening in API (__notifyFail, __notifySuccess, addListener)
+
+
+* DONE implement Entry.attachAsEditForm() and Entry.asDomDocument()
+* DONE place only url text input field onto add-tab
+* DONE implement tabbed display (search,add,edit,tags) 
+* DONE add a selected entry variable, edit-tab displays always selected entry 
+* DONE use init() to jump directly into a tab 
 
 
 API
 =========
-* get rid of JDOM use in EntryGenerator
-* remove roosster servlet from web.xml
 * implement tag fetching
-* implement ccommand to fetch only raw contents of entry
+* implement command to fetch only raw contents of entry
+* implement api method to retrieve number of entries
+
+* DONE remove roosster servlet from web.xml
+* DONE get rid of JDOM use in EntryGenerator
 
 
 General
 =========
-* implement Entry.Author and use it to replace author/authorEmail in
-  Entry.class 
 * look at all TODO comments in sourcecode
-* use HTML parser (jtidy or jsoup) to process HTML before adding
 * extend Entry so that content field contains only meaningful (no
   markup) text, while adding a new (unindexed, stored) field to
   Entry.class text, while adding a new (unindexed, stored) field to
   Entry.class. Return this "raw" field when cached contents is
   requested
+* update roosster.app.version property
+* document when RAW is set, and what it means if it's not set
+* parse title from HTML into Entry.title
+
+* DONE use HTML parser (jtidy or jsoup) to process HTML before adding
+* DONE handle RAW field in XmlProcessor
+
+
+
+- don't hardcode output mode in ApiServlet 

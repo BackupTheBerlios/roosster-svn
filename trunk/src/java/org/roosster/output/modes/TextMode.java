@@ -67,6 +67,7 @@ public class TextMode extends AbstractOutputMode implements OutputMode, Constant
             stream.println("Issued:        "+ entry.getIssued() );
             stream.println("Last-Modified: "+ entry.getLastModified() );
             stream.println("Last-Fetched:  "+ entry.getLastFetched() );
+            stream.println("Last-Edited:   "+ entry.getLastEdited() );
             stream.println("FileType:      "+ entry.getFileType() );
             stream.println("Tags:          "+ StringUtil.join(entry.getTags(), TAG_SEPARATOR) );
             stream.println("Note:          "+ StringUtil.truncate(entry.getNote(), truncate) );

@@ -38,6 +38,8 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.ResourceNotFoundException;
  
 import org.roosster.util.ServletUtil;
+import org.roosster.Constants;
+import org.roosster.Registry;
 
 /**
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
@@ -47,7 +49,8 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
     private static Logger LOG = Logger.getLogger(VelocityServlet.class.getName());
     
     
-    public static final String CTX_BASEURL     = "baseurl";
+    public static final String VELCTX_BASEURL     = "baseurl";
+    public static final String VELCTX_APPVERSION  = "roossterVersion";
     
     private ServletContext servletContext = null;
     
@@ -113,7 +116,13 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
      */
     protected void initContext(HttpServletRequest req, Context context)
     {
-        context.put(CTX_BASEURL, ServletUtil.getBaseUrl(req));
+        Registry registry = (Registry) servletContext.getAttribute(Constants.CTX_REGISTRY);
+        
+        if ( registry == null )
+            throw new IllegalStateException("Servlet Environment not properly initialized! No Registry!");
+        
+        context.put(VELCTX_APPVERSION, registry.getConfiguration().getProperty(Constants.PROP_APPVERSION));
+        context.put(VELCTX_BASEURL, ServletUtil.getBaseUrl(req));
     }
     
     

@@ -49,7 +49,7 @@ import org.roosster.Constants;
  */
 public class ApiServletMapper extends ServletMapper
 {
-    private static Logger LOG = Logger.getLogger(ApiServletMapper.class.getName());
+    private static Logger LOG = Logger.getLogger(ApiServletMapper.class);
 
     private static final String ENTRY_CMD     = "entry";
     private static final String PUTENTRY_CMD  = "putentries";
@@ -127,14 +127,5 @@ public class ApiServletMapper extends ServletMapper
     }
     
     
-    /**
-     * @return always <code>atom</code>
-     */
-    protected String getOutputMode(Map args)
-    {
-        return "roossterxml";
-
-    }
-
 }
 

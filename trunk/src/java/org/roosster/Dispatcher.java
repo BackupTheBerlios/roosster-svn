@@ -129,7 +129,7 @@ public class Dispatcher
             String commandName = null;
             try  {
                 
-                LOG.debug("Trying to load command "+names[i]);
+                //LOG.debug("Trying to load command "+names[i]);
                         
                 if ( names[i].endsWith(".chain") ) {
                     isChain = true;
@@ -141,7 +141,7 @@ public class Dispatcher
                     StringTokenizer tok = new StringTokenizer(value, " ");
                     while ( tok.hasMoreTokens() ) {
                         String name  = tok.nextToken();
-                        LOG.debug("Trying to load class for chain command "+name);
+                        //LOG.debug("Trying to load class for chain command "+name);
                       
                         String className = conf.getProperty("command."+name+".class");
                         if ( className != null )

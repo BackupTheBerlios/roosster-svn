@@ -52,6 +52,8 @@ public interface Constants
     public static final String PROP_OFFSET      = "output.offset";
     public static final String PROP_SORTFIELD   = "output.sortfield";
     public static final String PROP_OUTPUTMODE  = "output.mode";
+    
+    public static final String PROP_APPVERSION  = "roosster.app.version";
 
     /** if the value of this property is set to a value below zero, no output is truncated.
      */

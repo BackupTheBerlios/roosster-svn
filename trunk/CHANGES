@@ -1,4 +1,22 @@
 
+Revision XX / 2005-02-XX / Benjamin Reitzammer
+
+* fixed a bug in org.roosster.input.UrlFetcher that caused wrong 
+  ContentTypeProcessor to be used, when ContentType was specified with Encoding
+* removed JDOM dependency in EntryGenerator (ROME still needs JDOM)
+* removed "app" Servlet from web.xml; this means the application (when run as 
+  a web application is only available through the API)
+* Implemented a rudimentary HTML Parser to extract text only from HTML pages, and
+  use that as searchable content in index (uses TagSoup); is also used when 
+  fetching feeds. --> added raw field to Lucene Document to still store complete
+  URL's content
+* added lastedit field to Entry and Document, gets updated automatically
+* changed XML format, see doc/entry.xml for example of new structure
+* API now allows to select output mode (specify 'output.mode' request parameter)
+* standardized exception messages (for easy parsing and meaningful error Messages
+  in JS Client)
+  
+
 Revision 45 / 2005-02-11 /  Benjamin Reitzammer
 
 * finished API

@@ -33,10 +33,13 @@ import java.net.MalformedURLException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.xml.sax.InputSource;
+
 import org.apache.log4j.Logger;
 
 import com.sun.syndication.io.SyndFeedInput;
@@ -47,6 +50,7 @@ import com.sun.syndication.feed.synd.SyndEntry;
 
 import org.roosster.OperationException;
 import org.roosster.store.Entry;
+import org.roosster.input.processors.HtmlProcessor;
 
 /**
  * 
@@ -149,7 +153,7 @@ public class FeedParser
             // I know that's far from acting sensibly -- that's TODO
             if ( syndContent != null && syndContent.getValue() != null ) {
               
-                content = syndContent.getValue(); 
+                content = syndContent.getValue();
                 
                 String type = getFileType(syndContent.getType());
                 fileType = type == null || "".equals(content) ? MIME_TYPE_TEXT : type;
@@ -160,8 +164,20 @@ public class FeedParser
             
         
             // now create roosster Entry                
-            entry = new Entry(content, url);
+            entry = new Entry(url);
             
+            try {
+                // spoof my stypid ContentHandler in thinking this is a normal HTML doc
+                LOG.debug("content "+ content+"\n\n");
+                new HtmlProcessor.HtmlParser(entry)
+                                 .parse(new InputSource(new StringReader(content)));
+                
+            } catch (Exception ex) {
+                LOG.warn("Exception while parsing HTML to get entry's content", ex);
+                entry.setContent(content);
+            }
+
+            entry.setRaw(content);
             entry.setFileType(fileType);
             entry.setAuthor( feedEntry.getAuthor() == null ? feedAuthor : feedEntry.getAuthor() );
             

@@ -93,6 +93,7 @@ public class AddUrlsCommand extends AbstractCommand implements Command, Constant
             output.addEntries(fetchedEntries);
             
         } else {
+            LOG.warn("Didn't add any Entries in "+getClass()+", as the list was empty!");
             output.addOutputMessage("Didn't add any Entries, as the list was empty!");
         }
         

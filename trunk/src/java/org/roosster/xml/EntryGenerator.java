@@ -28,11 +28,11 @@ package org.roosster.xml;
 
 import java.io.PrintWriter;
 import java.util.Date;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
-import org.jdom.input.DOMBuilder;
-import org.jdom.output.XMLOutputter;
-import org.jdom.output.Format;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -75,33 +75,31 @@ public class EntryGenerator implements EntryTags
                 Entry entry = entries.getEntry(i);
               
                 Element entryNode = XmlUtil.createChild(root, ENTRY);
-                entryNode.setAttribute(HREF_ATTR, entry.getUrl().toString());
+                entryNode.setAttribute(HREF_ATTR,     entry.getUrl().toString());
+                entryNode.setAttribute(TITLE_ATTR,    entry.getTitle());
+                entryNode.setAttribute(TYPE_ATTR,     entry.getFileType());
                 
+                entryNode.setAttribute(ISSUED_ATTR,   XmlUtil.formatW3cDate(entry.getIssued()) );
+                entryNode.setAttribute(MODIFIED_ATTR, XmlUtil.formatW3cDate(entry.getLastModified()) );
+                entryNode.setAttribute(FETCHED_ATTR,  XmlUtil.formatW3cDate(entry.getLastFetched()) );
+                entryNode.setAttribute(EDITED_ATTR,   XmlUtil.formatW3cDate(entry.getLastEdited()) );
                 
-                Element authorsNode = XmlUtil.createChild(entryNode, AUTHORS);
-                Element authorNode = XmlUtil.createChild(authorsNode, AUTHOR);
+                XmlUtil.createTextChild(entryNode, NOTE,    entry.getNote());
+                XmlUtil.createTextChild(entryNode, CONTENT, StringUtil.truncate(entry.getContent(), truncate));
+
+                Element authorNode = XmlUtil.createChild(entryNode, AUTHOR);
                 authorNode.setAttribute(NAME_ATTR, entry.getAuthor());
                 authorNode.setAttribute(EMAIL_ATTR, entry.getAuthorEmail());
                 
                 
                 String[] tags = entry.getTags();
-                Element tagsNode = XmlUtil.createChild(entryNode, TAGS);
                 for ( int k = 0; k < tags.length; k++ ) {
-                    XmlUtil.createTextChild(tagsNode, TAG, tags[k]);
+                    XmlUtil.createTextChild(entryNode, TAG, tags[k]);
                 }
-                
-                XmlUtil.createTextChild(entryNode, TITLE,   entry.getTitle());
-                XmlUtil.createTextChild(entryNode, TYPE,    entry.getFileType());
-                XmlUtil.createTextChild(entryNode, NOTE,    entry.getNote());
-                XmlUtil.createTextChild(entryNode, CONTENT, StringUtil.truncate(entry.getContent(), truncate));
-                
-                XmlUtil.createTextChild(entryNode, ISSUED,   XmlUtil.formatW3cDate(entry.getIssued()) );
-                XmlUtil.createTextChild(entryNode, MODIFIED, XmlUtil.formatW3cDate(entry.getLastModified()) );
-                XmlUtil.createTextChild(entryNode, FETCHED,  XmlUtil.formatW3cDate(entry.getLastFetched()) );
             }
             
             // now serialize it to the output stream
-            new XMLOutputter(Format.getPrettyFormat() ).output(new DOMBuilder().build(doc), writer);
+            XmlUtil.getTransformer().transform(new DOMSource(doc), new StreamResult(writer));
             
         } catch (Exception ex) {
             throw new OperationException("Error while generating <entrylist>", ex);

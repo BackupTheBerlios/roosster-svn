@@ -50,6 +50,7 @@ public class Entry
     public static final String CONTENT      = "content";
     public static final String LAST_MOD     = "lastmod";
     public static final String LAST_FETCHED = "lastfetch";
+    public static final String LAST_EDITED  = "lastedit";
     public static final String ISSUED       = "issued";
     public static final String URL          = "url";
     public static final String TITLE        = "title";
@@ -58,6 +59,7 @@ public class Entry
     public static final String FILETYPE     = "filetype";
     public static final String NOTE         = "note";
     public static final String TAGS         = "tags";
+    public static final String RAW          = "raw";
 
     /** enumerates the fields, by which result can be sorted
      */
@@ -68,6 +70,7 @@ public class Entry
     private Date         issued	       = null;
     private Date         lastModified	 = null;
     private Date         lastFetched	   = null;
+    private Date         lastEdited     = null;
     private URL          url            = null;
     private String       title          = "";
     private String       author         = "";
@@ -75,6 +78,7 @@ public class Entry
     private String       fileType	     = "";
     private StringBuffer content        = new StringBuffer();
     private StringBuffer note           = new StringBuffer();
+    private StringBuffer raw            = new StringBuffer();
     private String[]     tags           = new String[0];
 
 
@@ -83,16 +87,6 @@ public class Entry
      */
     public Entry(URL url)
     {
-        setUrl(url);
-    }
-
-
-    /**
-     *
-     */
-    public Entry(String content, URL url)
-    {
-        setContent(content);
         setUrl(url);
     }
 
@@ -113,6 +107,7 @@ public class Entry
                 setAuthorEmail( doc.getField(AUTHOREMAIL).stringValue() );
                 setFileType( doc.getField(FILETYPE).stringValue() );
                 setContent( doc.getField(CONTENT).stringValue() );
+                setRaw( doc.getField(RAW).stringValue() );
                 setNote( doc.getField(NOTE).stringValue() );
                 setTags( StringUtil.split(doc.getField(TAGS).stringValue(), TAG_SEPARATOR) );
 
@@ -124,6 +119,9 @@ public class Entry
 
                 setLastFetched( !"".equals(doc.getField(LAST_FETCHED).stringValue())
                                  ? DateField.stringToDate(doc.getField(LAST_FETCHED).stringValue()) : null );
+                                 
+                setLastEdited( !"".equals(doc.getField(LAST_EDITED).stringValue())
+                                 ? DateField.stringToDate(doc.getField(LAST_EDITED).stringValue()) : null );
             }
 
         } catch (MalformedURLException ex) {
@@ -138,9 +136,10 @@ public class Entry
      */
     protected Document getDocument()
     {
-        String lastModStr = lastModified != null ? DateField.dateToString(lastModified) : "";
-        String lastFetStr = lastFetched != null ? DateField.dateToString(lastFetched) : "";
-        String issuedStr  = issued != null ? DateField.dateToString(issued) : "";
+        String lastModStr  = lastModified != null ? DateField.dateToString(lastModified) : "";
+        String lastFetStr  = lastFetched != null ? DateField.dateToString(lastFetched) : "";
+        String lastEditStr = lastEdited != null ? DateField.dateToString(lastEdited) : "";
+        String issuedStr   = issued != null ? DateField.dateToString(issued) : "";
 
         Document doc = new Document();
 
@@ -151,10 +150,13 @@ public class Entry
         doc.add( Field.Keyword(FILETYPE,      fileType) );
         doc.add( Field.Keyword(LAST_MOD,      lastModStr) );
         doc.add( Field.Keyword(LAST_FETCHED,  lastFetStr) );
+        doc.add( Field.Keyword(LAST_EDITED,   lastEditStr) );
         doc.add( Field.Keyword(ISSUED,        issuedStr) );
         doc.add( Field.Text(CONTENT,          content.toString()) );
         doc.add( Field.Text(NOTE,             note.toString()) );
         doc.add( Field.Text(TAGS,             StringUtil.join(tags, TAG_SEPARATOR)) );
+        
+        doc.add( Field.UnIndexed(RAW, getRaw()) );
 
         doc.add( Field.Text(ALL,  url +" "+ title +" "+ author+" "+authorEmail+" "+
                                   content +" "+note+" "+StringUtil.join(tags, TAG_SEPARATOR)) );
@@ -267,6 +269,23 @@ public class Entry
     }
 
 
+		/**
+		 * Returns the value of lastEdited.
+		 */
+		public Date getLastEdited() {
+				return lastEdited;
+		}
+
+
+		/**
+		 * Sets the value of lastEdited.
+		 * @param lastEdited The value to assign lastEdited.
+		 */
+		public void setLastEdited(Date lastEdited) {
+				this.lastEdited = lastEdited;
+		}
+
+    
     /**
      * Returns the value of url.
      */
@@ -404,6 +423,39 @@ public class Entry
     public void appendNote(char[] str, int offset, int len) 
     {
       this.note.append(str, offset, len) ;
+    }  
+    
+    /**
+     * Returns the value of raw.
+     */
+    public String getRaw()
+    {
+      return raw.toString();
+    }
+  
+    /**
+     * Sets the value of raw.
+     * @param note The value to assign raw.
+     */
+    public void setRaw(String raw)
+    {
+      this.raw = new StringBuffer(raw);
+    }
+
+    /**
+     * 
+     */
+    public void appendRaw(String raw)
+    {
+      this.raw.append(raw);
+    }
+    
+    /**
+     * 
+     */
+    public void appendRaw(char[] str, int offset, int len) 
+    {
+      this.raw.append(str, offset, len) ;
     }
     
     
@@ -418,7 +470,11 @@ public class Entry
         if ( that == null )
             throw new IllegalArgumentException("that-Entry-object not allowed to be null");
       
-        String str = that.getTitle();
+        String str = that.getContent();
+        if ( str != null && !"".equals(str) )
+            setContent(str);
+        
+        str = that.getTitle();
         if ( str != null && !"".equals(str) )
             setTitle(str);
         

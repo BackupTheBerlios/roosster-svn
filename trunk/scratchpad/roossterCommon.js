@@ -10,53 +10,80 @@
 
 const DEBUG = true;
 
-const TAG_ENTRYLIST   = 'entrylist';
-const TAG_ENTRY       = 'entry';
-const TAG_NOTES       = 'notes';
-const TAG_AUTHOR      = 'author';
-const TAG_AUTHORS     = 'authors';
-const TAG_TAG         = 'tag';
-const TAG_TAGS        = 'tags';
-const TAG_NOTE        = 'note';
-const TAG_TYPE        = 'type';
-const TAG_TITLE       = 'title';
-const TAG_ISSUED      = 'issued';
-const TAG_MODIFIED    = 'modified';
-const TAG_FETCHED     = 'fetched';
-const TAG_CONTENT     = 'content';
-
-const ATTR_HREF       = 'href';
-const ATTR_URL        = 'url';
-const ATTR_NAME       = 'name';
-const ATTR_EMAIL      = 'email';
 
 const DIV_ID_DEBUGOUT = "debug-out";
 
 const DIV_ID_ENTRIESOUT   = "entries-out";
 const FORM_ID_ENTRYFORM   = "entryform";
 
+const PARAM_JUMP      = "jump";
+
+
+
 // global reference to window's document
 var doc = window.document;
+
 
 /**
  * 
  */    
 function Debug() {
-    this.messageString = '';
+  
+    this.messagesElement = doc.createElement('ul');
+    this.messageString   = '';
     
-    // methods
-    this.addMsg = function(message) {
+    
+    /**
+     * 
+     */
+    this.clear  = function() {
+        this.messagesElement = doc.createElement('ul');
+        this.messageString   = '';
+    }
+    
+    
+    /**
+     * 
+     */
+    this.addException = function(message) {
+        var listElem = doc.createElement('li');
+        var bElem = doc.createElement('b');
+        bElem.appendChild( doc.createTextNode( this.getTimeString() +" - EXCEPTION - ") );
+        
+        listElem.appendChild(bElem);
+        listElem.appendChild( doc.createTextNode(message) );
+        
+        this.messagesElement.appendChild(listElem);
+        
         this.messageString += message +"\n";
     }
     
+    
+    /**
+     * 
+     */
+    this.addMsg = function(message) {
+        var listElem = doc.createElement('li');
+        listElem.appendChild( doc.createTextNode( this.getTimeString() ) );
+        listElem.appendChild( doc.createTextNode(message) );
+        this.messagesElement.appendChild(listElem);
+        
+        this.messageString += message +"\n";
+    }
+
+    
+    /**
+     * 
+     */
     this.show = function() {
         if ( DEBUG ) {
             var debugOut = doc.getElementById(DIV_ID_DEBUGOUT);
             
             if ( debugOut != null ) {
+                removeAllChildren(debugOut);
               
                 if ( this.messageString ) {
-                    var text = doc.createTextNode("DEBUG: "+this.messageString)
+                    var text = doc.createTextNode("DEBUG: ");
                     
                     var p = doc.createElement("p");
                     p.style.backgroundColor = "#FF8064";
@@ -64,6 +91,7 @@ function Debug() {
                     p.style.padding         = "10px";
                     
                     p.appendChild(text);
+                    p.appendChild(this.messagesElement);
 
                     debugOut.appendChild(p);
                 }
@@ -72,13 +100,29 @@ function Debug() {
                 alert("DEBUG \n"+this.messageString);
             }
         }
+        
+        this.clear();
+    }
+    
+    
+    /**
+     * 
+     */
+    this.getTimeString = function() {
+        var d = new Date();
+        return d.getHours()+"."+d.getMinutes()+"."+d.getSeconds()+'.'+d.getMilliseconds()+": ";
     }
 }
 
+// global debug instance
 var debugConsole = new Debug();
 
-function exception(message) {
-    debugConsole.addMsg("Exception: "+message+"\n\n (Stopping execution)");
+
+/**
+ * 
+ */
+function _exception(message) {
+    debugConsole.addException(message);
     debugConsole.show();
     throw message;
 }
@@ -131,6 +175,17 @@ function parseW3cDate(date) {
 function displayDate(date) {
     // TODO implement this
     return date;
+}
+
+
+/**
+ * 
+ */
+function _startsWith(testStr, startStr) {
+    if ( testStr != null && startStr != null ) 
+        return testStr.indexOf(startStr, 0) == 0; 
+    else 
+        return false;
 }
 
 
@@ -198,4 +253,35 @@ function getText(node) {
 }
 
 
+/**
+ * QueryString object taken from http://flangy.com/dev/javascript/
+ */
+function Querystring() {
+    // get the query string, ignore the ? at the front.
+    var querystring = window.location.search.substring(1, location.search.length);
+  
+    // parse out name/value pairs separated via &
+    var args = querystring.split('&');
+  
+    // split out each name = value pair
+    for (var i=0;i<args.length;i++) {
+        var pair = args[i].split('=');
+    
+        // Fix broken unescaping
+        temp = unescape(pair[0]).split('+');
+        name = temp.join(' ');
+    
+        temp = unescape(pair[1]).split('+');
+        value = temp.join(' ');
+    
+        this[name]=value;
+    }
 
+    this.get = function(strKey,strDefault) {
+        var value=this[strKey];
+        if (value==null)
+            value=strDefault;
+      
+        return value;
+    }
+}

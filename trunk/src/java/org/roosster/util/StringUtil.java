@@ -43,6 +43,19 @@ public class StringUtil
     
 
     /**
+     * removes whitespace, \t, \n, \r 
+     */
+    public static String strip(String str)
+    {
+        try {
+            return str == null ? "" : str.replaceAll("[\\t\\n\\x0B\\f\\r]", "");
+        } catch (PatternSyntaxException ex) {
+            throw new IllegalStateException("Pattern for removing whitespace is invalid!! Huh? How can that be?!");
+        }
+    }
+    
+    
+    /**
      * @return null if an exception occurred
      */
     public static String[] split(String str, String regex)

@@ -41,7 +41,8 @@ import org.roosster.input.ContentTypeProcessor;
  */
 public class TextProcessor implements ContentTypeProcessor
 {
-
+    public static final String FILE_TYPE = "text/plain";
+    
     /**
      *
      */
@@ -71,7 +72,9 @@ public class TextProcessor implements ContentTypeProcessor
      */
     public Entry[] process(URL url, InputStream stream, String encoding) throws Exception
     {
-        Entry entry = new Entry(IOUtils.toString(stream, encoding), url);
+        Entry entry = new Entry(url);
+        entry.setContent(IOUtils.toString(stream, encoding));
+        entry.setFileType(FILE_TYPE);
         entry.setLastFetched(new Date());
         return new Entry[] { entry };
     }
