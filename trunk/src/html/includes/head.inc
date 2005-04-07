@@ -22,7 +22,7 @@
 <body>
   <div id="roosster">
     <div id="headernote">
-      <form action="$baseurl/application/search" method="get">
+      <form action="$baseurl/application/search" method="get" enctype="application/x-www-form-urlencoded">
           <input type="text" id="query" name="query" value="$!searchField" 
                  onfocus="if(this.value=='$DEF_SEARCH_FIELD') this.value='';" />
       </form>

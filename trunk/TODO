@@ -1,18 +1,18 @@
 Web Interface
 =========
-* LATER make extended search interface
-* LATER mass delete
-* implement and show search history 
+
 * let user choose 'limit' in paging
-* add select box for selecting sort order
 * add authentication option
 * show users for which creation of XmlHttpRequest object fails (and Safari)
   a message, that it won't work
 * implement recent (with recent.html just including search)
 * link to feeds in web interface
-* put all valid destinations in class and access only fields of this class?
 * add buttons for changing textarea size
+* when deleting with JSClient, remove entry from entryList and regenerate <ul>
+* remove "Goto" link in JSClient
+* hide 'advanded-add' with onload, same with indexed content on Edit Tab
 
+* DONE add select box for selecting sort order
 * DONE implement delete functionality 
 * DONE put Delete link on Entry detail page
 * DONE make image for non-public entries
@@ -52,34 +52,25 @@ API
 
 General
 =========
-* LATER Thinlet GUI http://thinlet.sf.net/ GUI Editor http://thing.sourceforge.net/
-* LATER use some kind of ErrorListener instead of ServletMapper.wrapProcessRequest() ?
+
 * look at all TODO comments in sourcecode
 * update roosster.app.version property
 * move to MultiFieldQueryParser, remove Entry.ALL
 * document when RAW is set, and what it means if it's not set
-* handle Frames in HTMLProcessor see http://javaboutique.internet.com/tutorials/HTMLParser/article.html
-* implement ContentTypeProcessor chains, should be triggered when certain 
-  mime types are encountered
-* implement property to enable forcing of a certain ContentTypeProcessor
 * rewrite raw content to reflect image locations ...
-* finish SyncDeliciousCommand
-* implement HitList (see Otis mail) and make it return Entry objects
-  (instantiated on the fly), use this in EntryList.class
-* add property for HtmlMode template suffix/prefix
-* use file locking in Configuration.persist() ?
+* handle exceptions sanely in SyncDeliciousCommand
 * make duplicate entry handling more sane
 * extend XmlProcessor.class to use EntryParser.class
 * implement InvalidRequestException to give meaningful error messages in case of 
   wrong/missing arguments
-* only sync public entries
 * use BufferedStreams in input/ouput classes
 * use HttpClient in UrlFetcher to set timeout for connections
-* IMPORTANT retain entry's date information with finer granularity (down to 
-  seconds) and be sure to keep timezone information and output this information
-  in roossterxml
-* del.icio.us: why does /api/posts/all does not contain extended text?
+* split UrlFetcher in two, resulting in UrlFetcher and UrlProcessor 
+  --> UrlFetcher should only fetch URL's as streams
+* add fetch.content=false to base properties and set it to true in web 
+  interface and add commands
 
+* DONE implement property to enable forcing of a certain ContentTypeProcessor
 * DONE add property delicious.api.endpoint
 * DONE implement get/setJumpTo in Output.class
 * DONE overload EntryStore.getAllEntries() 
@@ -96,22 +87,5 @@ General
 * DONE parse title from HTML into Entry.title
 * DONE use HTML parser (jtidy or jsoup) to process HTML before adding
 * DONE handle RAW field in XmlProcessor
-
-
-Scratchpad Feature:
-====================
-
-* - make own url scheme
-- add boolean attribute to Entry.class,
--  add search option (on extra page), to search only standalone notes,
--  show only standalone notes, add new tab for that
-
-
-maybe
--  implement new Entry class, make Entry an interface and let the new  and old Entry class implement it
-- this would make a Factory necessary,  Commons Discovery?
-
-
-
 
 

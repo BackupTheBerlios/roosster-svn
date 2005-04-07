@@ -443,9 +443,14 @@ function Entry(url) {
         node.addedDate.value = displayDate(this.addedDate);
         node.editedDate.value = displayDate(this.editedDate);
         
-        var cachedPageLink = getById(DIV_ID_CACHEDENTRYLINK);
-        XmlRemoveAllChildren(cachedPageLink);
-        cachedPageLink.appendChild( createLink("${baseurl}/cachedentryframeset.html?url="+this.url, "cached page", "_blank")  );
+        var actionLinkDiv = getById(DIV_ID_ACTIONLINKS);
+        XmlRemoveAllChildren(actionLinkDiv);
+        actionLinkDiv.className = 'action-links';
+        actionLinkDiv.appendChild( createLink("${baseurl}/cachedentryframeset.html?url="+this.url, "View Cached Page", "_blank")  );
+        actionLinkDiv.appendChild( createLink(this.url, "View Original Page", "_blank")  );
+        var deleteLink = createLink("javascript:doDelete('"+this.url+"')", "Delete this Entry");
+        deleteLink.className = 'detail-delete-link';
+        actionLinkDiv.appendChild( deleteLink );
         
         var linkSpan = getById(DIV_ID_ENTRYURLLINK);
         XmlRemoveAllChildren(linkSpan);

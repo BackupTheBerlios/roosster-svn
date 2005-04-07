@@ -41,6 +41,7 @@ import org.roosster.Command;
 import org.roosster.Registry;
 import org.roosster.Output;
 import org.roosster.util.StringUtil;
+import org.roosster.util.DateUtil;
 
 /**
  * This command is not meant to be executed alone, but rather in a chain, 
@@ -90,9 +91,9 @@ public class PutEntryCliCommand extends AbstractCommand implements Command, Cons
         if ( email != null ) 
             entry.setAuthorEmail(email);
         if ( issued != null )
-            entry.setIssued(StringUtil.parseEntryDate(issued));
+            entry.setIssued(DateUtil.parseEntryDate(issued));
         if ( modified != null )
-            entry.setModified(StringUtil.parseEntryDate(modified));
+            entry.setModified(DateUtil.parseEntryDate(modified));
         if ( tags != null ) 
             entry.setTags( StringUtil.split(tags, TAG_SEPARATOR) );
         if ( pubStr != null ) 

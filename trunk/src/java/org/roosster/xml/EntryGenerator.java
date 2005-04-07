@@ -40,6 +40,7 @@ import org.w3c.dom.Element;
 import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
 import org.roosster.xml.EntryTags;
+import org.roosster.util.DateUtil;
 import org.roosster.util.XmlUtil;
 import org.roosster.util.StringUtil;
 import org.roosster.OperationException;
@@ -80,10 +81,10 @@ public class EntryGenerator implements EntryTags
                 entryNode.setAttribute(TYPE_ATTR,     entry.getFileType());
                 entryNode.setAttribute(PUBLIC_ATTR,   entry.getPublic() ? "true" : "false");
                 
-                entryNode.setAttribute(ISSUED_ATTR,   XmlUtil.formatW3cDate(entry.getIssued()) );
-                entryNode.setAttribute(MODIFIED_ATTR, XmlUtil.formatW3cDate(entry.getModified()) );
-                entryNode.setAttribute(ADDED_ATTR,    XmlUtil.formatW3cDate(entry.getAdded()) );
-                entryNode.setAttribute(EDITED_ATTR,   XmlUtil.formatW3cDate(entry.getEdited()) );
+                entryNode.setAttribute(ISSUED_ATTR,   DateUtil.formatW3cDate(entry.getIssued()) );
+                entryNode.setAttribute(MODIFIED_ATTR, DateUtil.formatW3cDate(entry.getModified()) );
+                entryNode.setAttribute(ADDED_ATTR,    DateUtil.formatW3cDate(entry.getAdded()) );
+                entryNode.setAttribute(EDITED_ATTR,   DateUtil.formatW3cDate(entry.getEdited()) );
                 
                 XmlUtil.createTextChild(entryNode, NOTE,    entry.getNote());
                 XmlUtil.createTextChild(entryNode, CONTENT, StringUtil.truncate(entry.getContent(), truncate));

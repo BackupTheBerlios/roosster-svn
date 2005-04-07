@@ -1,7 +1,15 @@
 
-Revision XX / 2005-04-XX / Benjamin Reitzammer
+Revision 68 / 2005-04-07 / Benjamin Reitzammer
 
 * splitted Constants.class into multiple interfaces
+* refactored EntryStore.getChangedEntries() to EntryStore.getEntriesByDate()
+* split Constants.class into Constants, VelocityConstants, ServletConstants
+* moved all date related methods form XmlUtil and StringUtil into DateUtil
+* implemented sync with del.icio.us
+* added Configuration.clearRequestArguments()
+* implemented property for forcing of a certain ContentTypeProcessor
+* making search request returns posts added in last 7 days
+* finished first version of del.icio.us sync
 
 Revision 64 / 2005-03-30 / Benjamin Reitzammer
 
@@ -11,7 +19,7 @@ Revision 64 / 2005-03-30 / Benjamin Reitzammer
 * implemented EntryStore.getChangedEntries(after, before)
 * added EntryStore.deleteEntries(URL[]) method
 * renamed index.html to jsclient.html and added new index.html
-* implemented ServletMapp.returnEmptyList() to fix a bug
+* implemented ServletMapper.returnEmptyList() to fix a bug
 * finished HTML-only web interface
 * added VelocityTemplateUtil
 * added Configuration.setProperty

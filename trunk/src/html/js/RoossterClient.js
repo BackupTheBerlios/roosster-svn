@@ -18,7 +18,7 @@ var DIV_ID_OUTPUTMESSAGES  = "output-messages";
 var DIV_ID_ENTRIESOUT      = "entries-out";
 var DIV_ID_LOADINGNOTE     = "loading-notification";
 var DIV_ID_ENTRYURLLINK    = "entry-url-link";
-var DIV_ID_CACHEDENTRYLINK = 'cachedentrylink';
+var DIV_ID_ACTIONLINKS     = 'actionlinks';
 var FORM_ID_ENTRYFORM      = "entryform";
 
 var ID_HEADER_QUERYSTRING = 'headerQueryStr';

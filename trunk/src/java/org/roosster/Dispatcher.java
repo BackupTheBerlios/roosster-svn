@@ -90,8 +90,6 @@ public class Dispatcher
         Configuration conf = registry.getConfiguration();
 
         try {
-            conf.setRequestArguments(reqArgs);
-            
             Command[] commands = getCommands(commandName);
             Output output = getOutput(commandName, outputMode);
             

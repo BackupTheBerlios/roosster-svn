@@ -31,11 +31,13 @@ import java.net.URL;
 
 import del.icio.us.Delicious;
 import del.icio.us.beans.Post;
+import del.icio.us.DeliciousUtils;
 import org.apache.log4j.Logger;
 
 import org.roosster.store.EntryStore;
 import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
+import org.roosster.input.UrlFetcher;
 import org.roosster.util.StringUtil;
 import org.roosster.Constants;
 import org.roosster.Command;
@@ -67,9 +69,16 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
     public static final String DELICIOUS_TAG_SEP   = " ";
     public static final String DELICIOUS_TAG_EMPTY = "system:unfiled";
     
+    // default for the pub: field for newly added entries in roosster
+    public static final boolean DEF_PUBLIC_STATUS        = true;
+    
     public static final String PROP_DELICIOUS_USER       = "delicious.username";
     public static final String PROP_DELICIOUS_PASS       = "delicious.password";
     public static final String PROP_DELICIOUS_LASTSYNC   = "delicious.lastsync";
+    
+    /** specifies if entries/posts are deleted from either system during sync, true by default 
+     */
+    public static final String PROP_DELICIOUS_DELETE     = "delicious.sync.delete";
     
     public static final String PROP_DELICIOUS_APIENDPOINT= "delicious.api.endpoint";
     public static final String DEF_DELICIOUS_APIENDPOINT = "http://del.icio.us/api/";    
@@ -144,10 +153,13 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
     {
         Configuration conf = registry.getConfiguration();
         
+        String deletePropStr = conf.getProperty(PROP_DELICIOUS_DELETE, "true");
+        boolean deleteProp = "true".equalsIgnoreCase(deletePropStr) ? true : false;
+        
         List allDelPosts = delicious.getAllPosts(); // remote call
 
-        EntryStore store = (EntryStore) registry.getPlugin("store");
-        EntryList allRsstEntries = store.getAllEntries(0, Integer.MAX_VALUE);
+        EntryStore store = (EntryStore) registry.getPlugin(Constants.PLUGIN_STORE);
+        EntryList allRsstEntries = store.getAllEntries(0, Integer.MAX_VALUE, false);
           
         // parse del.icio.us posts into map, to allow easy access by URL
         Map allPostsMap = new HashMap();
@@ -164,8 +176,9 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         List deleteDelicious = new ArrayList(); // contains Post objects
         List deleteRoosster = new ArrayList(); // contains Entry objects
         
-        List updateDelicious = new ArrayList(); // contains Entry objects
+        List updateDelicious = new ArrayList(); // contains Post objects
         List updateRoosster = new ArrayList(); // contains Entry objects
+        Map addToRoosster = new HashMap(); // contains Entry objects, keyed by URL
         
         for (int i = 0; i < allRsstEntries.size(); i++) {
             Entry entry = (Entry) allRsstEntries.get(i);
@@ -173,15 +186,20 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
             
             if ( post != null ) {
                 if ( !equal(post, entry) ) {
-                    // post and entry need to be merged and written to both systems
-                    LOG.debug(entry+" changed! Will be merged and updated in both systems!");
-                    updateDelicious.add(post);
+                    merge(post, entry);
                     updateRoosster.add(entry);
+                    
+                    // only post to del.icio.us if it's a public bookmark
+                    if ( entry.getPublic() ) {
+                        updateDelicious.add(post);
+                        LOG.debug(post.getHref()+" is public! Will be added/updated in del.icio.us!");
+                    }
                 } else {  
                     LOG.debug(entry+" didn't change! No action needed!");
                 }
                     
-                allPostsMap.remove(entry.getUrl()); 
+                if ( entry.getPublic() ) 
+                    allPostsMap.remove(entry.getUrl()); 
             } else {
                 volatileRoosster.add(entry);
             }
@@ -194,12 +212,12 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         
         for(int i = 0; i < volatileRoosster.size(); i++) {
             Entry entry = (Entry) volatileRoosster.get(i);
-            if ( lastSync.after(entry.getAdded()) ) {
-                LOG.debug(entry+" was deleted from del.icio.us! Will be deleted from roosster!");
+            if ( lastSync.after(entry.getAdded()) && entry.getPublic() ) {
+                LOG.debug(entry+" was deleted from del.icio.us! Will be deleted from roosster!\n");
                 deleteRoosster.add(entry);
-            } else {
-                LOG.debug(entry+" was added to roosster! Will be added to del.icio.us");
-                updateDelicious.add(entry);
+            } else if ( entry.getPublic() ) {
+                LOG.debug(entry+" was added to roosster and is public! Will be added to del.icio.us\n");
+                updateDelicious.add( entry2Post(entry) );
             }
         }
         
@@ -207,17 +225,110 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         for(int i = 0; i < volatileDelicious.size(); i++) {
             Post post = (Post) volatileDelicious.get(i);
             if ( lastSync.after(post.getTimeAsDate()) ) {
-                LOG.debug(post+" was deleted from roosster! Will be deleted from del.icio.us!");
+                LOG.debug(post.getHref()+" -- was deleted from roosster! Will be deleted from del.icio.us!\nAdded: "+post.getTimeAsDate()+"\n");
                 deleteDelicious.add(post);
             } else {
-                LOG.debug(post+" was added to del.icio.us! Will be added to roosster");
-                updateRoosster.add( post2Entry(post) );
+                LOG.debug(post.getHref()+" -- was added to del.icio.us! Will be added to roosster!\n Added: "+post.getTimeAsDate()+"\n");
+                Entry entry = post2Entry(post); 
+                addToRoosster.put(entry.getUrl(), entry);
             }
         }
+
+        // 
+        // write now to delicious
+        //
+        for(int i = 0; i < updateDelicious.size(); i++) {
+            Post post = (Post) updateDelicious.get(i);
+            
+            LOG.debug("Updating/Adding <"+post.getHref()+"> to del.icio.us!");
+            
+            Thread.sleep(1000);
+            boolean added = delicious.addPost(post.getHref(), post.getDescription(), 
+                                              post.getExtended(), post.getTag(), 
+                                              post.getTimeAsDate());
+            if ( !added )
+                LOG.warn("Failed to post "+post.getHref()+" to del.icious");
+        }        
         
+        // write changed entries to roosster
+        store.addEntries((Entry[]) updateRoosster.toArray(new Entry[0]), true); 
+        
+        // fetch contents of new URLs and add Entries to roosster
+        URL[] urls = (URL[]) addToRoosster.keySet().toArray(new URL[0]);
+        
+        if ( urls.length > 0 ) {
+            UrlFetcher fetcher = (UrlFetcher) registry.getPlugin(Constants.PLUGIN_FETCHER);
+            Entry[] fetchedEntries = fetcher.fetch(urls);
+            
+            for ( int i = 0; i < fetchedEntries.length; i++ ) {
+                Entry entry = (Entry) addToRoosster.get(fetchedEntries[i].getUrl());
+                if ( entry != null ) 
+                    fetchedEntries[i].overwrite(entry);
+            }
+            
+            store.addEntries(fetchedEntries, true);
+        }
+     
+        // should we delete?
+        if ( deleteProp ) {
+          
+            // delete from del.icio.us
+            for(int i = 0; i < deleteDelicious.size(); i++) {
+                Post post = (Post) deleteDelicious.get(i);        
+                
+                LOG.debug("DELETING "+post.getHref()+" from del.icio.us!");
+                            
+                Thread.sleep(1000);
+                if ( !delicious.deletePost(post.getHref()) )
+                    LOG.warn("Failed to DELETE "+post.getHref()+" from del.icious");
+            }
+            
+            // delete from roosster
+            LOG.debug("Deleting "+deleteRoosster.size()+" Entries from roosster now\n\n");
+            store.deleteEntries((Entry[]) deleteRoosster.toArray(new Entry[0]));
+        }
         
     }
 
+    
+    /**
+     * merges only tag list for now, and reports if title/description or note/extended
+     * are different
+     */
+    private void merge(Post post, Entry entry)
+    {
+        if ( !entry.getNote().equals(post.getExtended()) ) {
+            String note = entry.getNote();
+            String ext = post.getExtended();
+            
+            if ( "".equals(note) && !"".equals(ext) )
+                entry.setNote(ext);
+            else if ( !"".equals(note) && "".equals(ext) )
+                post.setExtended(note);
+            
+            LOG.debug("Note does not match on Entry/Post with URL "+entry.getUrl());
+        }
+        
+        if ( !entry.getTitle().equals(post.getDescription()) ) {
+            String title = entry.getTitle();
+            String desc = post.getDescription();
+            
+            if ( "".equals(title) && !"".equals(desc) )
+                entry.setTitle(desc);
+            else if ( !"".equals(title) && "".equals(desc) )
+                post.setDescription(title);
+          
+            LOG.debug("Title does not match on Entry/Post with URL "+entry.getUrl());
+        }
+
+        Set tagSet = new HashSet( Arrays.asList(entry.getTags()) );
+        tagSet.addAll( Arrays.asList( getTags(post) ) );
+        
+        String[] tags = (String[]) tagSet.toArray(new String[0]);
+        entry.setTags(tags);
+        post.setTag( StringUtil.join(tags, DELICIOUS_TAG_SEP) );
+    }
+    
     
     /**
      * does not use href/URL to determine equality, but only Title/Description,
@@ -234,17 +345,27 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         
         String[] entryTags = entry.getTags();
         Arrays.sort(entryTags);
-        String[] postTags = StringUtil.split(post.getTag(), DELICIOUS_TAG_SEP);
+        String[] postTags = getTags(post);
         Arrays.sort(postTags);
-        
-        // del.icio.us has no concept of "zero tags", if a post has no tags,
-        // it has the tag defined in DELICIOUS_TAG_EMPTY (cool, eeh?)
-        if ( postTags.length == 1 && DELICIOUS_TAG_EMPTY.equals(postTags[0]) )
-            postTags = new String[0];
         
         return Arrays.equals(entryTags, postTags);
     }
             
+    
+    /**
+     * 
+     */
+    private String[] getTags(Post post)
+    {
+        String[] postTags = StringUtil.split(post.getTag(), DELICIOUS_TAG_SEP);
+        
+        // del.icio.us has no concept of "zero tags", if a post has no tags,
+        // it has the tag defined in DELICIOUS_TAG_EMPTY (cool, eeh?)
+        if ( postTags.length == 1 && DELICIOUS_TAG_EMPTY.equals(postTags[0]) )
+            postTags = new String[0];  
+        
+        return postTags;
+    }
     
     /**
      * 'fix' post object, so that it contains no <code>null</code>-String objects
@@ -261,30 +382,13 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
     
     
     /**
-     * overwrite the post object with data stored in entry object and
-     * return post object
+     *
      */
-    private Post overwritePost(Post post, Entry entry)
+    private Post entry2Post(Entry entry) throws Exception
     {
-        post.setTag( StringUtil.join(entry.getTags(), " ") );
-        post.setDescription(entry.getTitle());
-        post.setExtended(entry.getNote());
-        return post;
-    }
-    
-    
-    /**
-     * overwrite the entry object with data stored in post object and
-     * return post object
-     */
-    private Entry overwriteEntry(Post post, Entry entry)
-    {
-        entry.setTags( StringUtil.split(post.getTag(), DELICIOUS_TAG_SEP) );
-        entry.setTitle(post.getDescription());
-        entry.setNote(post.getExtended());
-        entry.setAdded(post.getTimeAsDate());
-
-        return entry;
+        return new Post(entry.getUrl().toString(), entry.getTitle(), entry.getNote(),
+                        "", StringUtil.join(entry.getTags(), DELICIOUS_TAG_SEP), 
+                        DeliciousUtils.getUTCDate(entry.getAdded()) );      
     }
     
     
@@ -294,73 +398,14 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
     private Entry post2Entry(Post post) throws Exception
     {
         Entry entry = new Entry(new URL(post.getHref()));
-        entry.setTags( StringUtil.split(post.getTag(), DELICIOUS_TAG_SEP) );
+        entry.setTags( getTags(post) );
         entry.setTitle(post.getDescription());
         entry.setNote(post.getExtended());
         entry.setAdded(post.getTimeAsDate());
+        entry.setPublic(true);
 
         return entry;
     }
     
 }
 
-
-/* 
-
-
-        List addToDelicious = new ArrayList(); // contains Entry objects
-        for (int i = 0; i < allEntries.size(); i++) {
-            Entry entry = (Entry) allEntries.get(i);
-            
-            Post post = (Post) allPostsMap.get(entry.getUrl());
-            
-            if ( post != null ) {
-                if ( !equal(post, entry) ) 
-                    addToDelicious.add( post2Entry(post).overwrite(entry) );
-                else  
-                    LOG.debug(entry+" didn't change! No action needed!");
-                    
-                allPostsMap.remove(entry.getUrl()); 
-            } else {
-                // entry not in del.icio.us yet, add it
-                addToDelicious.add(entry); 
-            }
-
-        }
-
-        // loop over addToDelicious and post Entries
-        Iterator addEntriesIter = addToDelicious.iterator();
-        while ( addEntriesIter.hasNext() ) {
-            Entry entry = (Entry) addEntriesIter.next();
-            
-            LOG.debug("Updating/Adding <"+entry+"> to del.icio.us!");
-            
-            Thread.sleep(1000);
-            boolean added = delicious.addPost(entry.getUrl().toString(), 
-                                      entry.getTitle(), 
-                                      entry.getNote(),
-                                      StringUtil.join(entry.getTags(), DELICIOUS_TAG_SEP), 
-                                      entry.getAdded());
-                                      
-            if ( !added )
-                LOG.warn(entry+" NOT posted to del.icious");
-        }
-        LOG.info("Updated/Added "+addToDelicious.size()+" entries to del.icio.us");
-
-        // see if allDelMap contains any posts, if this is the
-        // case, delete them from del.icio.us if respective option is set
-        if ( deleteFromSlave ) {
-            Iterator deleteEntriesIter = allPostsMap.values().iterator();
-            while ( deleteEntriesIter.hasNext() ) {
-                Post post = (Post) deleteEntriesIter.next();
-                
-                LOG.debug("Deleting <"+post.getHref()+"> from del.icio.us! Not in roosster!");
-             
-                Thread.sleep(1000);
-                if ( !delicious.deletePost(post.getHref()) )
-                    LOG.warn("Post "+post.getHref()+" NOT deleted from del.icious");
-            }
-            
-            LOG.info("Deleted "+allPostsMap.size()+" entries from del.icio.us");
-        }
- */  

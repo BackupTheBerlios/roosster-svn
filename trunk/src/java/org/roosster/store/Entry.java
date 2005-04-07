@@ -37,6 +37,7 @@ import org.apache.log4j.Logger;
 
 import org.roosster.util.StringUtil;
 import org.roosster.util.XmlUtil;
+import org.roosster.util.DateUtil;
 import org.roosster.Constants;
 
 /**
@@ -52,7 +53,7 @@ public class Entry
     public static final String TAG_SEPARATOR= Constants.TAG_SEPARATOR;
   
     // this is used internally, to provide an (disk-) paging iterator
-    // over all entries (every entry has this set 
+    // over all entries (every entry has this set to the same value)
     public static final String ENTRY_MARKER = "roosster.entry";
 
     public static final String ALL          = "all";
@@ -70,6 +71,9 @@ public class Entry
     public static final String TAGS         = "tags";
     public static final String PUBLIC       = "pub";
     public static final String RAW          = "raw";
+    
+    private static final String __ADDED     = "_unindexed_added"; 
+    private static final String __EDITED    = "_unindexed_edited"; 
 
     public static final float  TITLE_BOOST  = 100;
     public static final float  TAG_BOOST    = 5;
@@ -80,7 +84,7 @@ public class Entry
     {URL, TITLE, AUTHOR, AUTHOREMAIL, FILETYPE};
     
     public static final String[] INTEGER_SORT_FIELDS     = new String[]
-    {MODIFIED, ADDED, ISSUED};
+    {MODIFIED, ADDED, ISSUED, EDITED};
     
     private float score = 0;
     
@@ -126,11 +130,12 @@ public class Entry
                 setRaw(           doc.get(RAW) );
                 setNote(          doc.get(NOTE) );
                 setTags(          StringUtil.split(doc.get(TAGS), TAG_SEPARATOR) );
-                setIssued(        StringUtil.parseEntryDate( doc.get(ISSUED) ) );
-                setModified(      StringUtil.parseEntryDate( doc.get(MODIFIED) ) );
-                setAdded(         StringUtil.parseEntryDate( doc.get(ADDED) ) );
-                setEdited(        StringUtil.parseEntryDate( doc.get(EDITED) ) );
+                setIssued(        DateUtil.parseSearchableEntryDate( doc.get(ISSUED) ) );
+                setModified(      DateUtil.parseSearchableEntryDate( doc.get(MODIFIED) ) );
                 setPublic(        StringUtil.parseBoolean( doc.get(PUBLIC) ) );
+                
+                setAdded(         DateUtil.parsePreciseEntryDate( doc.get(__ADDED) ) );
+                setEdited(        DateUtil.parsePreciseEntryDate( doc.get(__EDITED) ) );
             }
         } catch (MalformedURLException ex) {
             throw new IllegalStateException("URL '"+doc.get(URL)+"' is not a valid URL: "+ex.getMessage());
@@ -150,12 +155,15 @@ public class Entry
         doc.add( Field.Keyword(AUTHOR,        author) );
         doc.add( Field.Keyword(AUTHOREMAIL,   authorEmail) );
         doc.add( Field.Keyword(FILETYPE,      fileType) );
-        doc.add( Field.Keyword(MODIFIED,      StringUtil.formatEntryDate(modified)) );
-        doc.add( Field.Keyword(ADDED,         StringUtil.formatEntryDate(added)) );
-        doc.add( Field.Keyword(EDITED,        StringUtil.formatEntryDate(edited)) );
-        doc.add( Field.Keyword(ISSUED,        StringUtil.formatEntryDate(issued)) );
+        doc.add( Field.Keyword(MODIFIED,      DateUtil.formatSearchableEntryDate(modified)) );
+        doc.add( Field.Keyword(ADDED,         DateUtil.formatSearchableEntryDate(added)) );
+        doc.add( Field.Keyword(EDITED,        DateUtil.formatSearchableEntryDate(edited)) );
+        doc.add( Field.Keyword(ISSUED,        DateUtil.formatSearchableEntryDate(issued)) );
         doc.add( Field.Keyword(PUBLIC,        pub ? "true" : "false") );
         doc.add( Field.Text(CONTENT,          content.toString()) );
+        
+        doc.add( Field.UnIndexed(__ADDED,  DateUtil.formatPreciseEntryDate(added)) );
+        doc.add( Field.UnIndexed(__EDITED, DateUtil.formatPreciseEntryDate(edited)) );
         
         Field titleField =  Field.Keyword(TITLE, title);
         titleField.setBoost(TITLE_BOOST); 
@@ -181,7 +189,7 @@ public class Entry
      */
     public String toString()
     {
-        return "Entry: "+url.toString();
+        return "Entry: "+url.toString()+" Added "+added;
     }
 
 

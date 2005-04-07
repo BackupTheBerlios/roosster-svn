@@ -27,6 +27,7 @@
 package org.roosster.commands;
 
 import java.util.Map;
+import java.util.Date;
 
 import org.roosster.Constants;
 import org.roosster.Command;
@@ -36,8 +37,6 @@ import org.roosster.store.EntryStore;
 import org.roosster.store.Entry;
 
 /**
- * If no query String is provided in the <code>args</code>-Map, then the current 
- * portion of <code>allEntries</code> is returned
  * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
@@ -50,11 +49,13 @@ public class SearchCommand extends AbstractCommand implements Command
     {
         String query = (String) arguments.get(Constants.ARG_QUERY);
         
+        EntryStore store = (EntryStore) registry.getPlugin("store");
         if ( query != null && !"".equals(query) ) {
-            EntryStore store = (EntryStore) registry.getPlugin("store");
             output.setEntries( store.search(query) );
         } else {
-            output.addOutputMessage("No queryString specified. Can't execute search!");
+            output.addOutputMessage("No queryString specified. Returning recently added Entries!");
+            Date oneWeekAgo = new Date(System.currentTimeMillis() - 604800000); 
+            output.setEntries( store.getEntriesByDate(Entry.ADDED, oneWeekAgo,null) );
         }
     }
 
@@ -63,6 +64,6 @@ public class SearchCommand extends AbstractCommand implements Command
      */
     public String getName()
     {
-        return "Search Result";
+        return "Search Entries";
     }
 }

@@ -56,62 +56,6 @@ public class StringUtil
         else
             return false;
     }
-    
-    
-    /**
-     * 
-     */
-    public static String formatDisplayDate(Date date)
-    {
-        if ( date == null )
-            return "";
-        
-        try {
-            return XmlUtil.getDateFormat(Constants.DISPLAY_DATE_FORMAT).format(date);
-        } catch (Exception ex) {
-            LOG.warn("Exception while converting Date to String", ex);
-            return "";
-        }
-    }
-    
-    
-    /**
-     * 
-     */
-    public static String formatEntryDate(Date date)
-    {
-        if ( date == null )
-            return "";
-        
-        try {
-            return XmlUtil.getDateFormat(Constants.ENTRY_DATE_FORMAT_LONG).format(date);
-        } catch (Exception ex) {
-            LOG.warn("Exception while converting Date to String", ex);
-            return "";
-        }
-    }
-    
-    
-    /**
-     * 
-     */
-    public static Date parseEntryDate(String dateStr)
-    {
-        if ( dateStr == null || "".equals(dateStr) )
-            return null;
-        
-        try {
-            return XmlUtil.getDateFormat(Constants.ENTRY_DATE_FORMAT_LONG).parse(dateStr);
-        } catch(java.text.ParseException ex) {
-            try {
-                return XmlUtil.getDateFormat(Constants.ENTRY_DATE_FORMAT_SHORT).parse(dateStr);
-            } catch(Exception ex1) {
-                // TODO more precise exception here
-                throw new NumberFormatException(ex1.getMessage());
-            }
-        }
-        
-    }
 
 
     /**

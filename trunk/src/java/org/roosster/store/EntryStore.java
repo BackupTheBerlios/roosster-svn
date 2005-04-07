@@ -47,6 +47,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.index.*;
 
 import org.roosster.util.StringUtil;
+import org.roosster.util.DateUtil;
 import org.roosster.*;
 
 /**
@@ -213,46 +214,49 @@ public class EntryStore implements Plugin, Constants
     /**
      * 
      */
-    public EntryList getAllEntries() throws IOException
+    public EntryList getAllEntries(boolean pub) throws IOException
     {
-        return getAllEntries(getOffset(), getLimit());
+        return getAllEntries(getOffset(), getLimit(), pub);
     }
 
 
     /**
-     * provides unsorted, sequential access to all Entries (based on
-     * Lucene's document number).
+     * @param pub if true, this method returns only Entries which pub: field is 
+     * set to "true", if false all Entries are returned
      */
-    public EntryList getAllEntries(int offset, int limit) throws IOException
+    public EntryList getAllEntries(int offset, int limit, boolean pub) throws IOException
     {
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
         
-        IndexReader reader = null;
-        EntryList entries = null;
-        try {
-            reader = getReader();
-            int numdocs = reader.numDocs();
+        IndexSearcher searcher = null;
+        try {      
             
-            entries = new EntryList(numdocs);
+            BooleanQuery query = new BooleanQuery();
             
-            if ( numdocs > offset ) {
-                int lastElem = numdocs >= offset+limit ? offset+limit : numdocs;
-
-                for (int i = offset; i < lastElem; i++) {
-                    if ( !reader.isDeleted(i) ) 
-                        entries.add( new Entry(reader.document(i), 0) );
-                }
-                
-                LOG.info("Showing Entries "+offset+" to "+ lastElem);      
+            TermQuery term = new TermQuery(new Term(Entry.ENTRY_MARKER, Entry.ENTRY_MARKER));
+            query.add(term, true, false);
+            
+            if ( pub ) {
+                TermQuery pubTerm = new TermQuery(new Term(Entry.PUBLIC, "true"));
+                query.add(pubTerm, true, false);
             }
             
+            searcher = new IndexSearcher(indexDir);
+            
+            Sort sort = determineSort();
+            LOG.debug("Sort Instance: "+sort);
+            
+            Hits hits = searcher.search(query, sort);        
+    
+            LOG.debug("Found "+hits.length()+" matches for query: <"+query+">");            
+            
+            return fillEntryList(hits, offset, limit);
+            
         } finally {
-            if ( reader != null ) 
-                reader.close(); 
+            if ( searcher != null ) 
+                searcher.close(); 
         }
-
-        return entries;
     }
     
       
@@ -264,57 +268,70 @@ public class EntryStore implements Plugin, Constants
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
 
-        QueryParser parser = new QueryParser(Entry.ALL, createAnalyzer());
-        parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
-        Query query = parser.parse(queryStr);
-
-        LOG.info("Executing Query: "+query);
-
-        IndexSearcher searcher = new IndexSearcher(indexDir);
-        
-        Sort sort = determineSort();
-        LOG.debug("Sort Instance: "+sort);
-        
-        Hits hits = searcher.search(query, sort);
-        
-        LOG.info("Found "+hits.length()+" matches for query: <"+query+">");
-        
-        return fillEntryList(hits);
+        IndexSearcher searcher = null;
+        try {     
+            QueryParser parser = new QueryParser(Entry.ALL, createAnalyzer());
+            parser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
+            Query query = parser.parse(queryStr);
+    
+            searcher = new IndexSearcher(indexDir);
+            
+            Sort sort = determineSort();
+            LOG.debug("Sort Instance: "+sort);
+            
+            Hits hits = searcher.search(query, sort);
+            
+            LOG.info("Found "+hits.length()+" matches for query: <"+query+">");
+            
+            return fillEntryList(hits);
+            
+        } finally {
+            if  ( searcher != null )
+                searcher.close();
+        }
     }
 
     
     /**
+     * @param field
+     * @param after default to current Date
+     * @param before default to current Date
      * @return an {@link EntryList EntryList}-objects that's never <code>null</code>
      */
-    public EntryList getChangedEntries(Date after, Date before) throws IOException
+    public EntryList getEntriesByDate(String field, Date after, Date before) throws IOException
     {
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
+        
+        if ( field == null || "".equals(field) )
+            throw new IllegalArgumentException("Parameter 'field' is not allowed to be null or empty");
         
         if ( after == null )
             after = new Date();
         if ( before == null )
             before = new Date();
         
-        // TODO wrap this in a try/finally, to ensure IndexSearcher is
-        // always closed
-        
-        LOG.debug("Getting Entries edited after "+after+" and before "+before);
-        
-        Term afterTerm = new Term(Entry.EDITED, StringUtil.formatEntryDate(after));
-        Term beforeTerm = new Term(Entry.EDITED, StringUtil.formatEntryDate(before));
-        
-        Query query = new RangeQuery(afterTerm, beforeTerm, true); // search inclusively
-        IndexSearcher searcher = new IndexSearcher(indexDir);
-        
-        Sort sort = determineSort();
-        LOG.debug("Sort Instance: "+sort);
-        
-        Hits hits = searcher.search(query, sort);        
-
-        LOG.info("Found "+hits.length()+" matches for query: <"+query+">");
-        
-        return fillEntryList(hits, 0, Integer.MAX_VALUE);
+        IndexSearcher searcher = null;
+        try {        
+            Term afterTerm = new Term(field, DateUtil.formatSearchableEntryDate(after));
+            Term beforeTerm = new Term(field, DateUtil.formatSearchableEntryDate(before));
+            
+            Query query = new RangeQuery(afterTerm, beforeTerm, true); // search inclusively
+            searcher = new IndexSearcher(indexDir);
+            
+            Sort sort = determineSort();
+            LOG.debug("Sort Instance: "+sort);
+            
+            Hits hits = searcher.search(query, sort);        
+    
+            LOG.debug("Found "+hits.length()+" matches for query: <"+query+">");
+            
+            return fillEntryList(hits, 0, Integer.MAX_VALUE);
+            
+        } finally {
+            if  ( searcher != null )
+                searcher.close();
+        }
     }
     
 

@@ -35,6 +35,14 @@ public interface Constants
 {
     /**
      */
+    public static final String PLUGIN_STORE      = "store";
+    
+    /**
+     */
+    public static final String PLUGIN_FETCHER = "fetcher";
+    
+    /**
+     */
     public static final String APP_URI      = "http://www.roosster.org";
     
     /**
@@ -47,11 +55,11 @@ public interface Constants
 
     /**
      */
-    public static final String ENTRY_DATE_FORMAT_SHORT = "yyyyMMddHHmm";
+    public static final String ENTRY_DATE_FORMAT_SHORT = "yyyyMMdd";
 
     /**
      */
-    public static final String ENTRY_DATE_FORMAT_LONG  = "yyyyMMdd";
+    public static final String ENTRY_DATE_FORMAT_LONG  = "yyyyMMddHHmmZ";
         
     /** TODO make this configurable
      */
@@ -99,6 +107,10 @@ public interface Constants
 
     /**
      */
+    public static final String PROP_TIMEZONE    = "date.timezone";
+
+    /**
+     */
     public static final String PROP_OUTPUTMODE  = "output.mode";
     
     /** if the value of this property is set to a value below zero, no output is truncated.
@@ -117,6 +129,9 @@ public interface Constants
      */
     public static final String PROP_INPUT_PROC = "input.processor";
 
+    /**
+     */
+    public static final String PROP_FETCH_CONTENT = "fetch.content";
 
     // args are used in commands, and only an a request basis (although they could be
     // defined in property files, this wouldn't make much sense

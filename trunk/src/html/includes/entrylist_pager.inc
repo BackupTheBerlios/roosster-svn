@@ -1,5 +1,6 @@
 <div id="entrylist-pager">
-  #set ( $queryString = $req.getParameter("query") )
+  #set ( $queryString = $req.getParameter('query') )
+  #set ( $sortfield = $req.getParameter('output.sortfield') ) 
       
   #if ( $entryList.offset  <= 0)  #set( $offset = 0 )
   #else #set( $offset = $entryList.offset )
@@ -22,6 +23,19 @@
           Showing results $offset - 
           #if ( $nextOffset > $entryList.totalSize ) $entryList.totalSize #else $nextOffset #end 
           of $entryList.totalSize
+        </td>
+        <td class="tdalignright">
+          <select name="output.sortfield">
+            <option value="">Relevance</option>
+            <option value="url" #if($sortfield == 'url')selected="selected"#end>URL</option>
+            <option value="filetype" #if($sortfield == 'filetype')selected="selected"#end>Type</option>
+            <option value="author" #if($sortfield == 'author')selected="selected"#end>Author</option>
+            <option value="authormail" #if($sortfield == 'authormail')selected="selected"#end>Author-Email</option>
+            <option value="added" #if($sortfield == 'added')selected="selected"#end>Added Date</option>
+            <option value="edited" #if($sortfield == 'edited')selected="selected"#end>Edited Date</option>
+            <option value="issued" #if($sortfield == 'issued')selected="selected"#end>Issued Date</option>
+            <option value="modified" #if($sortfield == 'modified')selected="selected"#end>Modified Date</option>
+          </select>
         </td>
         <td class="tdalignright">
     #if ( $entryList.size() < $entryList.totalSize )

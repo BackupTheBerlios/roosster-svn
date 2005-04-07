@@ -38,6 +38,7 @@ import org.roosster.store.EntryStore;
 import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
 import org.roosster.input.UrlFetcher;
+import org.roosster.Configuration;
 import org.roosster.Command;
 import org.roosster.Constants;
 import org.roosster.Registry;
@@ -61,34 +62,48 @@ public class AddUrlsCommand extends AbstractCommand implements Command, Constant
         EntryList entryList = (EntryList) arguments.get(PARAM_ENTRIES);
         
         if ( entryList != null && entryList.size() > 0 ) {
-          
+            Configuration conf = registry.getConfiguration();
+            
             // shall existing entries get overwritten, or an exception thrown?
-            String forceStr = (String) arguments.get(ARG_FORCE);
-            boolean force = Boolean.valueOf(forceStr == null ? "false" : forceStr ).booleanValue();
+            boolean force = Boolean.valueOf(conf.getProperty(ARG_FORCE, "false")).booleanValue();
+            boolean pub = Boolean.valueOf(conf.getProperty(ARG_PUBLIC, "false")).booleanValue();
+            boolean fetch = Boolean.valueOf(conf.getProperty(PROP_FETCH_CONTENT, "true")).booleanValue();
 
-            URL[] urls = new URL[entryList.size()];
-            for ( int i = 0; i < entryList.size(); i++ ) {
-                urls[i] = entryList.getEntry(i).getUrl();
-            } 
-            
-            UrlFetcher fetcher = (UrlFetcher) registry.getPlugin("fetcher");
-            Entry[] fetchedEntries = fetcher.fetch(urls);
-            
-            for ( int i = 0; i < fetchedEntries.length; i++ ) {
-                Entry entry = entryList.getEntry(fetchedEntries[i].getUrl());
+            Entry[] entries = new Entry[0];
+            if ( fetch ) {
+              
+                URL[] urls = new URL[entryList.size()];
+                for ( int i = 0; i < entryList.size(); i++ ) {
+                    urls[i] = entryList.getEntry(i).getUrl();
+                } 
                 
-                // overwrite the fetched values, if others have been provided (in entryList)
-                if ( entry != null )
-                    fetchedEntries[i].overwrite(entry);
-            } 
+                UrlFetcher fetcher = (UrlFetcher) registry.getPlugin(Constants.PLUGIN_FETCHER);
+                entries = fetcher.fetch(urls);
                 
+                for ( int i = 0; i < entries.length; i++ ) {
+                    Entry entry = entryList.getEntry(entries[i].getUrl());
+                    
+                    // overwrite the fetched values, if others have been provided (in entryList)
+                    if ( entry != null ) 
+                        entries[i].overwrite(entry);
+                    
+                    entries[i].setPublic(pub);
+                } 
+                    
+            } else {
+                entries = (Entry[]) entryList.toArray(new Entry[0]);
+                for ( int i = 0; i < entries.length; i++ ) {
+                    entries[i].setPublic(pub);
+                }
+            }
+            
             // now finally store entries in index
-            EntryStore store = (EntryStore) registry.getPlugin("store");
-            store.addEntries(fetchedEntries, force);
+            EntryStore store = (EntryStore) registry.getPlugin(Constants.PLUGIN_STORE);
+            store.addEntries(entries, force);
             
             // output informative message to user
-            output.addOutputMessage("Number of added Entries: "+fetchedEntries.length);
-            output.addEntries(fetchedEntries);
+            output.addOutputMessage("Number of added Entries: "+entries.length);
+            output.addEntries(entries);
             
         } else {
             LOG.warn("Didn't add any Entries in "+getClass()+", as the list was empty!");

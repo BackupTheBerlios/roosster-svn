@@ -220,6 +220,14 @@ public class Configuration
 
     /**
      */
+    public void clearRequestArguments()
+    {
+        setRequestArguments(new HashMap());
+    }
+
+
+    /**
+     */
     public void setRequestArguments(Map args)
     {
         reqArgs.set(args);

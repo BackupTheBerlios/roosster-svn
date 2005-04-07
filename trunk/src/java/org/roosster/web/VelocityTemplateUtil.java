@@ -30,6 +30,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
  
 import org.roosster.util.StringUtil;
+import org.roosster.util.DateUtil;
 import org.roosster.Constants;
 import org.roosster.Registry;
 
@@ -79,7 +80,7 @@ public class VelocityTemplateUtil
      */
     public String searchableDate(Date date)  
     {
-        return StringUtil.formatEntryDate(date);
+        return DateUtil.formatSearchableEntryDate(date);
     }  
 
     
@@ -88,6 +89,6 @@ public class VelocityTemplateUtil
      */
     public String displayDate(Date date)  
     {
-        return StringUtil.formatDisplayDate(date);
+        return DateUtil.formatDisplayDate(date);
     }  
 }

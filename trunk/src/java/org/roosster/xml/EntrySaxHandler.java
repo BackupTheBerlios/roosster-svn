@@ -45,6 +45,7 @@ import org.roosster.OperationException;
 import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
 import org.roosster.util.XmlUtil;
+import org.roosster.util.DateUtil;
 import org.roosster.util.StringUtil;
 
 /**
@@ -56,7 +57,7 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
 {
     private static Logger LOG = Logger.getLogger(EntrySaxHandler.class.getName());
 
-    private DateFormat  dateFormat         = XmlUtil.getDateFormat();
+    private DateFormat  dateFormat         = DateUtil.getDateFormat();
     
     private EntryList   entries            = new EntryList();
     
@@ -190,7 +191,7 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
     private Date parseDate(String dateStr) throws SAXException
     {
         try {
-            return XmlUtil.parseW3cDate(dateStr);
+            return DateUtil.parseW3cDate(dateStr);
         } catch(ParseException ex) {
             throw new SAXException("Invalid date format: "+dateStr, ex);
         }

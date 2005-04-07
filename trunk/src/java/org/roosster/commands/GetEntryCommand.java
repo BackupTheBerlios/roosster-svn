@@ -31,6 +31,7 @@ import java.net.URL;
 
 import org.roosster.store.EntryStore;
 import org.roosster.store.Entry;
+import org.roosster.Constants;
 import org.roosster.Command;
 import org.roosster.Registry;
 import org.roosster.Output;
@@ -41,7 +42,6 @@ import org.roosster.Output;
  */
 public class GetEntryCommand extends AbstractCommand implements Command
 {
-    public static final String ARG_URL = "url";
     
     /**
      *
@@ -49,9 +49,9 @@ public class GetEntryCommand extends AbstractCommand implements Command
     public void execute(Map arguments, Registry registry, Output output)
                  throws Exception
     {
-        validateArguments(arguments, new String[] {ARG_URL});
+        validateArguments(arguments, new String[] {Constants.ARG_URL});
 
-        URL url = new URL((String) arguments.get(ARG_URL));
+        URL url = new URL((String) arguments.get(Constants.ARG_URL));
         
         LOG.debug("Trying to get Entry with URL '"+url+"'");
         

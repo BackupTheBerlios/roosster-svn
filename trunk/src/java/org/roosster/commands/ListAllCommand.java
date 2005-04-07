@@ -49,7 +49,7 @@ public class ListAllCommand extends AbstractCommand implements Command
                  throws Exception
     {
         EntryStore store = (EntryStore) registry.getPlugin("store");
-        output.setEntries( store.getAllEntries() );
+        output.setEntries( store.getAllEntries(false) );
     }
 
 

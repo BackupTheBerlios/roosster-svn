@@ -26,9 +26,6 @@
  */
 package org.roosster.util;
 
-import java.util.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -58,52 +55,6 @@ public class XmlUtil implements Constants
     private static Logger LOG = Logger.getLogger(XmlUtil.class.getName());
 
 
-    /**
-     * @return a <code>SimpleDateFormat</code> instance initialized with the 
-     * {@link org.roosster.Constants#W3C_DATEFORMAT Constants.W3C_DATEFORMAT} 
-     * pattern.
-     */
-    public static DateFormat getDateFormat() 
-    {
-        return getDateFormat(Constants.W3C_DATEFORMAT);
-    }
-
-    
-    /**
-     * 
-     */
-    public static DateFormat getDateFormat(String format) 
-    {
-        return new SimpleDateFormat(format);
-    }
-
-    
-    /**
-     */
-    public static String formatW3cDate(Date date) throws ParseException
-    {
-        if ( date == null )
-            return "";
-        
-        String dateStr = getDateFormat().format(date);
-        return dateStr.substring(0, dateStr.length()-2) +":"+ dateStr.substring(dateStr.length()-2);
-    }
-      
-      
-    /**
-     */
-    public static Date parseW3cDate(String dateStr) throws ParseException
-    {
-        if ( dateStr == null || "".equals(dateStr) )
-            return null;
-        
-        int len = dateStr.length();
-        
-        if ( ":".equals(dateStr.substring(len-3, len-2)) )
-            return getDateFormat().parse(dateStr.substring(0, len-3) + dateStr.substring(len-2));
-        else
-            return getDateFormat().parse(dateStr);
-    }
     
     
     /**

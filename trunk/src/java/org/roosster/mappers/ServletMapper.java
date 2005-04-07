@@ -178,9 +178,12 @@ public class ServletMapper extends HttpServlet
         Output output = null;
         String commandName = null;
         try {
-          
+            Configuration conf = registry.getConfiguration();
+            
             commandName = getCommandName(method, req);
             Map args = parseRequestArguments(req);
+            
+            conf.setRequestArguments(args);
             
             // run commands            
             output = dispatcher.run(commandName, getOutputMode(), args);
@@ -195,6 +198,9 @@ public class ServletMapper extends HttpServlet
                 output.output( resp.getWriter() );
             }
           
+            // reset 
+            conf.clearRequestArguments();
+            
         } catch (Exception ex) {
             processException(method, req, resp, output, commandName, ex);
         }

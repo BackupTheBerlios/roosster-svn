@@ -102,6 +102,8 @@ public class CliMapper
         // now on with the action
         Registry registry = new Registry(getClass().getResourceAsStream(PROP_FILE), cmdLine);
 
+        registry.getConfiguration().setRequestArguments(cmdLine);
+        
         String outputMode = registry.getConfiguration().getProperty(Constants.PROP_OUTPUTMODE, 
                                                                     DEF_OUTPUT_MODE);
         

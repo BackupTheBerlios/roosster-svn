@@ -9,6 +9,7 @@
  */
 ## velocity helper definitions
 #set ($linkColor        = '#33a1ff')
+#set ($linkHoverBgColor = '#fffac7')
 #set ($headerColor      = '#33a1ff')
 #set ($tagDatesColor    = '#008aff')
 #set ($inputFocusColor  = '#EFEFEF')
@@ -16,7 +17,7 @@
 #set ($infoColor        = '#FAD163')
 #set ($loadingColor     = '#00FF0B')
 #set ($editLinkColor    = '#9FFFAC')
-#set ($deleteLinkColor  = '#FFAFAF')
+#set ($deleteLinkColor  = '#ff2727')
 #set ($textColor        = 'black')
 #set ($bgColor          = 'white')
 #set ($headerFontColor  = 'white')
@@ -35,13 +36,13 @@
 .entry-tags                   { margin:0px 0px 0px -30px; border-bottom:1px solid black; }
 .entry-tags-table             { color:$tagDatesColor; width:100%; font-size:x-small; }
 
-.entrylist-editlink           { width:150px; vertical-align:top; text-align:center;}
+.entrylist-editlink           { width:150px; vertical-align:top; text-align:center; }
 .entrylist-editlink a         { font-size:small; display:block; padding:2px;}
-.entrylist-editlink a:hover   { background-color:$editLinkColor; }
+.entrylist-editlink a:hover   { background-color:$editLinkColor; font-weight:bold;}
 
 .entrylist-deletelink         { width:150px; vertical-align:top; text-align:center; }
 .entrylist-deletelink a       { font-size:small; display:block; padding:2px; }
-.entrylist-deletelink a:hover { background-color:$deleteLinkColor; }
+.entrylist-deletelink a:hover { background-color:$deleteLinkColor; color:white; font-weight:bold;}
 
 #entrylist-pager {clear:both;}
 
@@ -64,16 +65,25 @@ textarea { height:100px; }
 .action-links { text-align:center; font-size:small; }
 .action-links a { float:left; display:block; width:175px; padding:2px;  }
 
-.detail-delete-link:hover { background-color:$deleteLinkColor; }
+.detail-delete-link:hover { background-color:$deleteLinkColor; color:white; font-weight:bold; }
 
 #indexedcontent { display:none; overflow:auto; border:1px solid $tagDatesColor; width:500px; height:130px;}
+
+
+/*
+ * Add Tab
+ */
+#advanced-add { padding:20px 0px 0px 30px; font-size:small; width:400px;}
+#advanced-add td { font-size:small; vertical-align:top; padding-bottom:10px;}
+#advanced-add td input { vertical-align:bottom;}
+#advanced-add fieldset legend { font-weight:bold; }
 
 
 /*
  * General Elements 
  */
 a       { color:$linkColor; text-decoration:none; }
-a:hover { background-color:$inputFocusColor; }
+a:hover { background-color:$linkHoverBgColor; }
 dfn     { border-bottom:dotted 1px black; font-style:normal;}
 body    { margin:0px;padding:0px; font:Arial 1em normal; }
 
