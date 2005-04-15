@@ -36,7 +36,7 @@ Web Interface
 
 API
 =========
-* implement tag fetching
+* implement tag fetching, include frequency of tags in output
 * configurable authentication
 * make sure response codes are correct 
 * implement tag API
