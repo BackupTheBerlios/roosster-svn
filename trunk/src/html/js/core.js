@@ -8,6 +8,22 @@
  * See http://www.opensource.org/licenses/artistic-license.php for details
  */
  
+var DIV_ID_ADVANCED_ADD	  = "advanced-add";
+var DIV_ID_INDEXEDCONTENT = "indexedcontent";
+
+/**
+ * this function is executed in every body.onload event
+ */
+function core_init() {
+	var hideDivs = [DIV_ID_ADVANCED_ADD, DIV_ID_INDEXEDCONTENT];
+	
+	for (var i = 0; i < hideDivs.length; i++) {
+		var d = getById(hideDivs[i]);
+		if ( d ) d.style.display = "none";
+	}
+	
+}
+ 
 /**
  */
 function toggleDisplay(currId) {

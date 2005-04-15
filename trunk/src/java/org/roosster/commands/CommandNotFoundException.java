@@ -34,6 +34,8 @@ import org.roosster.OperationException;
  */
 public class CommandNotFoundException extends OperationException 
 {
+    private static final long serialVersionUID = 3763098544357389368L;
+    
     private String name = null;
 
     /**

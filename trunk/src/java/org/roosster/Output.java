@@ -26,22 +26,20 @@
  */
 package org.roosster;
 
-import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import org.apache.log4j.Logger;
 
+import org.apache.log4j.Logger;
+import org.roosster.output.InvalidOutputModeException;
+import org.roosster.output.OutputMode;
 import org.roosster.store.Entry;
 import org.roosster.store.EntryList;
-import org.roosster.output.OutputMode;
-import org.roosster.output.InvalidOutputModeException;
-import org.roosster.util.StringUtil;
 
 
 /**

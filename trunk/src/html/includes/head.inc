@@ -19,7 +19,7 @@
   <style type="text/css"> @import url($baseurl/styles.css); </style>
   <script type="text/javascript" src="$baseurl/js/core.js" ></script>
 </head>
-<body>
+<body onload="core_init();">
   <div id="roosster">
     <div id="headernote">
       <form action="$baseurl/application/search" method="get" enctype="application/x-www-form-urlencoded">

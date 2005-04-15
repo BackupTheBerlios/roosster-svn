@@ -26,19 +26,17 @@
  */
 package org.roosster.xml;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+
 import org.apache.log4j.Logger;
-
-import javax.xml.parsers.*;
-
-import org.xml.sax.XMLReader;
+import org.roosster.store.EntryList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import org.roosster.OperationException;
-import org.roosster.store.EntryList;
-import org.roosster.store.Entry;
-import org.roosster.util.XmlUtil;
 
 /**
  * 

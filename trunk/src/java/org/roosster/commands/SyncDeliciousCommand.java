@@ -156,17 +156,20 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         String deletePropStr = conf.getProperty(PROP_DELICIOUS_DELETE, "true");
         boolean deleteProp = "true".equalsIgnoreCase(deletePropStr) ? true : false;
         
+        LOG.debug("Getting all Posts from del.icio.us now");
         List allDelPosts = delicious.getAllPosts(); // remote call
+        LOG.debug("Fetched "+allDelPosts.size()+" from del.icio.us");
 
         EntryStore store = (EntryStore) registry.getPlugin(Constants.PLUGIN_STORE);
         EntryList allRsstEntries = store.getAllEntries(0, Integer.MAX_VALUE, false);
           
         // parse del.icio.us posts into map, to allow easy access by URL
+        LOG.debug("Building lookup Map for del.icio.us posts");
         Map allPostsMap = new HashMap();
         for (int i = 0; i < allDelPosts.size(); i++) {
             Post post = (Post) allDelPosts.get(i);
             fixPost(post);
-            allPostsMap.put(new URL(post.getHref()), post);
+            allPostsMap.put(post.getHref(), post);
         }
         
         
@@ -180,9 +183,10 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         List updateRoosster = new ArrayList(); // contains Entry objects
         Map addToRoosster = new HashMap(); // contains Entry objects, keyed by URL
         
+        LOG.debug("Looping over "+allRsstEntries.size()+" roosster entries");
         for (int i = 0; i < allRsstEntries.size(); i++) {
             Entry entry = (Entry) allRsstEntries.get(i);
-            Post post = (Post) allPostsMap.get(entry.getUrl());
+            Post post = (Post) allPostsMap.get(entry.getUrl().toString());
             
             if ( post != null ) {
                 if ( !equal(post, entry) ) {
@@ -199,7 +203,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
                 }
                     
                 if ( entry.getPublic() ) 
-                    allPostsMap.remove(entry.getUrl()); 
+                    allPostsMap.remove(entry.getUrl().toString()); 
             } else {
                 volatileRoosster.add(entry);
             }
@@ -230,7 +234,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
             } else {
                 LOG.debug(post.getHref()+" -- was added to del.icio.us! Will be added to roosster!\n Added: "+post.getTimeAsDate()+"\n");
                 Entry entry = post2Entry(post); 
-                addToRoosster.put(entry.getUrl(), entry);
+                addToRoosster.put(entry.getUrl().toString(), entry);
             }
         }
 
@@ -242,6 +246,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
             
             LOG.debug("Updating/Adding <"+post.getHref()+"> to del.icio.us!");
             
+            // fulfill Joshua's restriction by posting calling API once per second 
             Thread.sleep(1000);
             boolean added = delicious.addPost(post.getHref(), post.getDescription(), 
                                               post.getExtended(), post.getTag(), 
@@ -254,19 +259,21 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         store.addEntries((Entry[]) updateRoosster.toArray(new Entry[0]), true); 
         
         // fetch contents of new URLs and add Entries to roosster
-        URL[] urls = (URL[]) addToRoosster.keySet().toArray(new URL[0]);
+        String[] urls = (String[]) addToRoosster.keySet().toArray(new String[0]);
         
         if ( urls.length > 0 ) {
             UrlFetcher fetcher = (UrlFetcher) registry.getPlugin(Constants.PLUGIN_FETCHER);
-            Entry[] fetchedEntries = fetcher.fetch(urls);
             
-            for ( int i = 0; i < fetchedEntries.length; i++ ) {
-                Entry entry = (Entry) addToRoosster.get(fetchedEntries[i].getUrl());
-                if ( entry != null ) 
-                    fetchedEntries[i].overwrite(entry);
+            for ( int i = 0; i < urls.length; i++ ) {
+                Entry[] fetchedEntries =  fetcher.fetch( new URL[] {new URL(urls[i])} );
+                
+                for ( int k = 0; k < fetchedEntries.length; k++ ) {
+                    Entry entry = (Entry) addToRoosster.get(fetchedEntries[k].getUrl().toString());
+                    if ( entry != null ) 
+                        fetchedEntries[k].overwrite(entry);
+                }
+                store.addEntries(fetchedEntries, true);
             }
-            
-            store.addEntries(fetchedEntries, true);
         }
      
         // should we delete?
@@ -278,6 +285,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
                 
                 LOG.debug("DELETING "+post.getHref()+" from del.icio.us!");
                             
+                // fulfill Joshua's restriction by posting calling API once per second 
                 Thread.sleep(1000);
                 if ( !delicious.deletePost(post.getHref()) )
                     LOG.warn("Failed to DELETE "+post.getHref()+" from del.icious");

@@ -26,15 +26,12 @@
  */
 package org.roosster.util;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Map;
 
 import org.mortbay.http.SocketListener;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.servlet.ServletHttpContext;
-
-import org.roosster.InitializeException;
-import org.roosster.util.MapperUtil;
 import org.roosster.Constants;
 
 /**

@@ -28,14 +28,13 @@ package org.roosster.output.modes;
 
 import java.io.PrintWriter;
 
-import org.roosster.Output;
+import org.roosster.Constants;
 import org.roosster.OperationException;
-import org.roosster.Registry;
+import org.roosster.Output;
+import org.roosster.output.OutputMode;
 import org.roosster.store.Entry;
 import org.roosster.store.EntryList;
-import org.roosster.output.OutputMode;
 import org.roosster.util.StringUtil;
-import org.roosster.Constants;
 
 /**
  *
@@ -55,6 +54,9 @@ public class TextMode extends AbstractOutputMode implements OutputMode, Constant
 
         String truncStr = registry.getConfiguration().getProperty(PROP_TRUNCLENGTH, "-1");
         int truncate = Integer.valueOf(truncStr).intValue();
+        
+        int end = entries.getOffset()+entries.getLimit();
+        stream.println("Showing Entries "+entries.getOffset()+"-"+end+" of total "+entries.getTotalSize());
         
         // TODO show output messages?
         

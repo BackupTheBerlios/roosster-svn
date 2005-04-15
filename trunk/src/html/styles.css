@@ -57,7 +57,7 @@
  */
  
 #entry-form     {}
-textarea { height:100px; }
+textarea { height:100px;  }
 
 .entry-detail  { width:700px; padding:5px;}
 .entry-detail td { padding-bottom:5px;}
@@ -85,7 +85,7 @@ textarea { height:100px; }
 a       { color:$linkColor; text-decoration:none; }
 a:hover { background-color:$linkHoverBgColor; }
 dfn     { border-bottom:dotted 1px black; font-style:normal;}
-body    { margin:0px;padding:0px; font:Arial 1em normal; }
+body    { margin:0px;padding:0px; font:Arial 1em normal; background-color:white;}
 
 #content {padding:10px;}
 

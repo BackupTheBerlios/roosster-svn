@@ -81,6 +81,8 @@ var outputMsgElem = null;
  * 
  */
 function initClient() {
+	core_init();
+	
     outputMsgElem = getById(DIV_ID_OUTPUTMESSAGES);
     
     var qs = new Querystring();
@@ -201,12 +203,14 @@ function displayDate(date) {
  * 
  */
 function doDelete(url) {
-    __clearAll();
-        
+    __clearHttp();
+    __clearOutputMessages();
+            
     if ( url == null || url == '' ) 
         return null;
   
     toggleDisplay(DIV_ID_LOADINGNOTE);
+    currentEntryUrl = url;
     xmlhttp.open("DELETE", API_ENDPOINT + "/entry?url="+ escape(url) , true);     
     xmlhttp.onreadystatechange = deleteResponseHandler;
     xmlhttp.setRequestHeader("Content-Type", API_CTYPE);
@@ -223,9 +227,15 @@ function deleteResponseHandler() {
 
     if ( httpstate.checkHttpState()  ) {
         __outputMessage("Entry deleted successfully");
+        if ( entryList != null ) {
+        	entryList.del(currentEntryUrl);
+        	__renderEntryList();
+        }
     } else {
         __outputMessage("Error while executing DELETE! Server said: <"+httpstate.lastExceptionText+">", true);
     }
+    
+//    currentEntryUrl = null;
     
     toggleDisplay(DIV_ID_LOADINGNOTE);
     debugConsole.show();    
@@ -269,31 +279,11 @@ function searchResponseHandler() {
       
     if ( httpstate.checkHttpState()  ) {
         
-        var entriesOut = getById(DIV_ID_ENTRIESOUT);
-        XmlRemoveAllChildren(entriesOut);
-        
-        if ( httpstate.lastHttpState == 204 ) {
-            entriesOut.appendChild( XmlCreateText("No Entries found for this search!") );
-        } else {
-      
-          entryList = parseEntryList(xmlhttp.responseXML);
-
-          entryList.attachPager(entriesOut);
-          
-          var entries = entryList.getList();
-          
-          var ulEntryList = XmlCreateElement("ul");
-          ulEntryList.id = 'entry-list';
-          entriesOut.appendChild(ulEntryList);
-          
-          for(var url in entries) {
-              var li = XmlCreateElement("li");
-              ulEntryList.appendChild(li);
-              entries[url].attachAsList(li);
-          }
-        }
-        
+		entryList = httpstate.lastHttpState == 204 ? new EntryList() : parseEntryList(xmlhttp.responseXML);
+		
+		__renderEntryList();
         setTab(TAB_SEARCH);    
+        
     } else {
         __outputMessage("Error while executing search! Server said: <"+httpstate.lastExceptionText+">", true);
     }
@@ -536,6 +526,37 @@ function __newXmlHttp() {
   
     return req;
 }  
+
+
+/**
+ *
+ */
+function __renderEntryList() {
+
+    var entriesOut = getById(DIV_ID_ENTRIESOUT);
+    XmlRemoveAllChildren(entriesOut);
+    
+	var entries = entryList.getList();
+	
+	if ( entryList.length() < 1 ) {
+	
+		entriesOut.appendChild( XmlCreateText("No Entries found for this search!") );
+		
+	} else {  
+	
+		entryList.attachPager(entriesOut);
+	  
+		var ulEntryList = XmlCreateElement("ul");
+		ulEntryList.id = 'entry-list';
+		entriesOut.appendChild(ulEntryList);
+		  
+		for(var url in entries) {
+		    var li = XmlCreateElement("li");
+		    ulEntryList.appendChild(li);
+		    entries[url].attachAsList(li);
+		}
+	}
+}
 
 
 /**

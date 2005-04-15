@@ -1,7 +1,7 @@
 #parse('includes/head.inc')
 
 #set ( $queryStr = $req.getParameter('query') )
-<form method="get" action="$baseurl/application/search">
+<form method="get" name="searchform" action="$baseurl/application/search">
   <table>
     <tr>
       <td><label for="queryStr">Search</label></td>

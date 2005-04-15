@@ -26,10 +26,12 @@
  */
 package org.roosster.util;
 
-import java.io.*;
-import java.util.*;
-
-import org.roosster.InitializeException;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides static utility methods for <code>Mapper</code>-classes
@@ -121,7 +123,6 @@ public class MapperUtil
             else
                 homeDir += homeDir.endsWith("/") ? DEF_HOMEDIR : "/"+DEF_HOMEDIR;
             
-            System.out.println("Checking if "+homeDir+" exists, if not create it");
             File dir = new File(homeDir);
 
             if ( dir.exists() ) {

@@ -27,12 +27,9 @@
 package org.roosster.commands;
 
 import java.util.Map;
-import java.io.IOException;
-import org.roosster.OperationException;
-import org.roosster.Command;
-import org.roosster.Registry;
-import org.roosster.Output;
+
 import org.apache.log4j.Logger;
+import org.roosster.Command;
 
 /**
  *

@@ -27,12 +27,11 @@
 package org.roosster.commands;
 
 import java.util.Map;
-import java.net.URL;
 
-import org.roosster.store.EntryStore;
 import org.roosster.Command;
-import org.roosster.Registry;
 import org.roosster.Output;
+import org.roosster.Registry;
+import org.roosster.store.EntryStore;
 
 /**
  *

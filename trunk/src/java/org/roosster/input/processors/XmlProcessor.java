@@ -27,18 +27,20 @@
 package org.roosster.input.processors;
 
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URL;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import org.apache.log4j.Logger;
 
-import org.roosster.store.Entry;
-import org.roosster.Registry;
+import org.apache.commons.io.CopyUtils;
+import org.apache.log4j.Logger;
 import org.roosster.InitializeException;
 import org.roosster.OperationException;
+import org.roosster.Registry;
 import org.roosster.input.ContentTypeProcessor;
-import org.roosster.xml.*;
+import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
+import org.roosster.xml.EntryParser;
+import org.roosster.xml.FeedParser;
+import org.roosster.xml.ParseException;
 
 /**
  *
@@ -81,15 +83,27 @@ public class XmlProcessor implements ContentTypeProcessor
         if ( url == null || stream == null || encoding == null || "".equals(encoding) )
             throw new IllegalArgumentException("No parameter is allowed to be null");
 
+        StringWriter strWriter = new StringWriter();
+        CopyUtils.copy(stream, strWriter, encoding);
         try {
-            // TODO Try to determine, if the stream is a feed, and parses it, 
-            // if this is the case. If not, it just indexes it
-
-            FeedParser parser = new FeedParser();
-            return parser.parse(url, stream, encoding);
-
-        } catch(Exception ex) {
-            throw new OperationException(ex);
+            
+            EntryList entryList = new EntryParser().parse(strWriter.toString(), encoding);
+            
+            return (Entry[]) entryList.toArray(new Entry[0]);
+            
+        } catch( ParseException ex1 ) {
+            LOG.debug("Parsing Error while trying to parse EntryList: "+ex1.getMessage());
+            
+            try {
+                // TODO Try to determine, if the stream is a feed, and parses it, 
+                // if this is the case. If not, it just indexes it
+    
+                FeedParser parser = new FeedParser();
+                return parser.parse(url, strWriter.toString());
+    
+            } catch(Exception ex) {
+                throw new OperationException(ex);
+            }
         }
 
     }

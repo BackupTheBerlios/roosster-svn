@@ -26,22 +26,24 @@
  */
 package org.roosster.web;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
-import org.apache.log4j.Logger;
-import javax.servlet.*;
-import javax.servlet.http.*;
 
-import org.apache.velocity.app.Velocity;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
+import org.apache.velocity.app.Velocity;
 import org.apache.velocity.context.Context;
-import org.apache.velocity.exception.ResourceNotFoundException;
- 
+import org.roosster.Registry;
 import org.roosster.util.ServletUtil;
 import org.roosster.util.VelocityUtil;
-import org.roosster.store.EntryStore;
-import org.roosster.Constants;
-import org.roosster.Registry;
 
 /**
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
@@ -49,6 +51,8 @@ import org.roosster.Registry;
 public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet 
                           implements VelocityConstants, ServletConstants
 {
+    private static final long serialVersionUID = 3257289132211712567L;
+
     private static Logger LOG = Logger.getLogger(VelocityServlet.class.getName());
 
     private ServletContext servletContext = null;
@@ -103,7 +107,7 @@ public class VelocityServlet extends org.apache.velocity.servlet.VelocityServlet
             LOG.warn("Velocity: Can't load '"+path+"' for request "+
                         req.getRequestURL().append("?").append(req.getQueryString()) );
                         
-            resp.sendError(resp.SC_NOT_FOUND, path+" not found");
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, path+" not found");
         }
         
         return null;

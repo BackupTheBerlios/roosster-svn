@@ -27,30 +27,27 @@
 package org.roosster.xml;
 
 import java.net.URL;
-import java.util.Date;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.LinkedList;
 import java.text.DateFormat;
 import java.text.ParseException;
-
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
-import org.roosster.OperationException;
-import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
-import org.roosster.util.XmlUtil;
+import org.roosster.store.EntryList;
 import org.roosster.util.DateUtil;
 import org.roosster.util.StringUtil;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * 
- *
+ * TODO parse offset,limit, total attributes of entrylist element
+ * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
 public class EntrySaxHandler extends DefaultHandler implements EntryTags
@@ -117,6 +114,9 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
         
         else if ( CONTENT.equals(qName) )
             currentEntry.setContent(currentText.toString());
+        
+        else if ( RAW.equals(qName) )
+            currentEntry.setRaw(currentText.toString());
         
         LOG.debug("PARSE: <-- Pop <"+qName+"> from element stack");
         elementStack.removeLast();
@@ -203,8 +203,14 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
      */
     private void validate(Attributes atts) throws SAXException
     {
+        // entrylist
+        if ( ENTRYLIST.equals(currentTag) ) {
+            if ( !compareToStack( new String[] {ENTRYLIST} ) )
+                throwException(ENTRYLIST+" must be root element");
+        }
+        
         // entry
-        if ( ENTRY.equals(currentTag) ) {
+        else if ( ENTRY.equals(currentTag) ) {
             if ( !compareToStack( new String[] {ENTRYLIST, ENTRY} ) )
                   throwException(ENTRY+" must be child of root tag "+ENTRYLIST);
         }
@@ -231,6 +237,16 @@ public class EntrySaxHandler extends DefaultHandler implements EntryTags
         else if ( TAG.equals(currentTag) ) {
             if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, TAG} ) )
                 throwException(TAG+" must be child Element of "+ENTRY);
+        }
+        
+        // raw
+        else if ( RAW.equals(currentTag) ) {
+            if ( !compareToStack( new String[] {ENTRYLIST, ENTRY, RAW} ) )
+                throwException(RAW+" must be child Element of "+ENTRY);
+        }
+        
+        else {
+            throwException("Invalid element: "+currentTag);
         }
     }
 

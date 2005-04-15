@@ -26,7 +26,6 @@
  */
 package org.roosster;
 
-import java.util.Map;
 
 /**
  * Classes implementing this interface must be thread-safe

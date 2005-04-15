@@ -27,25 +27,21 @@
 package org.roosster.xml;
 
 import java.io.PrintWriter;
-import java.util.Date;
-import javax.xml.transform.Transformer;
+
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import org.roosster.store.EntryList;
-import org.roosster.store.Entry;
-import org.roosster.xml.EntryTags;
-import org.roosster.util.DateUtil;
-import org.roosster.util.XmlUtil;
-import org.roosster.util.StringUtil;
+import org.roosster.Constants;
 import org.roosster.OperationException;
 import org.roosster.Registry;
-import org.roosster.Constants;
+import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
+import org.roosster.util.DateUtil;
+import org.roosster.util.StringUtil;
+import org.roosster.util.XmlUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * 
@@ -58,7 +54,8 @@ public class EntryGenerator implements EntryTags
     /**
      * @param entries
      */
-    public void createFeed(Registry registry, PrintWriter writer, EntryList entries)
+    public void createFeed(Registry registry, PrintWriter writer, 
+                           EntryList entries, boolean includeRaw)
                     throws OperationException
     {
         String truncStr = registry.getConfiguration().getProperty(Constants.PROP_TRUNCLENGTH, "-1");
@@ -88,6 +85,9 @@ public class EntryGenerator implements EntryTags
                 
                 XmlUtil.createTextChild(entryNode, NOTE,    entry.getNote());
                 XmlUtil.createTextChild(entryNode, CONTENT, StringUtil.truncate(entry.getContent(), truncate));
+                
+                if ( includeRaw )
+                    XmlUtil.createTextChild(entryNode, RAW, entry.getRaw());
 
                 Element authorNode = XmlUtil.createChild(entryNode, AUTHOR);
                 authorNode.setAttribute(NAME_ATTR, entry.getAuthor());

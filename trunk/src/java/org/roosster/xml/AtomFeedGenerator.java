@@ -26,22 +26,21 @@
  */
 package org.roosster.xml;
 
-import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
 import java.io.PrintWriter;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.roosster.Constants;
 import org.roosster.OperationException;
 import org.roosster.Registry;
-import org.roosster.Constants;
 import org.roosster.store.EntryList;
 
-import com.sun.syndication.feed.atom.Feed;
-import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Content;
+import com.sun.syndication.feed.atom.Entry;
+import com.sun.syndication.feed.atom.Feed;
 import com.sun.syndication.feed.atom.Link;
 import com.sun.syndication.feed.atom.Person;
-import com.sun.syndication.io.WireFeedOutput; 
+import com.sun.syndication.io.WireFeedOutput;
 
 
 /**

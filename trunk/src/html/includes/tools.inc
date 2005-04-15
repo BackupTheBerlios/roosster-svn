@@ -7,5 +7,6 @@
 TODO<br/>
 <ul>
 <li>Clicking on 'Delete' will permanently remove the Entry from the index without asking for confirmation</li>
+<li>Explain icons for public/private</li>
 </ul>
 </p>

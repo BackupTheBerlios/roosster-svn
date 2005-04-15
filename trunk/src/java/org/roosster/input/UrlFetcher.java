@@ -26,22 +26,24 @@
  */
 package org.roosster.input;
 
-import java.util.*;
-import org.apache.log4j.Logger;
-import java.util.logging.Level;
-import java.net.URL;
-import java.net.URLConnection;
 import java.io.IOException;
-import java.io.InputStream;
-import org.apache.commons.io.IOUtils;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
-import org.roosster.OperationException;
-import org.roosster.InitializeException;
-import org.roosster.Registry;
-import org.roosster.Plugin;
-import org.roosster.Output;
+import org.apache.log4j.Logger;
 import org.roosster.Configuration;
 import org.roosster.Constants;
+import org.roosster.InitializeException;
+import org.roosster.OperationException;
+import org.roosster.Plugin;
+import org.roosster.Registry;
 import org.roosster.store.Entry;
 
 
@@ -53,13 +55,10 @@ public class UrlFetcher implements Plugin, Constants
 {
     private static Logger LOG = Logger.getLogger(UrlFetcher.class.getName());
 
-    public static final String USER_AGENT_HEADER = "User-Agent";
-    public static final String USER_AGENT        = "Mozilla/5.0 (compatible; roosster - personal search; http://roosster.org/dev)";
-    
     private Registry              registry        = null;
-    private String                defaultEncoding = null;
     private Map                   processors      = new Hashtable();
     private Map                   procsByName     = new Hashtable();
+    private ResourceFetcher       fetcher         = null;
     private ContentTypeProcessor  defaultProc     = null;
 
     private boolean  initialized     = false;
@@ -72,13 +71,22 @@ public class UrlFetcher implements Plugin, Constants
         this.registry = registry;
         initProcessors(registry);
 
-        defaultEncoding = registry.getConfiguration().getProperty(PROP_DEF_ENC);
+        String defaultEncoding = registry.getConfiguration().getProperty(PROP_DEF_ENC);
         if ( defaultEncoding == null )
             throw new InitializeException("Must provide default encoding via "+PROP_DEF_ENC);
+
+        fetcher = new ResourceFetcher(defaultEncoding);
         
-        LOG.info("Initialized UrlFetcher: \ndefaultEncoding: "+defaultEncoding +
-                 "\ndefaultProcessor: "+defaultProc +
-                 "\nContentTypeProcessors: "+processors );
+        if ( LOG.isInfoEnabled() ) {
+            LOG.info("Initialized UrlFetcher: \ndefaultEncoding: "+defaultEncoding +
+                     "\ndefaultProcessor: "+defaultProc+"\nContentTypeProcessors: \n");
+            
+            Iterator iter = processors.keySet().iterator();
+            while ( iter.hasNext() ) {
+                String key = (String) iter.next();
+                LOG.info(key+" => "+processors.get(key));
+            }
+        }
         
         initialized = true;
     }
@@ -152,39 +160,18 @@ public class UrlFetcher implements Plugin, Constants
     {
         LOG.debug("Opening connection to URL "+url);
 
-        URLConnection con = url.openConnection();
-        con.setRequestProperty(USER_AGENT_HEADER, USER_AGENT);
-
+        Resource resource = fetcher.fetchResource(url);
         
-        long modified = con.getLastModified();
-
-        
-        String contentType = con.getContentType();
-        
-        // find out if Content-Type String contains encoding information
-        String embeddedContentEnc = null;
-        if ( contentType != null && contentType.indexOf(";") > -1 ) {
-            LOG.debug("Content-type string ("+contentType+") contains charset; strip it!");
-            contentType = contentType.substring(0, contentType.indexOf(";")).trim();
-            
-            String cType = con.getContentType();
-            if ( cType.indexOf("=") > -1 ) {
-                embeddedContentEnc = cType.substring(cType.indexOf("=")+1).trim();
-            }
-        }
-        
-        String contentEnc  = con.getContentEncoding();
-        if ( contentEnc == null ) 
-            contentEnc = embeddedContentEnc != null ? embeddedContentEnc : defaultEncoding;
-
-        
-        ContentTypeProcessor proc = getProcessor(contentType); 
-        LOG.debug("ContentType: '"+contentType+"' - ContentEncoding: '"+contentEnc+"'");
+        ContentTypeProcessor proc = getProcessor(resource.getContentType()); 
         LOG.debug("Using Processor "+proc);
 
-        Entry[] entries = proc.process(url, con.getInputStream(), contentEnc);
+        Entry[] entries = null;
+        if ( proc == null )
+            entries = new Entry[] { new Entry(url) };
+        else
+            entries = proc.process(url, resource.getStream(), resource.getContentEncoding());
        
-        Date modDate = new Date(modified);
+        Date modDate = new Date(resource.getLastModified());
         Date now = new Date();
         
         List returnArr  = new ArrayList();
@@ -297,10 +284,13 @@ public class UrlFetcher implements Plugin, Constants
 
 
     /**
-     *
+     * @return null if no appropriate processor is found
      */
     private ContentTypeProcessor getProcessor(String contentType)
     {
+        if ( contentType == null || "".equals(contentType) )
+            throw new IllegalArgumentException("Parameter contentType is not allowed to be null");
+        
         ContentTypeProcessor proc = null;
 
         String forcedProc = registry.getConfiguration().getProperty(PROP_INPUT_PROC);
@@ -313,10 +303,12 @@ public class UrlFetcher implements Plugin, Constants
                 return proc;
         }
         
-        proc = (ContentTypeProcessor) processors.get(contentType);
+        return  (ContentTypeProcessor) processors.get(contentType);
+        /*
         if ( proc == null ) 
             return defaultProc;
         else
             return proc;
+        */
     }
 }

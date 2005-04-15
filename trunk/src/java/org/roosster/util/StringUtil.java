@@ -26,15 +26,11 @@
  */
 package org.roosster.util;
 
-import java.util.regex.PatternSyntaxException;
-import java.util.Date;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 import org.apache.log4j.Logger;
-
-import org.roosster.Registry;
-import org.roosster.Constants;
 
 
 /**

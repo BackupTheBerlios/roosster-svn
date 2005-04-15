@@ -26,31 +26,27 @@
  */
 package org.roosster.xml;
 
-import java.net.URI;
-import java.net.URL;
-import java.net.URISyntaxException;
-import java.net.MalformedURLException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
-import java.util.Date;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
-import org.xml.sax.InputSource;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.feed.synd.SyndContent;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.feed.synd.SyndEntry;
-
 import org.roosster.OperationException;
-import org.roosster.store.Entry;
 import org.roosster.input.processors.HtmlProcessor;
+import org.roosster.store.Entry;
+import org.xml.sax.InputSource;
+
+import com.sun.syndication.feed.synd.SyndContent;
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.io.SyndFeedInput;
 
 /**
  * 
@@ -70,16 +66,33 @@ public class FeedParser
     
     
     /**
-     *
-     * @param encoding the name of the streams encoding/charset
+     * 
+     * @param url
+     * @param stream
+     * @return
+     * @throws OperationException
      */
-    public Entry[] parse(URL url, InputStream stream, String encoding)  
+    public Entry[] parse(URL url, String stream)  
+                 throws OperationException
+    {
+        return parse(url, new StringReader(stream));
+    }
+    
+
+    /**
+     * 
+     * @param url
+     * @param stream
+     * @return
+     * @throws OperationException
+     */
+    public Entry[] parse(URL url, Reader stream)  
                                     throws OperationException
     {
         try {
           
             SyndFeedInput input = new SyndFeedInput();
-            SyndFeed feed = input.build( new InputStreamReader(stream, encoding) );
+            SyndFeed feed = input.build(stream);
         
             String feedTitle  = feed.getTitle() == null  ? "" : feed.getTitle();
             String feedAuthor = feed.getAuthor() == null ? "" : feed.getAuthor();

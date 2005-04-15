@@ -27,26 +27,19 @@
 package org.roosster.output.modes;
 
 import java.io.PrintWriter;
-import java.util.List;
 import java.util.Iterator;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
 import org.apache.log4j.Logger;
-
-import org.roosster.web.VelocityConstants;
-import org.roosster.store.Entry;
-import org.roosster.store.EntryList;
-import org.roosster.util.VelocityUtil;
-import org.roosster.util.ServletUtil;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.context.Context;
+import org.roosster.Constants;
+import org.roosster.OperationException;
 import org.roosster.Output;
 import org.roosster.output.OutputMode;
-import org.roosster.OperationException;
-import org.roosster.Registry;
-import org.roosster.Constants;
+import org.roosster.store.EntryList;
+import org.roosster.util.VelocityUtil;
+import org.roosster.web.VelocityConstants;
 
 
 /**

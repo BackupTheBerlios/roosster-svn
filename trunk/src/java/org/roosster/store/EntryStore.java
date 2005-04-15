@@ -26,29 +26,39 @@
  */
 package org.roosster.store;
 
-import java.net.URL;
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Date;
-import java.security.*;
+import java.util.List;
 
 import org.apache.log4j.Logger;
-
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.search.*;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.index.*;
-
-import org.roosster.util.StringUtil;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.RangeQuery;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.TermQuery;
+import org.roosster.Configuration;
+import org.roosster.Constants;
+import org.roosster.InitializeException;
+import org.roosster.Plugin;
+import org.roosster.Registry;
 import org.roosster.util.DateUtil;
-import org.roosster.*;
 
 /**
  * TODO better synchronizing

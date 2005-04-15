@@ -26,19 +26,16 @@
  */
 package org.roosster.store;
 
-import java.util.Date;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Date;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.DateField;
-import org.apache.lucene.document.Field;
 import org.apache.log4j.Logger;
-
-import org.roosster.util.StringUtil;
-import org.roosster.util.XmlUtil;
-import org.roosster.util.DateUtil;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.roosster.Constants;
+import org.roosster.util.DateUtil;
+import org.roosster.util.StringUtil;
 
 /**
  * TODO make dateformat configurable

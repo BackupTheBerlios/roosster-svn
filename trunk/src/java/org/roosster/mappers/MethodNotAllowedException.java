@@ -24,35 +24,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.output;
+package org.roosster.mappers;
 
 import org.roosster.OperationException;
+
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class InvalidOutputModeException extends OperationException 
+public class MethodNotAllowedException extends OperationException
 {
-    private static final long serialVersionUID = 3258126951381087797L;
+    private static final long serialVersionUID = 3906926789896058931L;
     
-    private String name = null;
+    private String methodName = null;
+
 
     /**
      * 
+     * @param methodName
      */
-    public InvalidOutputModeException(String name) {
-        super("Wrong or No output mode specified! Mode: "+name);
-        this.name = name;
+    public MethodNotAllowedException(String methodName) {
+        super(methodName +"is not allowed");
+        this.methodName = methodName;
     }
 
     
     /**
-     * Returns the value of name.
+     * @return Returns the methodName.
      */
-    public String getName()
-    {
-        return name;
+    public String getMethodName() {
+        return methodName;
     }
-    
 }

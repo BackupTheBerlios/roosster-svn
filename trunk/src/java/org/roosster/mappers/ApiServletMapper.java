@@ -29,23 +29,20 @@ package org.roosster.mappers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-import javax.servlet.http.*;
+
 import javax.servlet.ServletException;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.xml.sax.SAXException;
-import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
-
+import org.apache.log4j.Logger;
+import org.roosster.Constants;
+import org.roosster.OperationException;
+import org.roosster.Output;
 import org.roosster.commands.CommandNotFoundException;
 import org.roosster.store.EntryList;
 import org.roosster.xml.EntryParser;
 import org.roosster.xml.ParseException;
-import org.roosster.OperationException;
-import org.roosster.Output;
-import org.roosster.Constants;
-import org.roosster.Registry;
 
 
 /**
@@ -54,6 +51,8 @@ import org.roosster.Registry;
  */
 public class ApiServletMapper extends ServletMapper
 {
+    private static final long serialVersionUID = 3977577017724057911L;
+
     private static Logger LOG = Logger.getLogger(ApiServletMapper.class);
 
     private static final String ENTRY_CMD     = "entry";
@@ -63,9 +62,9 @@ public class ApiServletMapper extends ServletMapper
     private static final String DEL_CMD       = "delete";
     
     /**
-     *
+     * @throws MethodNotAllowedException 
      */
-    protected String getCommandName(int method, HttpServletRequest req)
+    protected String getCommandName(int method, HttpServletRequest req) throws MethodNotAllowedException
     {
         String commandName = super.getCommandName(method, req); 
        
@@ -149,26 +148,32 @@ public class ApiServletMapper extends ServletMapper
         if ( ex instanceof CommandNotFoundException ) {
           
             LOG.warn(ex.getMessage(), ex);
-            resp.sendError(resp.SC_NOT_FOUND, 
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, 
                            "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
             
         } else if ( ex instanceof ParseException ) {
 
             LOG.warn("Sending HTTP Status Code 400: "+ex.getMessage(), ex);
-            resp.sendError(resp.SC_BAD_REQUEST, 
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+                           "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
+                           
+        } else if ( ex instanceof MethodNotAllowedException ) {
+
+            LOG.warn("Sending HTTP Status Code 405: "+ex.getMessage(), ex);
+            resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, 
                            "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
                            
         } else if ( ex instanceof IllegalArgumentException ) {
 
             LOG.warn("Sending HTTP Status Code 400: "+ex.getMessage(), ex);
-            resp.sendError(resp.SC_BAD_REQUEST, 
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, 
                            "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
                            
         } else {
             
             Throwable t = ex.getCause() == null ? ex : ex.getCause();
             LOG.warn("Sending HTTP Status Code 500: "+t.getMessage(), t);
-            resp.sendError(resp.SC_INTERNAL_SERVER_ERROR, 
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                            "RoossterException: <"+t.getClass().getName()+"> "+t.getMessage());
         }
       

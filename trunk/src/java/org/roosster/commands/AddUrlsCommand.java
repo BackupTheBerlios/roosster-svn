@@ -26,23 +26,19 @@
  */
 package org.roosster.commands;
 
-import java.util.Map;
-import java.util.Date;
 import java.net.URL;
-import java.net.URLConnection;
-import org.apache.commons.io.IOUtils;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
-
-import org.roosster.store.EntryStore;
-import org.roosster.store.EntryList;
-import org.roosster.store.Entry;
-import org.roosster.input.UrlFetcher;
-import org.roosster.Configuration;
 import org.roosster.Command;
+import org.roosster.Configuration;
 import org.roosster.Constants;
-import org.roosster.Registry;
 import org.roosster.Output;
+import org.roosster.Registry;
+import org.roosster.input.UrlFetcher;
+import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
+import org.roosster.store.EntryStore;
 
 /**
  *

@@ -26,16 +26,14 @@
  */
 package org.roosster;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.StringTokenizer;
 import java.io.IOException;
-import java.io.PrintWriter;
-import org.apache.log4j.Logger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
+import org.apache.log4j.Logger;
 import org.roosster.commands.CommandNotFoundException;
 
 /**

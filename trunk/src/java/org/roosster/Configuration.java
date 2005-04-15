@@ -312,11 +312,11 @@ public class Configuration
         File propFile = new File(propFileName);
 
         if ( propFile.exists() && propFile.canRead() ) {
-            System.out.println("Overriding default setting with user defined settings");
+            LOG.info("Overriding default setting with user defined settings");
             propInput = new FileInputStream(propFile);
             props.load(propInput);
         } else {
-            System.out.println("Can't use secondary configuration file: "+propFileName);
+            LOG.info("Can't use secondary configuration file: "+propFileName);
         }
 
         // now override with commandline parameters

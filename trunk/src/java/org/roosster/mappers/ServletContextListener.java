@@ -28,23 +28,16 @@ package org.roosster.mappers;
 
 import java.io.InputStream;
 import java.util.HashMap;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
-import org.apache.log4j.Logger;
 
-import org.roosster.util.MapperUtil;
-import org.roosster.util.ServletUtil;
-import org.roosster.util.StringUtil;
-import org.roosster.web.ServletConstants;
-import org.roosster.logging.LogUtil;
-import org.roosster.commands.CommandNotFoundException;
-import org.roosster.InitializeException;
-import org.roosster.OperationException;
-import org.roosster.Registry;
-import org.roosster.Configuration;
-import org.roosster.Output;
-import org.roosster.Dispatcher;
+import org.apache.log4j.Logger;
 import org.roosster.Constants;
+import org.roosster.Dispatcher;
+import org.roosster.Registry;
+import org.roosster.logging.LogUtil;
+import org.roosster.web.ServletConstants;
 
 /**
  *

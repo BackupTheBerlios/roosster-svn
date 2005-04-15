@@ -26,28 +26,24 @@
  */
 package org.roosster.input.processors;
 
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URL;
 import java.util.Date;
 import java.util.LinkedList;
-import java.io.InputStream;
-import java.io.Writer;
-import java.io.StringWriter;
-import java.io.StringReader;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.InputSource;
-
-import org.ccil.cowan.tagsoup.Parser;
 
 import org.apache.commons.io.CopyUtils;
 import org.apache.log4j.Logger;
-
-import org.roosster.store.Entry;
-import org.roosster.Registry;
 import org.roosster.InitializeException;
+import org.roosster.Registry;
 import org.roosster.input.ContentTypeProcessor;
+import org.roosster.store.Entry;
 import org.roosster.util.StringUtil;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * TODO respect img-alt-tags

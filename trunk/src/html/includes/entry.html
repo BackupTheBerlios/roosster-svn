@@ -26,16 +26,16 @@
        </td>
        <td><input type="checkbox" name="pub" value="true" #if( $entry.public ) checked="checked" #end /></td> </tr>
   <tr> <td>Issued</td>      
-       <td>$util.displayDate($entry.issued)</td> 
+       <td><input type="text" name="issuedDate" readonly="readonly" value="$util.displayDate($entry.issued)" /></td> 
   </tr>
   <tr> <td>Modified</td>
-       <td>$util.displayDate($entry.modified)</td> 
+       <td><input type="text" name="modifiedDate" readonly="readonly" value="$util.displayDate($entry.modified)" /></td> 
   </tr>
   <tr> <td>Added</td>
-       <td>$util.displayDate($entry.added)</td> 
+       <td><input type="text" name="addedDate" readonly="readonly" value="$util.displayDate($entry.added)" /></td> 
   </tr>
   <tr> <td>Last Edited</td>
-       <td>$util.displayDate($entry.edited)</td> 
+       <td><input type="text" name="editedDate" readonly="readonly" value="$util.displayDate($entry.edited)" /></td> 
   </tr>
   <tr> <td valign="top">Actions</td>
        <td class="action-links">

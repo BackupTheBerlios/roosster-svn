@@ -33,6 +33,8 @@ package org.roosster;
  */
 public class OperationException extends Exception
 {
+    private static final long serialVersionUID = 3905246731883985204L;
+
     public OperationException() {
         super();
     }

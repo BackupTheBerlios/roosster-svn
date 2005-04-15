@@ -39,6 +39,7 @@ public interface EntryTags
     public static final String TAG          = "tag";
     public static final String NOTE         = "note";
     public static final String AUTHOR       = "author";
+    public static final String RAW          = "raw";
 
     // <entrylist> attributes    
     public static final String TOTAL_ATTR   = "total";

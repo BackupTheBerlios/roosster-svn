@@ -27,10 +27,10 @@
 package org.roosster.output;
 
 import java.io.PrintWriter;
-import org.roosster.Registry;
-import org.roosster.Output;
+
 import org.roosster.OperationException;
-import org.roosster.store.Entry;
+import org.roosster.Output;
+import org.roosster.Registry;
 import org.roosster.store.EntryList;
 
 /**

@@ -26,15 +26,12 @@
  */
 package org.roosster.util;
 
-import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
-
 import org.roosster.Constants;
 
 

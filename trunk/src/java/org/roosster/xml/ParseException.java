@@ -26,7 +26,6 @@
  */
 package org.roosster.xml;
 
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -34,6 +33,8 @@ import org.xml.sax.SAXException;
  */
 public class ParseException extends Exception
 {
+    private static final long serialVersionUID = 3760559771925035064L;
+
     public ParseException() {
         super();
     }

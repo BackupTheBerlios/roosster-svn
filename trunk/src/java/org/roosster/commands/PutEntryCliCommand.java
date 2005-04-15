@@ -26,22 +26,17 @@
  */
 package org.roosster.commands;
 
-import java.util.Map;
-import java.util.Date;
 import java.net.URL;
-import java.net.URLConnection;
-import org.apache.commons.io.IOUtils;
+import java.util.Map;
 
-import org.roosster.store.EntryStore;
-import org.roosster.store.EntryList;
-import org.roosster.store.Entry;
-import org.roosster.input.UrlFetcher;
-import org.roosster.Constants;
 import org.roosster.Command;
-import org.roosster.Registry;
+import org.roosster.Constants;
 import org.roosster.Output;
-import org.roosster.util.StringUtil;
+import org.roosster.Registry;
+import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
 import org.roosster.util.DateUtil;
+import org.roosster.util.StringUtil;
 
 /**
  * This command is not meant to be executed alone, but rather in a chain, 

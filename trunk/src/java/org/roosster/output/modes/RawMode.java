@@ -27,13 +27,12 @@
 package org.roosster.output.modes;
 
 import java.io.PrintWriter;
-import org.roosster.store.Entry;
-import org.roosster.store.EntryList;
+
+import org.roosster.OperationException;
 import org.roosster.Output;
 import org.roosster.output.OutputMode;
-import org.roosster.OperationException;
-import org.roosster.Registry;
-import org.roosster.xml.EntryGenerator;
+import org.roosster.store.Entry;
+import org.roosster.store.EntryList;
 
 
 /**

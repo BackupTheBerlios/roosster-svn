@@ -26,25 +26,20 @@
  */
 package org.roosster.mappers;
 
-import java.util.Map;
-import java.util.Properties;
-import java.util.Arrays;
-import java.util.List;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.InputStream;
-import org.apache.log4j.Logger;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import org.roosster.output.OutputMode;
+import org.apache.log4j.Logger;
+import org.roosster.Constants;
+import org.roosster.Dispatcher;
+import org.roosster.InitializeException;
+import org.roosster.OperationException;
+import org.roosster.Registry;
 import org.roosster.logging.LogUtil;
 import org.roosster.util.MapperUtil;
-import org.roosster.OperationException;
-import org.roosster.InitializeException;
-import org.roosster.Dispatcher;
-import org.roosster.Registry;
-import org.roosster.Configuration;
-import org.roosster.Output;
-import org.roosster.Constants;
 
 /**
  *

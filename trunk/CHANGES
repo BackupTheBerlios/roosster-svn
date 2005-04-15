@@ -1,4 +1,15 @@
 
+Revision 69 / 2005-04-15 / Benjamin Reitzammer
+
+* moved resource fetching from UrlFetcher.class to new ResourceFetcher.class 
+* implemented use of timeouts in ResourceFetcher.class
+* created new exception MethodNotAllowedException
+* ServletMapper now forbids PUT and DELETE requests
+* XmlProcessor.class now first tries to parse input as roossterxml then as feed
+* when deleting Entry in JSClient, entry is removed from display after 
+  successful delete
+* user can now choose limit in paging in web interface
+
 Revision 68 / 2005-04-07 / Benjamin Reitzammer
 
 * splitted Constants.class into multiple interfaces

@@ -328,6 +328,15 @@ function EntryList(total, limit, offset) {
     
     
     /**
+     */  
+    this.del = function(key) { 
+    	delete this.list[key]; 
+    	this.__listCount--; 
+    	this.total--;
+	}
+    
+    
+    /**
      */
     this.get = function(key) { return this.list[key];  }
     
@@ -452,9 +461,6 @@ function Entry(url) {
         deleteLink.className = 'detail-delete-link';
         actionLinkDiv.appendChild( deleteLink );
         
-        var linkSpan = getById(DIV_ID_ENTRYURLLINK);
-        XmlRemoveAllChildren(linkSpan);
-        linkSpan.appendChild(createLink(this.url, "Goto '"+this.title+"'", '_blank'));
     }    
     
     

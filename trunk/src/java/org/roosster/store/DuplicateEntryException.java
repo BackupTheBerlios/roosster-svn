@@ -34,6 +34,8 @@ import java.net.URL;
  */
 public class DuplicateEntryException extends RuntimeException
 {
+    private static final long serialVersionUID = 3906364909439694905L;
+    
     private URL url = null;
     
     public DuplicateEntryException(URL url) {

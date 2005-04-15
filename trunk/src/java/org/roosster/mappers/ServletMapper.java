@@ -27,38 +27,34 @@
 package org.roosster.mappers;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration; 
-import javax.servlet.http.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-
-import org.roosster.util.MapperUtil;
-import org.roosster.util.ServletUtil;
-import org.roosster.util.StringUtil;
-import org.roosster.logging.LogUtil;
+import org.roosster.Configuration;
+import org.roosster.Constants;
+import org.roosster.Dispatcher;
+import org.roosster.OperationException;
+import org.roosster.Output;
+import org.roosster.Registry;
 import org.roosster.commands.CommandNotFoundException;
 import org.roosster.store.DuplicateEntryException;
-import org.roosster.xml.ParseException;
+import org.roosster.util.ServletUtil;
+import org.roosster.util.StringUtil;
 import org.roosster.web.ServletConstants;
 import org.roosster.web.VelocityConstants;
-import org.roosster.InitializeException;
-import org.roosster.OperationException;
-import org.roosster.Registry;
-import org.roosster.Configuration;
-import org.roosster.Output;
-import org.roosster.Dispatcher;
-import org.roosster.Constants;
+import org.roosster.xml.ParseException;
 
 
 /**
@@ -66,6 +62,8 @@ import org.roosster.Constants;
  */
 public class ServletMapper extends HttpServlet
 {
+    private static final long serialVersionUID = 3978426910013208371L;
+
     private static Logger LOG = Logger.getLogger(ServletMapper.class);     
     
     public static final int PUT     = 1;
@@ -189,7 +187,7 @@ public class ServletMapper extends HttpServlet
             output = dispatcher.run(commandName, getOutputMode(), args);
 
             if ( output.entriesSize() < 1 && !returnEmptyList() ) {
-                resp.setStatus(resp.SC_NO_CONTENT);
+                resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
             } else {
                 
                 prepareOutput(req, resp, output);
@@ -202,6 +200,7 @@ public class ServletMapper extends HttpServlet
             conf.clearRequestArguments();
             
         } catch (Exception ex) {
+            LOG.warn("Exception occurred: "+ex.getMessage(), ex);
             processException(method, req, resp, output, commandName, ex);
         }
     }
@@ -231,19 +230,23 @@ public class ServletMapper extends HttpServlet
             internalRedirect(req, resp, "/application/entry");
           
         } else if ( ex instanceof CommandNotFoundException ) {
-            resp.sendError(resp.SC_NOT_FOUND, 
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, 
                            "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
             
         } else if ( ex instanceof ParseException ) {
-            resp.sendError(resp.SC_BAD_REQUEST, 
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, 
                            "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
                            
+        } else if ( ex instanceof MethodNotAllowedException ) {
+            resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, 
+                           "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
+
         } else if ( ex instanceof IllegalArgumentException ) {
-            resp.sendError(resp.SC_BAD_REQUEST, 
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, 
                            "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
                            
         } else {
-            resp.sendError(resp.SC_INTERNAL_SERVER_ERROR, 
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                            "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
         }
       
@@ -253,7 +256,7 @@ public class ServletMapper extends HttpServlet
     /**
      *
      */
-    protected String getCommandName(int method, HttpServletRequest req)
+    protected String getCommandName(int method, HttpServletRequest req) throws MethodNotAllowedException
     {
         String commandName = null;
         
@@ -268,10 +271,30 @@ public class ServletMapper extends HttpServlet
             }
         }
         
-        return commandName == null ? DEF_COMMAND : commandName;
+        commandName = commandName == null ? DEF_COMMAND : commandName;
+        
+        return commandName;
     }
 
-
+    
+    /**
+     * 
+     * @param method
+     * @param commandName
+     * @return
+     * @throws MethodNotAllowedException
+     */
+    protected void checkMethodAllowed(int method, String commandName) throws MethodNotAllowedException 
+    {
+        // TODO make this a little more sophisticated 
+        
+        if ( method == PUT )
+            throw new MethodNotAllowedException("PUT");
+        if ( method == DELETE )
+            throw new MethodNotAllowedException("DELETE");
+    }
+    
+    
     /**
      * if <code>true</code>, then empty result sets are returned as normal results,
      * going through the OutputMode process; if <code>false</code>, then a 

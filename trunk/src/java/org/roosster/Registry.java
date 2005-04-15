@@ -26,16 +26,13 @@
  */
 package org.roosster;
 
-import java.util.Map;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.Iterator;
-import java.util.StringTokenizer;
 import java.io.InputStream;
-import java.sql.Connection;
-import org.apache.log4j.Logger;
-import java.util.logging.Level;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
 
+import org.apache.log4j.Logger;
 import org.roosster.util.MapperUtil;
 
 /**

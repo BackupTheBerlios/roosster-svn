@@ -27,13 +27,11 @@
 package org.roosster.output.modes;
 
 import java.io.PrintWriter;
-import java.util.List;
-import org.roosster.store.Entry;
-import org.roosster.store.EntryList;
+
+import org.roosster.OperationException;
 import org.roosster.Output;
 import org.roosster.output.OutputMode;
-import org.roosster.OperationException;
-import org.roosster.Registry;
+import org.roosster.store.EntryList;
 import org.roosster.xml.EntryGenerator;
 
 
@@ -45,7 +43,7 @@ public class RoossterXmlMode extends AbstractOutputMode implements OutputMode
 {
 
     /**
-     *
+     * Includes the entry's RAW field into the output, when truncation is disabled
      */
     public void output(Output output, PrintWriter stream, EntryList entries)
                 throws OperationException
@@ -53,7 +51,12 @@ public class RoossterXmlMode extends AbstractOutputMode implements OutputMode
         if ( entries == null )
             throw new IllegalArgumentException("entries parameter is not allowed to be null");
 
-        new EntryGenerator().createFeed(registry, stream, entries);
+        String truncStr = registry.getConfiguration().getProperty(org.roosster.Constants.PROP_TRUNCLENGTH, "-1");
+        int truncLength = Integer.valueOf(truncStr).intValue();        
+        
+        boolean showRaw = truncLength < 0 || !output.getTruncation() ? true : false;
+        
+        new EntryGenerator().createFeed(registry, stream, entries, showRaw);
     }
 
 }
