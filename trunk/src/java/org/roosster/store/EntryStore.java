@@ -43,6 +43,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanQuery;
@@ -220,6 +221,41 @@ public class EntryStore implements Plugin, Constants
         
         return numdocs; 
     }
+    
+    
+    /**
+     * 
+     * @return
+     * @throws IOException
+     */
+    public List getAllTags() throws IOException 
+    {
+       List tags = new ArrayList();
+       
+       IndexReader reader = null;
+       try {
+           LOG.debug("Getting all Tags from index");
+           
+           reader = getReader();
+           TermEnum terms = reader.terms(new Term(Entry.TAGS, ""));
+           
+           while ( Entry.TAGS.equals( terms.term().field() ) ) {
+               LOG.debug("Found tag '"+terms.term().text()+"'");
+               
+               tags.add( terms.term().text() );
+
+               if ( !terms.next() )
+                   break;
+           }           
+           
+       } finally {
+           if ( reader != null )
+               reader.close();
+       }
+       
+       return tags;
+    }
+    
     
     /**
      * 
