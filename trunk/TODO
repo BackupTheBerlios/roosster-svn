@@ -55,7 +55,9 @@ General
 * move to MultiFieldQueryParser, remove Entry.ALL
 * document when RAW is set, and what it means if it's not set
 * handle exceptions sanely in SyncDeliciousCommand
-* make duplicate entry handling more sane
+* make duplicate entry handling more sane --> add option with enum values 
+  'fail', 'ignore', 'overwrite' that does the respective thing when 
+  duplicate is encountered
 * implement InvalidRequestException to give meaningful error messages in case of 
   wrong/missing arguments
 * use BufferedStreams in input/ouput classes
