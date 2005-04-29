@@ -65,6 +65,11 @@ General
   interface and add commands
 * add http proxy support
 * throw exception and don't process content at all if no processor can be found
+* implement simpy sync
+  use own http client lib
+  for base64 encode/decode see 
+  http://koders.com/java/fid2A5784212AEE2284A78CD74BA1B33CD0E2EEDA4A.aspx?s=base64
+  http://koders.com/java/fid9E665EF8B31CB46CD7CCAA034BABC2D2240D8114.aspx?s=base64
 
 * DONE extend XmlProcessor.class to use EntryParser.class
 * DONE split UrlFetcher in two, resulting in UrlFetcher and ResourceFetcher 
