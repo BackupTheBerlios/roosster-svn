@@ -1,0 +1,401 @@
+<?xml version="1.0"?>
+
+<!--
+    This file is part of ROOSSTER.
+    Copyright 2004, Benjamin Reitzammer <benjamin@roosster.org>
+    All rights reserved.
+
+    ROOSSTER is free software; you can redistribute it and/or modify
+    it under the terms of the Artistic License.
+
+    You should have received a copy of the Artistic License
+    along with ROOSSTER; if not, go to
+    http://www.opensource.org/licenses/artistic-license.php for details
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND
+    CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+    AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+    EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+    AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+    STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+    ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<project name="roosster" default="compile" basedir=".">
+
+    <target name="init">
+       <tstamp/>
+       <echo>+ ============================================= +</echo>
+       <echo>+ Roosster - Load configuration                 +</echo>
+       <echo>+ ============================================= +</echo>
+       <property environment="env"/>
+
+       <property name="roosster.version" value="0.2-pre4" />
+
+       <!-- directory definitions-->
+       <property name="lib.dir"      location="${basedir}/lib" />
+       <property name="src.dir"      location="${basedir}/src/java" />
+       <property name="res.dir"      location="${basedir}/src/resources" />
+       <property name="baseres.dir"  location="${basedir}/src/resources/base-res" />
+       <property name="metadata.dir" location="${basedir}/src/metadata" />
+       <property name="html.dir"     location="${basedir}/src/html" />
+       <property name="doc.dir"      location="${basedir}/doc" />
+
+       <property name="build.dir" location="${basedir}/build" />
+       <property name="dist.dir" location="${basedir}/dist" />
+       
+       <mkdir dir="${build.dir}"/>
+       <mkdir dir="${dist.dir}"/>
+        
+       <!-- jar file definition -->
+       <property name="libs.unpacked.file" value="LIBS_UNPACKED" />
+       <available file="${dist.dir}/LIBS_UNPACKED" property="libs.unpacked"/>
+
+       <property name="all.jar.file"     value="roosster-all.jar" />
+       <property name="cli.jar.file"     value="roosster-cli.jar" />
+       <property name="min.jar.file"     value="roosster-min.jar" />
+       <property name="tmpl.jar.file"    value="roosster-templates.jar" />
+       <property name="starter.jar.file" value="roosster-start.jar" />
+        
+       <!-- property file definition -->
+       <property name="base.prop.file"    value="${baseres.dir}/roosster-base.properties" />
+        
+       <property name="web.prop.file"  value="roosster-web.properties" />
+       <property name="cli.prop.file"  value="roosster-cli.properties" />
+        
+       <!-- classpath definition -->
+       <path id="cp.classpath">
+          <fileset dir="${lib.dir}/war" includes="**/*.jar" />
+          <fileset dir="${lib.dir}/jetty-starter" includes="**/*.jar" />
+          <fileset dir="${lib.dir}/common" includes="**/*.jar" />
+          <fileset dir="${lib.dir}/cli" includes="**/*.jar" />
+       </path>
+
+       
+       <!-- TEST related definitions --> 
+       <property name="build.test.dir" location="${build.dir}/test" />
+       <property name="lib.test.dir"   location="${lib.dir}/test" />
+       <property name="src.test.dir"   location="${basedir}/src/test" />
+       
+       <property name="test.reports"        location="${basedir}/reports" />
+       <property name="test.reports.html"   location="${test.reports}/html" />
+       <property name="test.reports.data"   location="${test.reports}/data" />
+        
+       <path id="cp.test.classpath">
+          <path refid="cp.classpath" />
+          <fileset dir="${lib.test.dir}" includes="**/*.jar" />
+       </path>
+       
+    </target>
+
+
+    <target name="compile" depends="init" description="Compiles all source files">
+       <echo>+ ============================================= +</echo>
+       <echo>+ Roosster - Compile                            +</echo>
+       <echo>+ ============================================= +</echo>
+       
+       <javac srcdir="${src.dir}"
+               destdir="${build.dir}"
+               debug="true"
+               deprecation="true"
+               >
+           <classpath refid="cp.classpath" />
+       </javac>
+    </target>
+
+
+    <target name="prepare-libs"
+            depends="init"
+            unless="libs.unpacked"
+            description="unpacks all *.jar files in ./lib, for convenient packaging into rosster's jar-file">
+
+       <echo>+ ============================================= +</echo>
+       <echo>+ Roosster - Prepare Libraries                  +</echo>
+       <echo>+ ============================================= +</echo>
+       
+        <mkdir dir="${dist.dir}/lib/common" />
+        <mkdir dir="${dist.dir}/lib/cli" />
+        <mkdir dir="${dist.dir}/lib/jetty-starter" />
+
+        <unjar dest="${dist.dir}/lib/common">
+            <fileset dir="${lib.dir}/common" includes="*.jar" />
+        </unjar>
+        <unjar dest="${dist.dir}/lib/jetty-starter">
+            <fileset dir="${lib.dir}/jetty-starter" includes="*.jar" />
+        </unjar>
+        <unjar dest="${dist.dir}/lib/cli">
+            <fileset dir="${lib.dir}/cli" includes="*.jar" />
+        </unjar>
+        <touch file="${dist.dir}/${libs.unpacked.file}"/>
+    </target>
+
+    
+    <target name="process-properties" depends="compile">
+       <echo>+ ============================================= +</echo>
+       <echo>+ Roosster - Merge Properties                   +</echo>
+       <echo>+ ============================================= +</echo>
+       
+        <java classname="org.roosster.util.BuildUtil" failonerror="true">
+            <classpath>
+                <path refid="cp.classpath" />
+                <pathelement location="${build.dir}"/>
+            </classpath>
+            <arg value="${base.prop.file}"/>
+            <arg value="${baseres.dir}/${web.prop.file}"/>
+            <arg value="${res.dir}/${web.prop.file}"/>
+        </java>
+        
+        <java classname="org.roosster.util.BuildUtil" failonerror="true">
+            <classpath>
+                <path refid="cp.classpath" />
+                <pathelement location="${build.dir}"/>
+            </classpath>
+            <arg value="${base.prop.file}"/>
+            <arg value="${baseres.dir}/${cli.prop.file}"/>
+            <arg value="${res.dir}/${cli.prop.file}"/>
+        </java>
+        
+        <copy todir="${build.dir}">
+            <fileset dir="${src.dir}" includes="**/*.properties" />
+        </copy>
+    </target>
+
+    
+    <target name="dist-jar-minimal"
+            depends="compile, process-properties"
+            description="Builds the .jar file which contains only the compiled roosster classes and resources" >
+
+        <echo>+ ============================================= +</echo>
+        <echo>+ Roosster - Build minimal .jar file            +</echo>
+        <echo>+ ============================================= +</echo>
+        
+        <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+
+        <jar destfile="${dist.dir}/${min.jar.file}" compress="true">
+            <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+            <fileset dir="${build.dir}" includes="org/roosster/**" />
+            <fileset dir="${res.dir}/common" includes="**/*" />
+            <fileset dir="${res.dir}/web" includes="**/*" />
+            <fileset file="${res.dir}/${web.prop.file}"  />
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <section name="org.roosster">
+                    <attribute name="Specification-Title" value="${ant.project.name}"/>
+                    <attribute name="Specification-Version" value="${roosster.version}"/>
+                    <attribute name="Specification-Vendor" value="http://roosster.org"/>
+                    <attribute name="Implementation-Title" value="${ant.project.name}"/>
+                    <attribute name="Implementation-Version" value="${roosster.version} ${TODAY}"/>
+                    <attribute name="Implementation-Vendor" value="http://roosster.org"/>
+                </section>
+            </manifest>
+          </jar>
+    </target>
+    
+    
+    <target name="-dist-jar-templates"
+            description="Builds the .jar file which contains only the html templates" >
+
+        <echo>+ ============================================= +</echo>
+        <echo>+ Roosster - Build templates .jar file          +</echo>
+        <echo>+ ============================================= +</echo>
+        
+        <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+
+        <jar destfile="${dist.dir}/${tmpl.jar.file}" compress="true">
+            <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+            <fileset dir="${html.dir}" includes="**/*" />
+        </jar>
+    </target>
+
+    
+    <target name="dist-jar-starter"
+            depends="compile, prepare-libs, process-properties"
+            description="Builds the .jar file that starts and embedded jetty server with the .war file" >
+
+        <echo>+ ============================================= +</echo>
+        <echo>+ Roosster - Build Jetty Starter .jar file      +</echo>
+        <echo>+ ============================================= +</echo>
+        
+        <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+
+        <jar destfile="${dist.dir}/${starter.jar.file}" compress="true">
+            <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+            <fileset dir="${dist.dir}/lib/jetty-starter" includes="**/*" />
+            <fileset dir="${build.dir}" >
+                <include name="org/roosster/util/MapperUtil.class" />
+                <include name="org/roosster/util/JettyStarter.class" />
+                <include name="org/roosster/InitializeException.class" />
+                <include name="org/roosster/logging/VelocityLogSystem.class" />
+                <include name="org/roosster/Constants.class" />
+            </fileset>
+            <fileset dir="${res.dir}/common" includes="**/*" />
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="org.roosster.util.JettyStarter"/>
+                <attribute name="Class-Path" value="."/>
+                <section name="org.roosster">
+                    <attribute name="Specification-Title" value="${ant.project.name}"/>
+                    <attribute name="Specification-Version" value="${roosster.version}"/>
+                    <attribute name="Specification-Vendor" value="http://roosster.org"/>
+                    <attribute name="Implementation-Title" value="${ant.project.name}"/>
+                    <attribute name="Implementation-Version" value="${roosster.version} ${TODAY}"/>
+                    <attribute name="Implementation-Vendor" value="http://roosster.org"/>
+                </section>
+            </manifest>
+          </jar>
+    </target>
+
+    
+    <target name="dist-jar-cli"
+            depends="compile, prepare-libs, process-properties"
+            description="Builds the .jar file for the CLI distribution" >
+
+        <echo>+ ============================================= +</echo>
+        <echo>+ Roosster - Build CLI-app .jar file            +</echo>
+        <echo>+ ============================================= +</echo>
+        
+        <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+
+        <jar destfile="${dist.dir}/${cli.jar.file}" compress="true">
+            <fileset file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
+            <fileset dir="${dist.dir}/lib/common" includes="**/*" />
+            <fileset dir="${dist.dir}/lib/cli" includes="**/*" />
+            <fileset dir="${build.dir}" includes="org/roosster/**/*" />
+            <fileset dir="${res.dir}/cli" includes="**/*" />
+            <fileset dir="${res.dir}/common" includes="**/*" />
+            <fileset file="${res.dir}/${cli.prop.file}"  />
+            <fileset file="ARTISTIC.txt" />
+            <fileset file="LICENSE" />
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="org.roosster.mappers.CliMapper"/>
+                <attribute name="Class-Path" value="."/>
+                <section name="org.roosster">
+                    <attribute name="Specification-Title" value="${ant.project.name}"/>
+                    <attribute name="Specification-Version" value="${roosster.version}"/>
+                    <attribute name="Specification-Vendor" value="http://roosster.org"/>
+                    <attribute name="Implementation-Title" value="${ant.project.name}"/>
+                    <attribute name="Implementation-Version" value="${roosster.version} ${TODAY}"/>
+                    <attribute name="Implementation-Vendor" value="http://roosster.org"/>
+                </section>
+            </manifest>
+        </jar>
+    </target>
+
+    
+    <target name="dist-war" 
+            depends="dist-jar-minimal, dist-jar-starter, -dist-jar-templates"
+            description="builds a ready-to-deploy .war file of roosster">
+        
+        <echo>+ ============================================= +</echo>
+        <echo>+ Roosster - Build the rooosster .war file      +</echo>
+        <echo>+ ============================================= +</echo>
+        
+        <delete dir="${dist.dir}/libtmp" />
+        <mkdir dir="${dist.dir}/libtmp" />
+        <copy todir="${dist.dir}/libtmp">
+            <fileset dir="${lib.dir}/war" includes="*.jar"/>
+            <fileset dir="${lib.dir}/common" includes="*.jar"/>
+            <fileset file="${dist.dir}/${min.jar.file}" />
+            <fileset file="${dist.dir}/${tmpl.jar.file}" />
+        </copy>
+        
+        <war destfile="${dist.dir}/roosster.war" webxml="${metadata.dir}/web.xml">
+            <fileset dir="${html.dir}/" />
+            <webinf dir="${metadata.dir}/WEB-INF" includes="**/*" />
+            <lib dir="${dist.dir}/libtmp" includes="*.jar" />
+        </war>
+    </target>
+    
+    
+    <target name="clean" 
+            depends="init" 
+            description="Removes 'dist' and 'build' directories">
+
+        <echo>+ ============================================= +</echo>
+        <echo>+ Roosster - Clean all generated/compiled files +</echo>
+        <echo>+ ============================================= +</echo>
+
+        <delete file="${res.dir}/${cli.prop.file}" />
+        <delete file="${res.dir}/${web.prop.file}" />
+        <delete dir="${dist.dir}" />
+        <delete dir="${build.dir}" />
+        
+        <delete dir="${test.reports}"/>
+    </target>
+
+    
+    <!--
+      **************************************************************
+      Everything test related
+      **************************************************************
+      -->
+      
+
+    <target name="compile-test" 
+            depends="compile" 
+            description="Compiles all JUnit testcases files">
+
+        <echo>+ ============================================= +</echo>
+        <echo>+ Roosster - Compile Junit Tests                +</echo>
+        <echo>+ ============================================= +</echo>
+
+        <mkdir dir="${build.test.dir}" />
+        
+        <javac srcdir="${src.test.dir}"
+               destdir="${build.test.dir}"
+               debug="true"
+               deprecation="true"
+               >
+           <classpath refid="cp.test.classpath" />
+       </javac>
+    </target>
+
+
+    <target name="runtests" 
+            depends="compile-test"
+            description="">
+            
+        <echo>+ ============================================= +</echo>
+        <echo>+ Roosster - Run Junit Tests                    +</echo>
+        <echo>+ ============================================= +</echo>
+
+        <delete dir="${test.reports}"/>
+        <mkdir dir="${test.reports.data}"/>
+        <mkdir dir="${test.reports.html}"/>
+        
+        <property name="sysprop.api.endpoint"  value="api.endpoint" />
+        
+        <junit failureproperty="junit.failure">
+            <sysproperty key="${sysprop.api.endpoint}" value="http://localhost:8181/roosster/api/"/>
+        
+            <classpath>
+              <path refid="cp.test.classpath"/>
+              <path location="${build.test.dir}" />
+            </classpath>
+            <formatter type="xml"/>
+  
+            <!-- run single test -->
+            <test name="${testclass}" todir="${test.reports.data}" if="testclass" />
+  
+            <!-- run all tests in class path -->
+            <batchtest todir="${test.reports.data}" unless="testclass">
+              <fileset dir="${build.test.dir}" includes="**/Test*.class"/>
+            </batchtest>
+        </junit>
+  
+        <junitreport todir="${test.reports.html}">
+            <fileset dir="${test.reports.data}">
+              <include name="**/*.xml"/>
+            </fileset>
+            <report format="frames" todir="${test.reports.html}"/>
+        </junitreport>
+    </target>    
+    
+</project>

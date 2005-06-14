@@ -1,0 +1,41 @@
+#parse('includes/head.inc')
+
+<form name="addform" action="$baseurl/application/addurl" method="get">
+  <table>
+    <tr>
+      <td><label for="url">URL to Add</label></td>
+      <td><input type="text" id="newurl" name="url" /><input type="submit" value="send" /></td>
+    </tr>
+    <tr>
+      <td style="font-size:x-small;">
+        <a href="#"onclick="return toggleDisplay('advanced-add');" >Advanced Options
+      </td>
+      <td></td>
+    </tr>
+  </table>
+  <div id="advanced-add">
+    <fieldset>
+      <legend>Advanced Options for adding the URL</legend>
+      <table>
+        <tr>
+          <td>
+            YES <input type="radio" name="pub" value="true" />
+            NO <input type="radio" name="pub" value="false" checked="checked" />
+          </td>
+          <td><label for="pub">Public?</label></td>
+        </tr>
+        <tr>
+          <td>
+            YES <input type="radio" name="fetch.content" value="true" checked="checked" />
+            NO <input type="radio" name="fetch.content" value="false"/>
+          </td>
+          <td><label for="fetch.content">Fetch Content of URL?</label></td>
+        </tr>
+      </table>
+    </fieldset>
+  </div>
+  #if ( $req.getParameter('jumpto') == 'close' ) <input type="hidden" name="jumpto" value="close" />
+  #else <input type="hidden" name="jumpto" value="entry" /> #end
+</form>
+
+#parse('includes/foot.inc')

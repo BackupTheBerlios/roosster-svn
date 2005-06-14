@@ -1,0 +1,13 @@
+<html>
+<head>
+  <title>roosster - cached entry notice</title>
+  <style type="text/css"> @import url($baseurl/styles.css); </style>
+</head>
+#set ( $url = $req.getParameter('url') )
+<body id="cachenotice">
+  <p> This page's content is a cached copy of the original at <a href="$url">$url</a>. </p>
+  It was fetched and stored with the <a href="http://roosster.org">roosster - personal search engine</a>
+  <br/>Please note that portions of this page may not look as intended by the respective author.
+  <br/><a href="javascript:top.close();">Close this window</a>
+</body>
+</html>
