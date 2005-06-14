@@ -206,6 +206,15 @@ public class Output
     /**
      *
      */
+    public EntryList getEntries()
+    {
+        return entries;
+    }
+
+    
+    /**
+     *
+     */
     public boolean getTruncation()
     {
         return truncation;
