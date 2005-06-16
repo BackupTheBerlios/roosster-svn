@@ -26,9 +26,10 @@
  */
 package org.roosster.logging;
 
-import org.apache.log4j.PropertyConfigurator;
-
+import java.util.Map;
 import java.util.Properties;
+import org.apache.log4j.PropertyConfigurator;
+import org.roosster.Constants;
 
 /**
  * 
@@ -36,25 +37,25 @@ import java.util.Properties;
  */
 public class LogUtil 
 {
-    public static final String DEBUG_LOGGING   = "debug_log4j.properties";
-    public static final String VERBOSE_LOGGING = "verbose_log4j.properties";
-    public static final String DEFAULT_LOGGING = "default_log4j.properties";
+    public static final String DEBUG_LOGGING   = "/debug_log4j.properties";
+    public static final String VERBOSE_LOGGING = "/verbose_log4j.properties";
+    public static final String DEFAULT_LOGGING = "/default_log4j.properties";
     
     
     /**
      * 
      */
-    public static void configureLogging(String mode) throws java.io.IOException
+    public static void configureLogging(Map cmdLine) throws java.io.IOException
     {
-        if ( "debug".equals(mode) )
-            mode = DEBUG_LOGGING;
-        else if ( "verbose".equals(mode) )
-            mode = VERBOSE_LOGGING;
-        else 
-            mode = DEFAULT_LOGGING;
-          
+        String propFile = DEFAULT_LOGGING;
+      
+        if ( cmdLine.containsKey(Constants.DEBUG_LOGGING) )
+            propFile = DEBUG_LOGGING;
+        else if ( cmdLine.containsKey(Constants.VERBOSE_LOGGING) )
+            propFile = VERBOSE_LOGGING;
+      
         Properties props = new Properties();
-        props.load( LogUtil.class.getResourceAsStream(mode) );
+        props.load( LogUtil.class.getResourceAsStream(propFile) );
         PropertyConfigurator.configure(props);
     }
     

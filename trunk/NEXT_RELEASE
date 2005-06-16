@@ -1,26 +1,11 @@
-User Interface
-================
-
-* make extended search interface
-* mass delete
-* implement and show search history
-* add buttons for changing textarea size
-* make search screen nicer
-* sync js and html web interface
-
-
-
 General
 ===========
 
 * highlight search results
 * index pdf documents
-* Thinlet GUI http://thinlet.sf.net/ GUI Editor http://thing.sourceforge.net/
-* use some kind of ErrorListener instead of ServletMapper.wrapProcessRequest() ?
 * handle Frames in HTMLProcessor see http://javaboutique.internet.com/tutorials/HTMLParser/article.html
-* handle HTTP response codes correctly (302, 301, 404, 401 ... )
+* emit HTTP response codes correctly (302, 301, 404, 401 ... )
 * use file locking in Configuration.persist() ?
-* make location of HTML templates more configurable
 * implement ContentTypeProcessor chains, should be triggered when certain 
   mime types are encountered
 * implement pdf ContentTypeProcessor
@@ -28,9 +13,7 @@ General
   embedded content (styles, js, flash, applet ... ) or if this this stuff stays 
   in the page --> add explanation of this to help (referrer logging)
 * add ETag and If-Modified-Since support to ResourceFetcher
-* decode HTML entities and other stuff properly
 * optimize roossterxml output ... don't include content if raw is present --> adapt EntryParser with this
-* add authentication option
 
 
 Scratchpad Feature:

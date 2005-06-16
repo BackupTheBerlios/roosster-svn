@@ -88,9 +88,10 @@ public interface Constants
      */
     public static final String PARAM_ENTRIES    = "internal.param.entry";
     
-    /** Command-Line switch only
+    /** Command-Line switches only
      */
-    public static final String CLI_LOGGING      = "roosster.log";
+    public static final String DEBUG_LOGGING    = "d";
+    public static final String VERBOSE_LOGGING  = "v";
 
     /**
      */
