@@ -40,8 +40,11 @@ import org.roosster.Dispatcher;
 import org.roosster.InitializeException;
 import org.roosster.OperationException;
 import org.roosster.Registry;
+import org.roosster.store.EntryList;
+import org.roosster.store.Entry;
 import org.roosster.logging.LogUtil;
 import org.roosster.util.MapperUtil;
+import org.roosster.util.StringUtil;
 
 
 /**
@@ -54,8 +57,13 @@ public class Roosster extends Thinlet
     
     private static final String PROP_FILE       = "/roosster.properties";
     private static final String GUI_DEFINITON   = "/thinlet.xml";
+    
+    private static final String OUTPUT_MODE     = "text";
 
-    private Registry registry = null;
+    private Registry  registry        = null;
+    
+    private EntryList currentEntries = null;
+    private Entry     entry          = null;
 
     /**
      * 
@@ -92,20 +100,83 @@ public class Roosster extends Thinlet
     // ============ GUI event methods ============
     
         
-    public void search(String query, Object result) throws Exception 
+    /**
+     * 
+     */
+    public void eventTabChanged(Object tabbedPane) throws Exception 
     {
-        try {
-          
-            Map args = new HashMap();
-            args.put("query", query);
-            
-            Output output = new Dispatcher(registry).run("search", "text", args);
-            
-            setString(result, "text", String.valueOf(output.entriesSize()));
-            
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        Object selected = getSelectedItem(tabbedPane);
+        LOG.debug("Tab changed to "+ getString(selected, "name"));
+    }
+    
+    
+    /**
+     * 
+     */
+    public void edit(Object row) throws Exception
+    {
+        // switch to "Edit" Tab
+        Object tabPane = find("tabbedPane");
+        setInteger(tabPane, "selected", 1);
+        
+        Object[] cells = getItems(row);
+        
+        for (int i = 0; i < cells.length; i++) {
+            Integer id = (Integer) getProperty(cells[i], "id");
+            if ( id != null ) {
+                entry = currentEntries.getEntry( id.intValue() );
+                break;
+            }
         }
+        
+        LOG.debug("SELECTED ENTRY "+entry);
+    }
+    
+    
+    /**
+     * 
+     */
+    public void search(String query, Object resultTable) throws Exception 
+    {
+        removeAll(resultTable);
+      
+        Map args = new HashMap();
+        args.put("query", query);
+        
+        Output output = new Dispatcher(registry).run("search", OUTPUT_MODE, args);
+        
+        currentEntries = output.getEntries();
+        
+        for (int i = 0; i < currentEntries.size(); i++) {
+            Entry entry = currentEntries.getEntry(i);
+          
+            Object row = create("row");
+            add(resultTable, row);
+            
+            Object emptyRow = create("row");
+            add(resultTable, emptyRow);
+            
+            Object cell1 = create("cell");
+            putProperty(cell1, "id", new Integer(i));
+            setString(cell1, "text", entry.getTitle());
+            setString(cell1, "tooltip", entry.getUrl().toString());
+            add(row, cell1);
+        
+            Object cell2 = create("cell");
+            setString(cell2, "text", StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR) );
+            add(row, cell2);
+            
+            Object cell3 = create("cell");
+            setString(cell3, "text", entry.getNote());
+            add(row, cell3);
+        }
+        
+    }
+    
+    protected void handleException(Throwable throwable) 
+    {
+        // TODO show dialog etc.
+        LOG.warn("Exception occurred during event handling", throwable);
     }
     
 

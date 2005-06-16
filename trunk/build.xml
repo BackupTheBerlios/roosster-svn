@@ -96,6 +96,7 @@
         <unjar dest="${dist.dir}/lib">
             <fileset dir="${lib.dir}" includes="*.jar" />
         </unjar>
+        <touch file="${dist.dir}/${libs.unpacked.file}"/>
     </target>
 
     
