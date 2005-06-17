@@ -51,7 +51,7 @@ import org.roosster.util.StringUtil;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class Roosster extends Thinlet
+public class Roosster extends Thinlet implements GuiConstants
 {
     private static Logger LOG;
     
@@ -113,13 +113,22 @@ public class Roosster extends Thinlet
     /**
      * 
      */
-    public void edit(Object row) throws Exception
+    public void save() throws Exception
+    {
+        LOG.debug("Saving Entry");
+    }
+
+    
+    /**
+     * 
+     */
+    public void edit(Object selectedRow) throws Exception
     {
         // switch to "Edit" Tab
-        Object tabPane = find("tabbedPane");
-        setInteger(tabPane, "selected", 1);
+        Object tabPane = find(TABBED_PANE);
+        setInteger(tabPane, "selected", EDIT_TAB_INDEX);
         
-        Object[] cells = getItems(row);
+        Object[] cells = getItems(selectedRow);
         
         for (int i = 0; i < cells.length; i++) {
             Integer id = (Integer) getProperty(cells[i], "id");
@@ -129,7 +138,15 @@ public class Roosster extends Thinlet
             }
         }
         
-        LOG.debug("SELECTED ENTRY "+entry);
+        LOG.debug("Select Entry "+entry);
+
+        setString(find(URL_FIELD), "text", entry.getUrl().toString());
+        setString(find(TITLE_FIELD), "text", entry.getTitle());
+        setString(find(TAGS_FIELD), "text", StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR));
+        setString(find(NOTE_FIELD), "text", entry.getNote());
+        setString(find(TYPE_FIELD), "text", entry.getFileType());
+        setString(find(AUTHOR_FIELD), "text", entry.getAuthor());
+        setString(find(AUTHOREMAIL_FIELD), "text", entry.getAuthorEmail());
     }
     
     
