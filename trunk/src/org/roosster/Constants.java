@@ -33,9 +33,15 @@ package org.roosster;
  */
 public interface Constants
 {
+  
+    /**
+     */
+    public static final String PROP_LOCALE = "locale";
+  
     /**
      */
     public static final String DEFAULT_INPUT_ENCODING = "UTF-8";
+    
     /**
      */
     public static final String PLUGIN_STORE      = "store";

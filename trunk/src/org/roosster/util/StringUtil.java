@@ -41,6 +41,15 @@ public class StringUtil
 {
     private static Logger LOG = Logger.getLogger(StringUtil.class);
     
+    
+    /**
+     * 
+     */
+    public static final boolean isNullOrBlank(String str)
+    {
+        return str == null || "".equals(str) ? true : false;
+    }
+    
 
     /**
      * 

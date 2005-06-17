@@ -27,7 +27,7 @@
     ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<project name="roosster" default="compile" basedir=".">
+<project name="roosster" default="run" basedir=".">
 
     <target name="init">
        <tstamp/>
@@ -60,9 +60,18 @@
        <property name="prop.file"    value="${res.dir}/roosster-base.properties" />
         
        <!-- classpath definition -->
-       <path id="cp.classpath">
+       <path id="classpath">
           <fileset dir="${lib.dir}" includes="*.jar" />
        </path>
+       
+       <path id="run.classpath">
+          <path refid="classpath"/>
+          <pathelement location="${build.dir}" />
+          <pathelement location="${res.dir}" />
+       </path>
+       
+       <!-- misc definitions-->
+       <property name="main.class" value="org.roosster.gui.RoossterGui" />
        
     </target>
 
@@ -77,7 +86,7 @@
                debug="true"
                deprecation="true"
                >
-           <classpath refid="cp.classpath" />
+           <classpath refid="classpath" />
        </javac>
     </target>
 
@@ -117,7 +126,7 @@
             <fileset dir="${res.dir}" includes="**/*" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
-                <attribute name="Main-Class" value="org.roosster.gui.RoossterGui"/>
+                <attribute name="Main-Class" value="${main.class}"/>
                 <attribute name="Class-Path" value="."/>
                 <section name="org.roosster">
                     <attribute name="Specification-Title" value="${ant.project.name}"/>
@@ -131,6 +140,20 @@
           </jar>
     </target>
 
+    
+    <target name="run" depends="compile" description="Runs the roosster application">
+        <java classname="${main.class}" fork="true">
+            <classpath refid="run.classpath" />
+            <arg line="${debug.log.arg}"/>
+        </java>
+    </target>
+    
+    
+    <target name="run-with-debug" depends="compile" description="Runs the roosster application">
+        <property name="debug.log.arg" value="-d" />
+        <antcall target="run" inheritAll="true" inheritRefs="true" />
+    </target>
+    
     
     <target name="clean" 
             depends="init" 

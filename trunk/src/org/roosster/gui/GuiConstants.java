@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.main;
+package org.roosster.gui;
 
 public interface GuiConstants 
 {
@@ -32,20 +32,30 @@ public interface GuiConstants
     public static final int EDIT_TAB_INDEX      = 1;
 
     public static final String TABBED_PANE          = "tabbedPane";
-    public static final String EDIT_TAB             = "edidtTab";
+    public static final String EDIT_TAB             = "editTab";
     public static final String SEARCH_TAB           = "searchTab";
+
+    // the global message label
+    public static final String INFO_MSG_LABEL       = "infomessagesLabel";
+    public static final String ERR_MSG_LABEL        = "errormessagesLabel";
     
-    public static final String URL_FIELD            = "urlField";
+    // fields and label names in the Search-Tab    
+    public static final String QUERY_FIELD          = "queryField";
+    public static final String SEARCH_RESULT        = "searchresultTable";
+
+    // fields and label names in the Edit-Tab
+    public static final String URL_LABEL            = "urlLabel";
     public static final String TITLE_FIELD          = "titleField";
     public static final String TAGS_FIELD           = "tagsField";
     public static final String NOTE_FIELD           = "noteField";
     public static final String TYPE_FIELD           = "typeField";
     public static final String AUTHOR_FIELD         = "authorField";
     public static final String AUTHOREMAIL_FIELD    = "authoremailField";
-
-    public static final String QUERY_FIELD          = "queryField";
-
-    public static final String SEARCH_RESULT        = "searchresultTable";
+    
+    // fields and label names in the add Tab
+    public static final String ADDURL_FIELD         = "addurlField";
+    public static final String ADDFETCH_FIELD       = "addfetchcontentCheckbox";
+    public static final String ADDPUBLIC_FIELD      = "addpublicCheckbox";
 
 
 }

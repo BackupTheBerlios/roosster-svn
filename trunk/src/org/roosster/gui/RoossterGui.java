@@ -24,14 +24,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.main;
+package org.roosster.gui;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
+import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.net.URL;
+import java.net.MalformedURLException;
 
-import thinlet.Thinlet;
 import thinlet.FrameLauncher;
+import thinlet.Thinlet;
 
 import org.apache.log4j.Logger;
 import org.roosster.Output;
@@ -40,8 +45,11 @@ import org.roosster.Dispatcher;
 import org.roosster.InitializeException;
 import org.roosster.OperationException;
 import org.roosster.Registry;
+import org.roosster.Configuration;
+import org.roosster.store.EntryStore;
 import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
+import org.roosster.store.DuplicateEntryException;
 import org.roosster.logging.LogUtil;
 import org.roosster.util.MapperUtil;
 import org.roosster.util.StringUtil;
@@ -55,22 +63,30 @@ public class RoossterGui extends Thinlet implements GuiConstants
 {
     private static Logger LOG;
     
+    private static final String RES_BUNDLE      = "roosster_resources";
     private static final String PROP_FILE       = "/roosster.properties";
     private static final String GUI_DEFINITON   = "/thinlet.xml";
     
     private static final String OUTPUT_MODE     = "text";
 
-    private Registry  registry        = null;
-    
-    private EntryList currentEntries = null;
-    private Entry     entry          = null;
+    private ResourceBundle  resourceBundle = null; 
+    private Configuration   configuration  = null;
+    private Registry        registry       = null;
+    private EntryStore      store          = null;
+    private EntryList       currentEntries = null;
+    private Entry           entry          = null;
 
     /**
      * 
      */
-    public Roosster(Registry registry) throws java.io.IOException 
+    public RoossterGui(Registry registry, ResourceBundle bundle) throws Exception 
     {
         this.registry = registry;
+        resourceBundle = bundle;
+        
+        store = (EntryStore) registry.getPlugin(Constants.PLUGIN_STORE);
+        configuration = registry.getConfiguration();
+        
         add( parse( getClass().getResourceAsStream(GUI_DEFINITON) ) );
     }    
     
@@ -84,11 +100,17 @@ public class RoossterGui extends Thinlet implements GuiConstants
             Map cmdLine = MapperUtil.parseCommandLineArguments(arguments);
 
             LogUtil.configureLogging(cmdLine);
-            LOG = Logger.getLogger(Roosster.class);
+            LOG = Logger.getLogger(RoossterGui.class);
         
+            if ( cmdLine.containsKey(Constants.PROP_LOCALE) ) 
+                Locale.setDefault( new Locale((String) cmdLine.get(Constants.PROP_LOCALE)) );
+            
+            LOG.debug("Using Locale: "+Locale.getDefault());
+            
             new FrameLauncher("Thinlet", 
-                              new Roosster(
-                                  new Registry(Roosster.class.getResourceAsStream(PROP_FILE), cmdLine)
+                              new RoossterGui(
+                                  new Registry(RoossterGui.class.getResourceAsStream(PROP_FILE), cmdLine),
+                                  ResourceBundle.getBundle(RES_BUNDLE, Locale.getDefault())
                               ), 
                               640, 480);            
           
@@ -106,27 +128,30 @@ public class RoossterGui extends Thinlet implements GuiConstants
     public void eventTabChanged(Object tabbedPane) throws Exception 
     {
         Object selected = getSelectedItem(tabbedPane);
+        int selectedIndex = getSelectedIndex(tabbedPane);
+        
         LOG.debug("Tab changed to "+ getString(selected, "name"));
-    }
+        
+        resetMessages();
+                
+        switch (selectedIndex) {
+            case EDIT_TAB_INDEX:
+                break;
+            case SEARCH_TAB_INDEX: 
+                // TODO find a way to set the focus on query field
+                break;
+            default:
+        }
     
-    
-    /**
-     * 
-     */
-    public void save() throws Exception
-    {
-        LOG.debug("Saving Entry");
     }
 
     
     /**
      * 
      */
-    public void edit(Object selectedRow) throws Exception
+    public void fillEditForm(Object selectedRow) throws Exception
     {
-        // switch to "Edit" Tab
-        Object tabPane = find(TABBED_PANE);
-        setInteger(tabPane, "selected", EDIT_TAB_INDEX);
+        switchToTab(EDIT_TAB_INDEX);
         
         Object[] cells = getItems(selectedRow);
         
@@ -140,20 +165,99 @@ public class RoossterGui extends Thinlet implements GuiConstants
         
         LOG.debug("Select Entry "+entry);
 
-        setString(find(URL_FIELD), "text", entry.getUrl().toString());
-        setString(find(TITLE_FIELD), "text", entry.getTitle());
-        setString(find(TAGS_FIELD), "text", StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR));
-        setString(find(NOTE_FIELD), "text", entry.getNote());
-        setString(find(TYPE_FIELD), "text", entry.getFileType());
-        setString(find(AUTHOR_FIELD), "text", entry.getAuthor());
-        setString(find(AUTHOREMAIL_FIELD), "text", entry.getAuthorEmail());
+        fillForm();
+    }
+
+    
+    /**
+     * 
+     */
+    public void doSave(String title, String tags, String note, String type,
+                       String author, String authorEmail) 
+                throws Exception
+    {
+        if ( entry == null )
+            return;
+          
+        LOG.debug("Saving Entry "+entry);
+        
+        entry.setTitle(title);
+        entry.setTags( StringUtil.split(tags, Entry.TAG_SEPARATOR) );
+        entry.setNote(note);
+        entry.setFileType(type);
+        entry.setAuthor(author);
+        entry.setAuthorEmail(authorEmail);
+        
+        List list = new EntryList();
+        list.add(entry);
+        
+        Map args = new HashMap();
+        args.put(Constants.PARAM_ENTRIES, list);
+        
+        // TODO exception handling
+        new Dispatcher(registry).run("putentries", OUTPUT_MODE, args);
+        
+        showInfo(BundleKeys.SAVE_SUCCESS);
     }
     
     
     /**
      * 
      */
-    public void search(String query, Object resultTable) throws Exception 
+    public void doAdd(String urlString, boolean fetchContent, boolean pub) throws Exception 
+    {
+        LOG.debug("Trying to add Entry with URL "+urlString+", public: "+pub+", fetchContent: "+fetchContent);
+        
+        if ( StringUtil.isNullOrBlank(urlString) ) {
+            showError(BundleKeys.URL_EMPTY);
+            return;
+        }
+        
+        try {
+            configuration.setProperty(Constants.ARG_PUBLIC, String.valueOf(pub));
+            configuration.setProperty(Constants.ARG_FORCE, String.valueOf(false));
+            configuration.setProperty(Constants.PROP_FETCH_CONTENT, String.valueOf(fetchContent));
+            
+            List list = new EntryList();
+            list.add(new Entry(new URL(urlString)));
+            
+            Map args = new HashMap();
+            args.put(Constants.PARAM_ENTRIES, list);
+            
+            Output output = new Dispatcher(registry).run("addurls", OUTPUT_MODE, args);
+            
+            if ( output.entriesSize() > 1 ) {
+                showInfo(BundleKeys.MULTIPLE_ADDED);
+            } else {
+                entry = output.getEntries().getEntry(0);
+                fillForm();
+                switchToTab(EDIT_TAB_INDEX);
+                showInfo(BundleKeys.ADD_SUCCESS);
+            }
+             
+          
+        } catch(MalformedURLException ex) {
+          
+            LOG.debug("URL has wrong format", ex);
+            showError(BundleKeys.URL_EMPTY);
+          
+        } catch(DuplicateEntryException ex) {
+          
+            LOG.debug("URL already stored in index!");
+            
+            entry = store.getEntry(ex.getUrl());
+            fillForm();
+            
+            switchToTab(EDIT_TAB_INDEX);
+            showInfo(BundleKeys.DUPLICATE_URL);
+        }
+    }
+    
+    
+    /**
+     * 
+     */
+    public void doSearch(String query, Object resultTable) throws Exception 
     {
         removeAll(resultTable);
       
@@ -190,6 +294,20 @@ public class RoossterGui extends Thinlet implements GuiConstants
         
     }
     
+    
+    /**
+     * 
+     */
+    public void toggleVisible(Object component)
+    {
+        boolean currentValue = getBoolean(component, "visible");
+        setBoolean(component, "visible", !currentValue); 
+    }
+    
+    
+    /**
+     * 
+     */
     protected void handleException(Throwable throwable) 
     {
         // TODO show dialog etc.
@@ -197,4 +315,73 @@ public class RoossterGui extends Thinlet implements GuiConstants
     }
     
 
+    // ============ protected Helper methods ============
+
+    
+    /**
+     * 
+     */
+    protected void fillForm()
+    {
+        if ( entry != null ) {
+            text(URL_LABEL, entry.getUrl().toString());
+            text(TITLE_FIELD, entry.getTitle());
+            text(TAGS_FIELD, StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR));
+            text(NOTE_FIELD, entry.getNote());
+            text(TYPE_FIELD, entry.getFileType());
+            text(AUTHOR_FIELD, entry.getAuthor());
+            text(AUTHOREMAIL_FIELD, entry.getAuthorEmail());
+        }
+    }
+    
+    /**
+     * 
+     */
+    protected void switchToTab(int tabIndex)
+    {
+        setInteger(find(TABBED_PANE), "selected", tabIndex);
+    }
+    
+    
+    /**
+     * 
+     */
+    protected void resetMessages()
+    {
+        text(ERR_MSG_LABEL, "");
+        text(INFO_MSG_LABEL, "");
+        
+    }
+    
+    
+    /**
+     * 
+     */
+    protected void showInfo(String bundleKey)
+    {
+        text(ERR_MSG_LABEL, "");
+        text(INFO_MSG_LABEL, resourceBundle.getString(bundleKey));
+    }
+    
+    
+    /**
+     * 
+     */
+    protected void showError(String bundleKey)
+    {
+        text(INFO_MSG_LABEL, "");
+        text(ERR_MSG_LABEL, resourceBundle.getString(bundleKey));
+    }
+    
+    
+    /**
+     * 
+     */
+    protected Object text(String objName, String value)
+    {
+        Object obj = find(objName);
+        setString(obj, "text", value);
+        return obj;
+    }
+    
 }
