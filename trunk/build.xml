@@ -117,7 +117,7 @@
             <fileset dir="${res.dir}" includes="**/*" />
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
-                <attribute name="Main-Class" value="org.roosster.main.Roosster"/>
+                <attribute name="Main-Class" value="org.roosster.gui.RoossterGui"/>
                 <attribute name="Class-Path" value="."/>
                 <section name="org.roosster">
                     <attribute name="Specification-Title" value="${ant.project.name}"/>

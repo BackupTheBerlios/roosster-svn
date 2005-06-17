@@ -51,7 +51,7 @@ import org.roosster.util.StringUtil;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class Roosster extends Thinlet implements GuiConstants
+public class RoossterGui extends Thinlet implements GuiConstants
 {
     private static Logger LOG;
     
