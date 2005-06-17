@@ -24,18 +24,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.gui;
+package org.roosster.api;
 
-public interface BundleKeys 
+
+/**
+ *
+ * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
+ */
+public class RoossterApiHttpd 
 {
-    public static final String SAVE_SUCCESS        = "save.success";
-    public static final String ADD_SUCCESS         = "add.success";
-    
-    public static final String URL_EMPTY           = "param.empty.url";
-    public static final String URL_INVALID         = "param.invalid.url";
-    
-    public static final String DUPLICATE_URL       = "duplicate.url";
-    
-    public static final String MULTIPLE_ADDED      = "add.multiple.added";
-
+     
 }

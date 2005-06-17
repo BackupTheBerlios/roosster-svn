@@ -51,6 +51,7 @@ public interface GuiConstants
     public static final String TYPE_FIELD           = "typeField";
     public static final String AUTHOR_FIELD         = "authorField";
     public static final String AUTHOREMAIL_FIELD    = "authoremailField";
+    public static final String TAGS_LIST            = "tagsList";
     
     // fields and label names in the add Tab
     public static final String ADDURL_FIELD         = "addurlField";

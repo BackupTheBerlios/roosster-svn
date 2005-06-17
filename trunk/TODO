@@ -1,4 +1,11 @@
 
 GUI
 ========
-* put message texts into resourcebundle
+* make working with index faster by keeping Index* objects open
+* add menu 
+* let user specify index position at runtime through menu
+* add help and about system
+
+General
+=======
+* find way to let web server run in the background 

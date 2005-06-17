@@ -71,7 +71,7 @@
        </path>
        
        <!-- misc definitions-->
-       <property name="main.class" value="org.roosster.gui.RoossterGui" />
+       <property name="main.class" value="org.roosster.main.Roosster" />
        
     </target>
 

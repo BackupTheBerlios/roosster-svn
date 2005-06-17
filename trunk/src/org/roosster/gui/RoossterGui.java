@@ -30,12 +30,16 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.Locale;
 import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Arrays;
 import java.net.URL;
 import java.net.MalformedURLException;
 
-import thinlet.FrameLauncher;
 import thinlet.Thinlet;
 
 import org.apache.log4j.Logger;
@@ -61,10 +65,8 @@ import org.roosster.util.StringUtil;
  */
 public class RoossterGui extends Thinlet implements GuiConstants
 {
-    private static Logger LOG;
+    private static Logger LOG = Logger.getLogger(RoossterGui.class);
     
-    private static final String RES_BUNDLE      = "roosster_resources";
-    private static final String PROP_FILE       = "/roosster.properties";
     private static final String GUI_DEFINITON   = "/thinlet.xml";
     
     private static final String OUTPUT_MODE     = "text";
@@ -75,6 +77,7 @@ public class RoossterGui extends Thinlet implements GuiConstants
     private EntryStore      store          = null;
     private EntryList       currentEntries = null;
     private Entry           entry          = null;
+    private Set             allTags        = null; 
 
     /**
      * 
@@ -87,37 +90,11 @@ public class RoossterGui extends Thinlet implements GuiConstants
         store = (EntryStore) registry.getPlugin(Constants.PLUGIN_STORE);
         configuration = registry.getConfiguration();
         
+        allTags = new TreeSet( store.getAllTags() );
+        
         add( parse( getClass().getResourceAsStream(GUI_DEFINITON) ) );
     }    
-    
-    
-    /**
-     *
-     */
-    public static void main(String[] arguments)
-    {
-        try {
-            Map cmdLine = MapperUtil.parseCommandLineArguments(arguments);
 
-            LogUtil.configureLogging(cmdLine);
-            LOG = Logger.getLogger(RoossterGui.class);
-        
-            if ( cmdLine.containsKey(Constants.PROP_LOCALE) ) 
-                Locale.setDefault( new Locale((String) cmdLine.get(Constants.PROP_LOCALE)) );
-            
-            LOG.debug("Using Locale: "+Locale.getDefault());
-            
-            new FrameLauncher("Thinlet", 
-                              new RoossterGui(
-                                  new Registry(RoossterGui.class.getResourceAsStream(PROP_FILE), cmdLine),
-                                  ResourceBundle.getBundle(RES_BUNDLE, Locale.getDefault())
-                              ), 
-                              640, 480);            
-          
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } 
-    }
 
     // ============ GUI event methods ============
     
@@ -172,8 +149,8 @@ public class RoossterGui extends Thinlet implements GuiConstants
     /**
      * 
      */
-    public void doSave(String title, String tags, String note, String type,
-                       String author, String authorEmail) 
+    public void doSave(String title, String tagStr, String note, String type,
+                       String author, String authorEmail, Object tagsList) 
                 throws Exception
     {
         if ( entry == null )
@@ -181,8 +158,14 @@ public class RoossterGui extends Thinlet implements GuiConstants
           
         LOG.debug("Saving Entry "+entry);
         
+        Object[] selectedTags = getSelectedItems(tagsList);
+        LOG.debug("SELECTED TAGS "+Arrays.asList(selectedTags));
+        
+        String[] tags = StringUtil.split(tagStr, Entry.TAG_SEPARATOR);
+        updateTagsSet(tags);
+        
         entry.setTitle(title);
-        entry.setTags( StringUtil.split(tags, Entry.TAG_SEPARATOR) );
+        entry.setTags(tags);
         entry.setNote(note);
         entry.setFileType(type);
         entry.setAuthor(author);
@@ -239,17 +222,23 @@ public class RoossterGui extends Thinlet implements GuiConstants
         } catch(MalformedURLException ex) {
           
             LOG.debug("URL has wrong format", ex);
-            showError(BundleKeys.URL_EMPTY);
+            showError(BundleKeys.URL_INVALID);
           
-        } catch(DuplicateEntryException ex) {
+        } catch(OperationException ex) {
           
-            LOG.debug("URL already stored in index!");
+            if ( ex.getCause() instanceof DuplicateEntryException ) {
+                LOG.debug("URL already stored in index!");
+                
+                DuplicateEntryException e = (DuplicateEntryException) ex.getCause();
+                entry = store.getEntry(e.getUrl());
+                fillForm();
+                
+                switchToTab(EDIT_TAB_INDEX);
+                showInfo(BundleKeys.DUPLICATE_URL);
+            } else {
+                throw ex;
+            }
             
-            entry = store.getEntry(ex.getUrl());
-            fillForm();
-            
-            switchToTab(EDIT_TAB_INDEX);
-            showInfo(BundleKeys.DUPLICATE_URL);
         }
     }
     
@@ -277,24 +266,24 @@ public class RoossterGui extends Thinlet implements GuiConstants
             Object emptyRow = create("row");
             add(resultTable, emptyRow);
             
-            Object cell1 = create("cell");
-            putProperty(cell1, "id", new Integer(i));
-            setString(cell1, "text", entry.getTitle());
-            setString(cell1, "tooltip", entry.getUrl().toString());
-            add(row, cell1);
+            Object cell = create("cell");
+            putProperty(cell, "id", new Integer(i));
+            setString(cell, "text", entry.getTitle());
+            setString(cell, "tooltip", entry.getUrl().toString());
+            add(row, cell);
         
-            Object cell2 = create("cell");
-            setString(cell2, "text", StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR) );
-            add(row, cell2);
+            cell = create("cell");
+            setString(cell, "text", StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR) );
+            add(row, cell);
             
-            Object cell3 = create("cell");
-            setString(cell3, "text", entry.getNote());
-            add(row, cell3);
+            cell = create("cell");
+            setString(cell, "text", entry.getNote());
+            add(row, cell);
         }
         
     }
     
-    
+   
     /**
      * 
      */
@@ -326,11 +315,37 @@ public class RoossterGui extends Thinlet implements GuiConstants
         if ( entry != null ) {
             text(URL_LABEL, entry.getUrl().toString());
             text(TITLE_FIELD, entry.getTitle());
-            text(TAGS_FIELD, StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR));
+            //text(TAGS_FIELD, StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR));
             text(NOTE_FIELD, entry.getNote());
             text(TYPE_FIELD, entry.getFileType());
             text(AUTHOR_FIELD, entry.getAuthor());
             text(AUTHOREMAIL_FIELD, entry.getAuthorEmail());
+            
+            Object tagsList = find(TAGS_LIST);
+            Object[] tagItems = getItems(tagsList);
+            
+            // rebuild tagsList if size doesn't match number of current allTags
+            if ( tagItems.length != allTags.size() ) {
+                removeAll(tagsList);
+                
+                Iterator iter = allTags.iterator();
+                while ( iter.hasNext() ) {
+                    Object item = create("item");
+                    setString(item, "text", (String) iter.next());
+                    add(tagsList, item);
+                }
+                
+                tagItems = getItems(tagsList);
+            }
+            
+            // now mark the selected tags
+            if ( tagItems.length > 0 ) {
+                Set entryTags = new HashSet( Arrays.asList(entry.getTags()) );
+              
+                for (int i = 0; i < tagItems.length; i++) {
+                    setBoolean(tagItems[i], "selected", entryTags.contains(getString(tagItems[i], "text")) );
+                }
+            }
         }
     }
     
@@ -382,6 +397,21 @@ public class RoossterGui extends Thinlet implements GuiConstants
         Object obj = find(objName);
         setString(obj, "text", value);
         return obj;
+    }
+    
+    
+    // ============ private Helper methods ============
+    
+    
+    /**
+     * 
+     */
+    private void updateTagsSet(String[] tags)
+    {
+        for (int i = 0; i < tags.length; i++) {
+            if ( !StringUtil.isNullOrBlank(tags[i]) && !allTags.contains(tags[i]) )
+                allTags.add(tags[i]);
+        }
     }
     
 }
