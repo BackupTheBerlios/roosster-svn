@@ -42,6 +42,7 @@ public interface GuiConstants
     // fields and label names in the Search-Tab    
     public static final String QUERY_FIELD          = "queryField";
     public static final String SEARCH_RESULT        = "searchresultTable";
+    public static final String EMPTYRESULT_LABEL    = "emptyresultLabel";
 
     // fields and label names in the Edit-Tab
     public static final String URL_LABEL            = "urlLabel";

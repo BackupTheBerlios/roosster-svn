@@ -13,13 +13,14 @@
                 <textfield columns="50" name="queryField" perform="doSearch(this.text, searchresultTable)"/>
                 <button action="doSearch(queryField.text, searchresultTable)" text="Go"/>
                 <label text=" "/>
-                <table colspan="3" name="searchresultTable" perform="fillEditForm(item)" weightx="1" weighty="1">
+                <table colspan="3" name="searchresultTable" perform="fillEditForm(item)" visible="false" weightx="1" weighty="1">
                     <header>
                         <column name="titleHeader" text="Title" width="150"/>
                         <column name="tagsHeader" text="Tags" width="200"/>
                         <column name="noteHeader" text="Note" width="200"/>
                     </header>
                 </table>
+                <label name="emptyresultLabel" text="No Entries found for this search." visible="false"/>
             </panel>
         </tab>
         <tab mnemonic="0" name="editTab" text="Edit">

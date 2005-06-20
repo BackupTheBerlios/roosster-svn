@@ -5,6 +5,12 @@ GUI
 * add menu 
 * let user specify index position at runtime through menu
 * add help and about system
+* find nice help icon (question mark?) and provide first tips and help
+  via it's tooltip; give every tab it's own one
+* use i18n feature of thinlet
+* implement autocomplete function for tags
+* ask mailinglist, if it's possible to programmatically set focus
+* make it a nive startable app for MacOS X with a decent menubar
 
 General
 =======

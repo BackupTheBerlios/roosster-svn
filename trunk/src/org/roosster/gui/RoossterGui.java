@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.Locale;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -158,14 +159,16 @@ public class RoossterGui extends Thinlet implements GuiConstants
           
         LOG.debug("Saving Entry "+entry);
         
+        Set entryTags = new HashSet(Arrays.asList(StringUtil.split(tagStr, Entry.TAG_SEPARATOR)));
         Object[] selectedTags = getSelectedItems(tagsList);
-        LOG.debug("SELECTED TAGS "+Arrays.asList(selectedTags));
-        
-        String[] tags = StringUtil.split(tagStr, Entry.TAG_SEPARATOR);
-        updateTagsSet(tags);
+        for (int i = 0; i < selectedTags.length; i++) {
+           entryTags.add( getString(selectedTags[i], "text") ); 
+        }
+        updateTagsSet(entryTags);
+        buildTagsList();
         
         entry.setTitle(title);
-        entry.setTags(tags);
+        entry.setTags((String[]) entryTags.toArray(new String[0]));
         entry.setNote(note);
         entry.setFileType(type);
         entry.setAuthor(author);
@@ -257,33 +260,50 @@ public class RoossterGui extends Thinlet implements GuiConstants
         
         currentEntries = output.getEntries();
         
-        for (int i = 0; i < currentEntries.size(); i++) {
-            Entry entry = currentEntries.getEntry(i);
-          
-            Object row = create("row");
-            add(resultTable, row);
+        if ( currentEntries.size() > 0 ) {
+            for (int i = 0; i < currentEntries.size(); i++) {
+                Entry entry = currentEntries.getEntry(i);
+              
+                Object row = create("row");
+                add(resultTable, row);
+                
+                Object emptyRow = create("row");
+                add(resultTable, emptyRow);
+                
+                Object cell = create("cell");
+                putProperty(cell, "id", new Integer(i));
+                setString(cell, "text", entry.getTitle());
+                setString(cell, "tooltip", entry.getUrl().toString());
+                add(row, cell);
             
-            Object emptyRow = create("row");
-            add(resultTable, emptyRow);
+                cell = create("cell");
+                setString(cell, "text", StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR) );
+                add(row, cell);
+                
+                cell = create("cell");
+                setString(cell, "text", entry.getNote());
+                add(row, cell);
+            }
+            setVisible(SEARCH_RESULT, true);
+            setVisible(EMPTYRESULT_LABEL, false);
             
-            Object cell = create("cell");
-            putProperty(cell, "id", new Integer(i));
-            setString(cell, "text", entry.getTitle());
-            setString(cell, "tooltip", entry.getUrl().toString());
-            add(row, cell);
-        
-            cell = create("cell");
-            setString(cell, "text", StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR) );
-            add(row, cell);
-            
-            cell = create("cell");
-            setString(cell, "text", entry.getNote());
-            add(row, cell);
+        } else {
+            setVisible(SEARCH_RESULT, false);
+            setVisible(EMPTYRESULT_LABEL, true);
         }
         
     }
     
    
+    /**
+     * 
+     */
+    public void setVisible(String componentName, boolean visible)
+    {
+        setBoolean(find(componentName), "visible", visible); 
+    }
+    
+    
     /**
      * 
      */
@@ -315,39 +335,53 @@ public class RoossterGui extends Thinlet implements GuiConstants
         if ( entry != null ) {
             text(URL_LABEL, entry.getUrl().toString());
             text(TITLE_FIELD, entry.getTitle());
-            //text(TAGS_FIELD, StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR));
+            text(TAGS_FIELD, StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR));
             text(NOTE_FIELD, entry.getNote());
             text(TYPE_FIELD, entry.getFileType());
             text(AUTHOR_FIELD, entry.getAuthor());
             text(AUTHOREMAIL_FIELD, entry.getAuthorEmail());
             
-            Object tagsList = find(TAGS_LIST);
-            Object[] tagItems = getItems(tagsList);
-            
-            // rebuild tagsList if size doesn't match number of current allTags
-            if ( tagItems.length != allTags.size() ) {
-                removeAll(tagsList);
-                
-                Iterator iter = allTags.iterator();
-                while ( iter.hasNext() ) {
-                    Object item = create("item");
-                    setString(item, "text", (String) iter.next());
-                    add(tagsList, item);
-                }
-                
-                tagItems = getItems(tagsList);
-            }
-            
-            // now mark the selected tags
-            if ( tagItems.length > 0 ) {
-                Set entryTags = new HashSet( Arrays.asList(entry.getTags()) );
-              
-                for (int i = 0; i < tagItems.length; i++) {
-                    setBoolean(tagItems[i], "selected", entryTags.contains(getString(tagItems[i], "text")) );
-                }
-            }
+            buildTagsList();
         }
     }
+    
+    /**
+     *
+     */
+    protected void buildTagsList()
+    {
+        Object tagsList = find(TAGS_LIST);
+        Object[] tagItems = getItems(tagsList);
+        
+        // rebuild tagsList if size doesn't match number of current allTags
+        if ( tagItems.length != allTags.size() ) {
+            removeAll(tagsList);
+            
+            Iterator iter = allTags.iterator();
+            while ( iter.hasNext() ) {
+                Object item = create("item");
+                setString(item, "text", (String) iter.next());
+                add(tagsList, item);
+            }
+            
+            tagItems = getItems(tagsList);
+        }
+        
+        // now mark the selected tags
+        /* 
+        if ( tagItems.length > 0 ) {
+            Set entryTags = new HashSet( Arrays.asList(entry.getTags()) );
+          
+            for (int i = 0; i < tagItems.length; i++) {
+                setBoolean(tagItems[i], 
+                           "selected", 
+                           entryTags.contains(getString(tagItems[i], "text")) 
+                          );
+            }
+        }
+        */
+    }
+
     
     /**
      * 
@@ -408,9 +442,20 @@ public class RoossterGui extends Thinlet implements GuiConstants
      */
     private void updateTagsSet(String[] tags)
     {
-        for (int i = 0; i < tags.length; i++) {
-            if ( !StringUtil.isNullOrBlank(tags[i]) && !allTags.contains(tags[i]) )
-                allTags.add(tags[i]);
+        updateTagsSet( new HashSet(Arrays.asList(tags)) );
+    }
+
+    
+    /**
+     * 
+     */
+    private void updateTagsSet(Set tags)
+    {
+        Iterator iter = tags.iterator();
+        while ( iter.hasNext() ) {
+            String tag = (String) iter.next();
+            if ( !StringUtil.isNullOrBlank(tag) && !allTags.contains(tag) )
+                allTags.add(tag);
         }
     }
     
