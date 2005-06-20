@@ -190,7 +190,8 @@ public class RoossterGui extends Thinlet implements GuiConstants
     /**
      * 
      */
-    public void doAdd(String urlString, boolean fetchContent, boolean pub) throws Exception 
+    public void doAdd(String urlString, boolean fetchContent, boolean pub, boolean force) 
+               throws Exception 
     {
         LOG.debug("Trying to add Entry with URL "+urlString+", public: "+pub+", fetchContent: "+fetchContent);
         
@@ -200,9 +201,9 @@ public class RoossterGui extends Thinlet implements GuiConstants
         }
         
         try {
-            configuration.setProperty(Constants.ARG_PUBLIC, String.valueOf(pub));
-            configuration.setProperty(Constants.ARG_FORCE, String.valueOf(false));
             configuration.setProperty(Constants.PROP_FETCH_CONTENT, String.valueOf(fetchContent));
+            configuration.setProperty(Constants.ARG_PUBLIC, String.valueOf(pub));
+            configuration.setProperty(Constants.ARG_FORCE, String.valueOf(force));
             
             List list = new EntryList();
             list.add(new Entry(new URL(urlString)));

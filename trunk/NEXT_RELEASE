@@ -14,6 +14,9 @@ General
   in the page --> add explanation of this to help (referrer logging)
 * add ETag and If-Modified-Since support to ResourceFetcher
 * optimize roossterxml output ... don't include content if raw is present --> adapt EntryParser with this
+* plugin mechanism (drop class file into certain path and it can be used when 
+  configured in properties; if includes xml file, this gets included into thinlet
+  GUI)
 
 
 Scratchpad Feature:

@@ -58,6 +58,7 @@ public interface GuiConstants
     public static final String ADDURL_FIELD         = "addurlField";
     public static final String ADDFETCH_FIELD       = "addfetchcontentCheckbox";
     public static final String ADDPUBLIC_FIELD      = "addpublicCheckbox";
+    public static final String ADDFORCE_FIELD       = "addforceCheckbox";
 
 
 }

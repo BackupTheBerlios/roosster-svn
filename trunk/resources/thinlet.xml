@@ -5,7 +5,7 @@
         <label font="bold" foreground="#00df00" name="infomessagesLabel" text=" "/>
         <label font="bold" foreground="#df0000" name="errormessagesLabel"/>
     </panel>
-    <tabbedpane action="eventTabChanged(tabbedPane)" name="tabbedPane" weightx="1" weighty="1">
+    <tabbedpane action="eventTabChanged(tabbedPane)" name="tabbedPane" selected="1" weightx="1" weighty="1">
         <tab mnemonic="0" name="searchTab" text="Search">
             <panel colspan="0" columns="3" gap="4" weightx="1" weighty="1">
                 <label font="14 bold" text="Search"/>
@@ -32,8 +32,6 @@
                     <label name="urlLabel"/>
                     <label for="titleField" text="Title"/>
                     <textfield name="titleField"/>
-                    <label for="tagsField" mnemonic="1" text="Tags"/>
-                    <textfield name="tagsField"/>
                     <label for="noteField" mnemonic="0" text="Note" valign="top"/>
                     <textarea columns="30" name="noteField" rows="4"/>
                     <separator colspan="2"/>
@@ -46,8 +44,10 @@
                     <label/>
                     <button action="doSave(titleField.text, tagsField.text, noteField.text, typeField.text, authorField.text, authoremailField.text, tagsList)" halign="right" text="Save"/>
                 </panel>
-                <panel columns="1" weightx="1">
-                    <label halign="left" text="Tags"/>
+                <panel columns="2" weightx="1">
+                    <label colspan="2" for="tagsField" mnemonic="1" text="Tags" weightx="1"/>
+                    <textfield colspan="2" name="tagsField"/>
+                    <label colspan="2" halign="left" text="Tags"/>
                     <list name="tagsList" selection="multiple"/>
                 </panel>
             </panel>
@@ -57,14 +57,16 @@
                 <label colspan="2" font="14 bold" text="Add an Entry"/>
                 <separator colspan="3"/>
                 <label text="URL"/>
-                <textfield columns="50" name="addurlField" perform="doAdd(addurlField.text, addfetchcontentCheckbox.selected, addpublicCheckbox.selected)"/>
-                <button action="doAdd(addurlField.text, addfetchcontentCheckbox.selected, addpublicCheckbox.selected)" text="Add URL"/>
+                <textfield columns="50" name="addurlField" perform="doAdd(addurlField.text, addfetchcontentCheckbox.selected, addpublicCheckbox.selected, addforceCheckbox.selected)"/>
+                <button action="doAdd(addurlField.text, addfetchcontentCheckbox.selected, addpublicCheckbox.selected, addforceCheckbox.selected)" text="Add URL"/>
                 <togglebutton action="toggleVisible(advancedaddPanel)" colspan="2" halign="left" text="Advanced Options"/>
                 <panel colspan="3" columns="2" name="advancedaddPanel" visible="false">
                     <checkbox name="addfetchcontentCheckbox" selected="true"/>
                     <label text="Fetch Content?"/>
                     <checkbox name="addpublicCheckbox"/>
                     <label text="Public ?"/>
+                    <checkbox name="addforceCheckbox"/>
+                    <label text="Force Add ?"/>
                 </panel>
             </panel>
         </tab>

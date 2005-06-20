@@ -11,6 +11,11 @@ GUI
 * implement autocomplete function for tags
 * ask mailinglist, if it's possible to programmatically set focus
 * make it a nive startable app for MacOS X with a decent menubar
+* let
+* Edit Tab: ToggleButton/2-RadioButtons/Checkbox that toggles between two tag
+  views, one being a simple textfield with comma separated tags, the other being 
+  List with fast usable popup for entering new tags, and multiselect for using 
+  existing tags)
 
 General
 =======
