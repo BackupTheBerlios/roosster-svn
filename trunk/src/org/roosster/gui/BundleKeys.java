@@ -37,5 +37,9 @@ public interface BundleKeys
     public static final String DUPLICATE_URL       = "duplicate.url";
     
     public static final String MULTIPLE_ADDED      = "add.multiple.added";
+    
+    public static final String OF                  = "of";
+    public static final String TO                  = "to";
+    public static final String ENTRIES             = "entries";
 
 }

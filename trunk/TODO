@@ -8,15 +8,15 @@ GUI
 * find nice help icon (question mark?) and provide first tips and help
   via it's tooltip; give every tab it's own one
 * use i18n feature of thinlet
-* implement autocomplete function for tags
-* ask mailinglist, if it's possible to programmatically set focus
-* make it a nive startable app for MacOS X with a decent menubar
-* let
-* Edit Tab: ToggleButton/2-RadioButtons/Checkbox that toggles between two tag
-  views, one being a simple textfield with comma separated tags, the other being 
-  List with fast usable popup for entering new tags, and multiselect for using 
-  existing tags)
+* make it a native startable app for MacOS X with a decent menubar
+* add public/private to table
+* make tags editable (in dialog)
+* decode HTML entities in GUI
+* let simpy and del.icio.us sync run via dialog in bg
+* finish edit tab (content, cached ...)
+* sort search result
 
 General
 =======
 * find way to let web server run in the background 
+

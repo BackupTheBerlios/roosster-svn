@@ -36,6 +36,7 @@ import org.roosster.Constants;
 import org.roosster.Registry;
 import org.roosster.util.MapperUtil;
 import org.roosster.logging.LogUtil;
+import org.roosster.api.RoossterApiHttpd;
 import org.roosster.gui.RoossterGui;
 
 /**
@@ -68,6 +69,7 @@ public class Roosster
                               ), 
                               640, 480);            
            
+            
         } catch (Exception ex) {
             ex.printStackTrace();
         } 

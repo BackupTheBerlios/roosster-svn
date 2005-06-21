@@ -43,11 +43,16 @@ public interface GuiConstants
     public static final String QUERY_FIELD          = "queryField";
     public static final String SEARCH_RESULT        = "searchresultTable";
     public static final String EMPTYRESULT_LABEL    = "emptyresultLabel";
+    public static final String PAGER_LABEL          = "pagerLabel";
+    public static final String PAGERSIZE_BOX        = "pagersizeBox";
+    public static final String PAGERBACK_BUTTON     = "pagerbackButton";
+    public static final String PAGERFORWARD_BUTTON  = "pagerforwardButton";
 
     // fields and label names in the Edit-Tab
     public static final String URL_LABEL            = "urlLabel";
     public static final String TITLE_FIELD          = "titleField";
     public static final String TAGS_FIELD           = "tagsField";
+    public static final String TAGS_LABEL           = "tagsLabel";
     public static final String NOTE_FIELD           = "noteField";
     public static final String TYPE_FIELD           = "typeField";
     public static final String AUTHOR_FIELD         = "authorField";
@@ -59,8 +64,7 @@ public interface GuiConstants
     public static final String ADDFETCH_FIELD       = "addfetchcontentCheckbox";
     public static final String ADDPUBLIC_FIELD      = "addpublicCheckbox";
     public static final String ADDFORCE_FIELD       = "addforceCheckbox";
-
-
+    
 }
 
 

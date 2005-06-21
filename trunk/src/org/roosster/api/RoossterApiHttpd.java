@@ -26,6 +26,8 @@
  */
 package org.roosster.api;
 
+import java.util.Properties;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -33,5 +35,7 @@ package org.roosster.api;
  */
 public class RoossterApiHttpd 
 {
-     
+    private static Logger LOG = Logger.getLogger(RoossterApiHttpd.class);    
+  
 }
+

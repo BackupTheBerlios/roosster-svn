@@ -6,3 +6,5 @@ Revision XX / 2005-XX-XX / Benjamin Reitzammer
   version (based on http://thinlet.sf.net) that's got a web
   server running in the background, that offers an API (for 
   bookmarklet and scripting support)
+* implemented autocomplete for tags
+* implemented pager

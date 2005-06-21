@@ -26,6 +26,10 @@
  */
 package org.roosster.gui;
 
+import java.awt.Frame;
+import java.awt.FileDialog;
+import java.awt.Container;
+import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.Locale;
@@ -64,7 +68,7 @@ import org.roosster.util.StringUtil;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class RoossterGui extends Thinlet implements GuiConstants
+public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
 {
     private static Logger LOG = Logger.getLogger(RoossterGui.class);
     
@@ -78,7 +82,8 @@ public class RoossterGui extends Thinlet implements GuiConstants
     private EntryStore      store          = null;
     private EntryList       currentEntries = null;
     private Entry           entry          = null;
-    private Set             allTags        = null; 
+    private TreeSet         allTags        = null; 
+    private int             currentOffset  = 0; 
 
     /**
      * 
@@ -94,6 +99,8 @@ public class RoossterGui extends Thinlet implements GuiConstants
         allTags = new TreeSet( store.getAllTags() );
         
         add( parse( getClass().getResourceAsStream(GUI_DEFINITON) ) );
+
+        requestFocus(find(QUERY_FIELD));
     }    
 
 
@@ -116,7 +123,7 @@ public class RoossterGui extends Thinlet implements GuiConstants
             case EDIT_TAB_INDEX:
                 break;
             case SEARCH_TAB_INDEX: 
-                // TODO find a way to set the focus on query field
+                requestFocus(find(QUERY_FIELD));
                 break;
             default:
         }
@@ -150,7 +157,28 @@ public class RoossterGui extends Thinlet implements GuiConstants
     /**
      * 
      */
-    public void doSave(String title, String tagStr, String note, String type,
+    public void openIndex() throws Exception
+    {
+        /*
+        Container frame = this;
+        while ( !(frame instanceof Frame) ) { 
+            frame = frame.getParent(); 
+        }
+               
+        FileDialog fileDialog = new FileDialog((Frame)frame, "Open ...", FileDialog.LOAD);
+        fileDialog.show();
+        
+        File fileSelected = new File(fileDialog.getDirectory());
+        
+        LOG.debug("Selected "+fileDialog.getDirectory()+" for opening the index");
+        */
+    }
+    
+    
+    /**
+     * 
+     */
+    public void doSave(String title, String note, String type,
                        String author, String authorEmail, Object tagsList) 
                 throws Exception
     {
@@ -159,13 +187,11 @@ public class RoossterGui extends Thinlet implements GuiConstants
           
         LOG.debug("Saving Entry "+entry);
         
-        Set entryTags = new HashSet(Arrays.asList(StringUtil.split(tagStr, Entry.TAG_SEPARATOR)));
+        Set entryTags = new HashSet();
         Object[] selectedTags = getSelectedItems(tagsList);
         for (int i = 0; i < selectedTags.length; i++) {
            entryTags.add( getString(selectedTags[i], "text") ); 
         }
-        updateTagsSet(entryTags);
-        buildTagsList();
         
         entry.setTitle(title);
         entry.setTags((String[]) entryTags.toArray(new String[0]));
@@ -182,7 +208,11 @@ public class RoossterGui extends Thinlet implements GuiConstants
         
         // TODO exception handling
         new Dispatcher(registry).run("putentries", OUTPUT_MODE, args);
-        
+
+        // update GUI 
+        updateTagsSet(entryTags);
+        fillForm();
+        setString(find(TAGS_FIELD), "text", "");
         showInfo(BundleKeys.SAVE_SUCCESS);
     }
     
@@ -200,67 +230,73 @@ public class RoossterGui extends Thinlet implements GuiConstants
             return;
         }
         
-        try {
-            configuration.setProperty(Constants.PROP_FETCH_CONTENT, String.valueOf(fetchContent));
-            configuration.setProperty(Constants.ARG_PUBLIC, String.valueOf(pub));
-            configuration.setProperty(Constants.ARG_FORCE, String.valueOf(force));
-            
-            List list = new EntryList();
-            list.add(new Entry(new URL(urlString)));
-            
-            Map args = new HashMap();
-            args.put(Constants.PARAM_ENTRIES, list);
-            
-            Output output = new Dispatcher(registry).run("addurls", OUTPUT_MODE, args);
-            
-            if ( output.entriesSize() > 1 ) {
-                showInfo(BundleKeys.MULTIPLE_ADDED);
-            } else {
-                entry = output.getEntries().getEntry(0);
-                fillForm();
-                switchToTab(EDIT_TAB_INDEX);
-                showInfo(BundleKeys.ADD_SUCCESS);
-            }
-             
-          
-        } catch(MalformedURLException ex) {
-          
-            LOG.debug("URL has wrong format", ex);
-            showError(BundleKeys.URL_INVALID);
-          
-        } catch(OperationException ex) {
-          
-            if ( ex.getCause() instanceof DuplicateEntryException ) {
-                LOG.debug("URL already stored in index!");
-                
-                DuplicateEntryException e = (DuplicateEntryException) ex.getCause();
-                entry = store.getEntry(e.getUrl());
-                fillForm();
-                
-                switchToTab(EDIT_TAB_INDEX);
-                showInfo(BundleKeys.DUPLICATE_URL);
-            } else {
-                throw ex;
-            }
-            
+        configuration.setProperty(Constants.PROP_FETCH_CONTENT, String.valueOf(fetchContent));
+        configuration.setProperty(Constants.ARG_PUBLIC, String.valueOf(pub));
+        configuration.setProperty(Constants.ARG_FORCE, String.valueOf(force));
+        
+        List list = new EntryList();
+        list.add(new Entry(new URL(urlString)));
+        
+        Map args = new HashMap();
+        args.put(Constants.PARAM_ENTRIES, list);
+        
+        Output output = new Dispatcher(registry).run("addurls", OUTPUT_MODE, args);
+        
+        if ( output.entriesSize() > 1 ) {
+            showInfo(BundleKeys.MULTIPLE_ADDED);
+        } else {
+            entry = output.getEntries().getEntry(0);
+            fillForm();
+            switchToTab(EDIT_TAB_INDEX);
+            showInfo(BundleKeys.ADD_SUCCESS);
         }
+         
     }
     
     
     /**
      * 
      */
-    public void doSearch(String query, Object resultTable) throws Exception 
+    public void doSearch(String query, Object resultTable, String limitStr, String direction) throws Exception 
     {
         removeAll(resultTable);
       
+        LOG.debug("direction "+direction+" limitstr "+limitStr);
+        
+        int limit = !StringUtil.isNullOrBlank(limitStr) ?  Integer.valueOf(limitStr).intValue() : 10;
+        if ( limit <= 0 )
+            limit = 10;        
+        
+        if ( currentEntries != null ) {
+        
+            if ( PAGERFORWARD_BUTTON.equals(direction) ) 
+                currentOffset += limit;
+            else if ( PAGERBACK_BUTTON.equals(direction) )
+                currentOffset -= limit;
+            else 
+                currentOffset = 0;
+            
+        } else {
+            currentOffset = 0;
+        }
+        
+        LOG.debug("currentOffset "+currentOffset+" limit "+limit);
+        
+        // put together arguments
         Map args = new HashMap();
         args.put("query", query);
         
+        configuration.setProperty(Constants.PROP_OFFSET, String.valueOf(currentOffset));
+        configuration.setProperty(Constants.PROP_LIMIT, String.valueOf(limit));
+        
+        // run search
         Output output = new Dispatcher(registry).run("search", OUTPUT_MODE, args);
         
+        // extract result ... 
         currentEntries = output.getEntries();
-        
+        currentOffset = currentEntries.getOffset();
+
+        // ... and display it in table 
         if ( currentEntries.size() > 0 ) {
             for (int i = 0; i < currentEntries.size(); i++) {
                 Entry entry = currentEntries.getEntry(i);
@@ -277,22 +313,125 @@ public class RoossterGui extends Thinlet implements GuiConstants
                 setString(cell, "tooltip", entry.getUrl().toString());
                 add(row, cell);
             
-                cell = create("cell");
-                setString(cell, "text", StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR) );
-                add(row, cell);
-                
-                cell = create("cell");
-                setString(cell, "text", entry.getNote());
-                add(row, cell);
+                add(row, newtext("cell", StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR)));
+                add(row, newtext("cell", entry.getNote()));
             }
             setVisible(SEARCH_RESULT, true);
             setVisible(EMPTYRESULT_LABEL, false);
             
+            text(PAGER_LABEL, string(ENTRIES) +" "+ currentOffset +" "+ string(TO) 
+                            +" "+ (currentOffset+currentEntries.size()) +" "+ string(OF) 
+                            +" "+ currentEntries.getTotalSize());
+
         } else {
             setVisible(SEARCH_RESULT, false);
             setVisible(EMPTYRESULT_LABEL, true);
+            text(PAGER_LABEL, "");
         }
         
+        determinePagerEnabled();
+    }
+    
+    
+    /**
+     * 
+     */
+    public void determinePagerEnabled() 
+    {
+        Object selectedItem = getSelectedItem(find(PAGERSIZE_BOX));
+        int selected = Integer.valueOf(getString(selectedItem, "text")).intValue();
+        
+        if ( (currentOffset + selected) < currentEntries.getTotalSize() )
+            setEnabled(PAGERFORWARD_BUTTON, true);
+        else 
+            setEnabled(PAGERFORWARD_BUTTON, false);
+        
+        if ( (currentOffset - selected) < 0 )
+            setEnabled(PAGERBACK_BUTTON, false);
+        else 
+            setEnabled(PAGERBACK_BUTTON, true);
+    }
+    
+    
+    /**
+     * 
+     */
+    public void suggestTag(Object textField) 
+    {
+        String text = getString(textField, "text");
+
+        if ( allTags.isEmpty() || StringUtil.isNullOrBlank(text) ) 
+            return;
+          
+        String lastTag = (String) allTags.last();
+        
+        // only search if text is lexicographically smaller or equal than last tag
+        if ( text.compareTo(lastTag) <= 0 ) {
+        
+            Iterator iter = allTags.iterator();
+            while ( iter.hasNext() ) {
+                String tag = (String) iter.next();
+                
+                if ( tag.startsWith(text) ) {
+                    LOG.debug("Tag '"+tag+"' starts with '"+text+"'");
+                    setString(textField, "text", tag);
+                    setInteger(textField, "start", text.length());
+                    setInteger(textField, "end", tag.length());                    
+                } 
+            }
+        }
+            
+    }    
+    
+    
+    /**
+     * 
+     */
+    public void markTag(Object textField) 
+    {
+        String text = getString(textField, "text");
+        setString(textField, "text", "");
+      
+        if ( StringUtil.isNullOrBlank(text) ) 
+            return;
+        
+      
+        Object tagsList = find(TAGS_LIST);
+        Object[] tagItems = getItems(tagsList);
+        
+        String[] texts = new String[] {text};
+        
+        // if user submitted a text, that contains the TAG_SEPARATOR than
+        // consider text as mutliple tags by splitting the text 
+        if ( text.indexOf(Entry.TAG_SEPARATOR) != -1 ) 
+            texts = StringUtil.split(text, Entry.TAG_SEPARATOR);
+        
+        boolean[] found = new boolean[texts.length];
+        boolean[] allTrue = new boolean[texts.length];
+        Arrays.fill(found, false);
+        Arrays.fill(allTrue, true);
+        
+        // mark tags in tags list as selected if they were entered in textfield
+        for (int i = 0; i < tagItems.length; i++) {
+          
+            for (int k = 0; k < texts.length; k++) {
+                if ( texts[k].equals(getString(tagItems[i], "text")) ) {
+                    found[k] = true;
+                    setBoolean(tagItems[i], "selected", true);
+                }
+            }
+            
+            if ( Arrays.equals(allTrue, found) ) break;
+        }
+        
+        // add the entered text as new tag to tags list, if it wasn't found in tags list
+        for (int i = 0; i < texts.length; i++) {
+            if ( !found[i] ) { 
+                Object item = newtext("item", texts[i]);
+                setBoolean(item, "selected", true);
+                add(tagsList, item);
+            }
+        }
     }
     
    
@@ -305,6 +444,15 @@ public class RoossterGui extends Thinlet implements GuiConstants
     }
     
     
+    /**
+     * 
+     */
+    public void setEnabled(String componentName, boolean enabled)
+    {
+        setBoolean(find(componentName), "enabled", enabled); 
+    }
+
+
     /**
      * 
      */
@@ -322,6 +470,29 @@ public class RoossterGui extends Thinlet implements GuiConstants
     {
         // TODO show dialog etc.
         LOG.warn("Exception occurred during event handling", throwable);
+        
+        try {
+        
+            if ( throwable instanceof MalformedURLException ) {
+              
+                showError(BundleKeys.URL_INVALID);
+              
+            } else if ( throwable instanceof OperationException ) {
+              
+                if ( throwable.getCause() instanceof DuplicateEntryException ) {
+                    DuplicateEntryException e = (DuplicateEntryException) throwable.getCause();
+                    entry = store.getEntry(e.getUrl());
+                    fillForm();
+                    
+                    switchToTab(EDIT_TAB_INDEX);
+                    showInfo(BundleKeys.DUPLICATE_URL);
+                } 
+                
+            }
+            
+        } catch(Exception ex) {
+            LOG.warn("Exception occurred while handling exception! Giving up!", ex);
+        }
     }
     
 
@@ -335,8 +506,8 @@ public class RoossterGui extends Thinlet implements GuiConstants
     {
         if ( entry != null ) {
             text(URL_LABEL, entry.getUrl().toString());
+            text(TAGS_LABEL, StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR));
             text(TITLE_FIELD, entry.getTitle());
-            text(TAGS_FIELD, StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR));
             text(NOTE_FIELD, entry.getNote());
             text(TYPE_FIELD, entry.getFileType());
             text(AUTHOR_FIELD, entry.getAuthor());
@@ -369,7 +540,6 @@ public class RoossterGui extends Thinlet implements GuiConstants
         }
         
         // now mark the selected tags
-        /* 
         if ( tagItems.length > 0 ) {
             Set entryTags = new HashSet( Arrays.asList(entry.getTags()) );
           
@@ -380,7 +550,6 @@ public class RoossterGui extends Thinlet implements GuiConstants
                           );
             }
         }
-        */
     }
 
     
@@ -427,10 +596,30 @@ public class RoossterGui extends Thinlet implements GuiConstants
     /**
      * 
      */
+    protected String string(String bundleKey)
+    {
+        return resourceBundle.getString(bundleKey);
+    }
+    
+    
+    /**
+     * 
+     */
     protected Object text(String objName, String value)
     {
         Object obj = find(objName);
         setString(obj, "text", value);
+        return obj;
+    }
+    
+    
+    /**
+     * 
+     */
+    protected Object newtext(String widgetName, String textValue)
+    {
+        Object obj = create(widgetName);
+        setString(obj, "text", textValue);
         return obj;
     }
     
@@ -461,3 +650,43 @@ public class RoossterGui extends Thinlet implements GuiConstants
     }
     
 }
+
+/*
+first autocomplete test:
+
+        removeAll(comboBox);  
+            
+        String text = completeText;
+        int indexLastComma = completeText.lastIndexOf(Entry.TAG_SEPARATOR);
+        if ( indexLastComma != -1 ) {
+            text = completeText.substring(indexLastComma+1).trim();
+            
+            putProperty(comboBox, TAGS_PREVIOUS, completeText.substring(0, indexLastComma));
+        }
+      
+        if ( !allTags.isEmpty() && !StringUtil.isNullOrBlank(text) && selected == -1 ) {
+            // selected is -1 if the user has typed a custom value 
+          
+            Iterator iter = allTags.iterator();
+            while ( iter.hasNext() ) {
+                String tag = (String) iter.next();
+                
+                if ( tag.startsWith(text) ) {
+                    LOG.debug("Tag "+tag+" starts with "+text );
+                    add(comboBox, newtext("choice", tag));
+                }
+            }
+            
+        } else if ( selected != -1 &&  getProperty(comboBox, TAGS_PREVIOUS) != null ) {
+            // this is the case, if previous tags were entered and a new one was
+            // selected from a suggested choice
+          
+            String newText = getProperty(comboBox, TAGS_PREVIOUS) 
+                           + Entry.TAG_SEPARATOR 
+                           + getString(comboBox, "text");
+            
+            setString(comboBox, "text", newText);
+            setInteger(comboBox, "start", newText.length()); 
+            setInteger(comboBox, "end", newText.length()); 
+        }
+*/
