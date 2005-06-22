@@ -26,6 +26,7 @@
  */
 package org.roosster.main;
 
+import java.net.URL;
 import java.util.Map;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -121,12 +122,20 @@ public class Roosster
     public void start() throws Exception
     {
         // start Thinlet GUI
-        new FrameLauncher("Roosster - personal search ", gui, 640, 480);
+        new FrameLauncher("Roosster - personal search ", gui, 800, 600);
         
         // start Jetty HTTP server
         httpd.start(); 
     }
   
+    
+    /**
+     * 
+     */
+    public String constructCachedLink(URL url)
+    {
+        return httpd.constructCachedLink(url);
+    }
 
 		/**
 		 * Sets the value of httpd.

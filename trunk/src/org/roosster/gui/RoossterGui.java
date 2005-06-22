@@ -63,6 +63,7 @@ import org.roosster.store.DuplicateEntryException;
 import org.roosster.logging.LogUtil;
 import org.roosster.util.MapperUtil;
 import org.roosster.util.StringUtil;
+import org.roosster.util.DateUtil;
 
 
 /**
@@ -444,8 +445,31 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     /**
      * 
      */
-    public void remoteSync(String serviceName, String username, String password) throws Exception
+    public void runDeliciousSync(String username, String password, Object dialog, Object button) 
+                          throws Exception
     {
+        configuration.setProperty(Constants.PROP_DELICIOUS_PASS, password);
+        configuration.setProperty(Constants.PROP_DELICIOUS_USER, username);
+        
+        setString(button, "text", string(DELICIOUS_RUNNING));
+        
+        Output output = new Dispatcher(registry).run("syncdelicious", OUTPUT_MODE, new HashMap());
+        
+        allTags = new TreeSet( store.getAllTags() );
+                
+        showInfo(BundleKeys.DELICIOUS_SUCCESS);
+        closeDialog(dialog);
+    }
+    
+    
+    /**
+     * 
+     */
+    public void openDeliciousSync() throws Exception
+    {
+        openDialog("delicious_sync_dialog");
+        text(DELICIOUSPASS_FIELD, configuration.getProperty(Constants.PROP_DELICIOUS_PASS));
+        text(DELICIOUSUSER_FIELD, configuration.getProperty(Constants.PROP_DELICIOUS_USER));
     }
     
     
@@ -567,13 +591,15 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     /**
      * 
      */
-    protected void fillForm()
+    protected void fillForm() 
     {
         if ( entry != null ) {  
             Object button = find(URL_BUTTON);
-            setString(button, "text", entry.getUrl().toString());
-            setMethod(button, "action", "goUrl(this)", this, this);
+            setString(button, "text", StringUtil.truncate(entry.getUrl().toString(), 120));
+            setString(button, "tooltip", entry.getUrl().toString());
             putProperty(button, "url", entry.getUrl().toString());
+            
+            putProperty(find(CACHEDCOPY_BUTTON), "url", roosster.constructCachedLink(entry.getUrl()));
             
             text(TAGS_LABEL, StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR));
             text(TITLE_FIELD, entry.getTitle());
@@ -581,6 +607,11 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
             text(TYPE_FIELD, entry.getFileType());
             text(AUTHOR_FIELD, entry.getAuthor());
             text(AUTHOREMAIL_FIELD, entry.getAuthorEmail());
+            
+            text(ADDED_LABEL,    DateUtil.formatDisplayDate(entry.getAdded()));
+            text(ISSUED_LABEL,   DateUtil.formatDisplayDate(entry.getIssued()));
+            text(MODIFIED_LABEL, DateUtil.formatDisplayDate(entry.getModified()));
+            text(EDITED_LABEL,   DateUtil.formatDisplayDate(entry.getEdited()));
             
             buildTagsList();
         }

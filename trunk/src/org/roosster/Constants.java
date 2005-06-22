@@ -142,6 +142,17 @@ public interface Constants
     /**
      */
     public static final String PROP_FETCH_CONTENT = "fetch.content";
+    
+    public static final String PROP_DELICIOUS_USER       = "delicious.username";
+    public static final String PROP_DELICIOUS_PASS       = "delicious.password";
+    public static final String PROP_DELICIOUS_LASTSYNC   = "delicious.lastsync";
+    
+    /** specifies if entries/posts are deleted from either system during sync, true by default 
+     */
+    public static final String PROP_DELICIOUS_DELETE     = "delicious.sync.delete";
+    
+    public static final String PROP_DELICIOUS_APIENDPOINT= "delicious.api.endpoint";
+
 
     // args are used in commands, and only an a request basis (although they could be
     // defined in property files, this wouldn't make much sense

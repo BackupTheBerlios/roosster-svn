@@ -8,3 +8,12 @@ Revision XX / 2005-XX-XX / Benjamin Reitzammer
   bookmarklet and scripting support)
 * implemented autocomplete for tags
 * implemented pager
+* implemented clickable links (needs 'mozilla' executable in PATH on unix/linux)o
+* embedded jetty server
+* implemented roosster API, is available at /roosster/api on localhost at 
+  specified port
+* implemented first draft of del.icio.us sync
+* add button for viewing cached copy
+* shows dates in edit screen
+
+

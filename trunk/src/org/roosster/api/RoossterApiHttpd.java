@@ -26,11 +26,14 @@
  */
 package org.roosster.api;
 
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Properties;
 import org.mortbay.http.HttpServer;
 import org.mortbay.http.HttpContext;
 import org.mortbay.http.SocketListener;
 import org.mortbay.http.handler.NotFoundHandler;
+import org.mortbay.http.handler.IPAccessHandler;
 import org.apache.log4j.Logger;
 
 import org.roosster.Registry;
@@ -41,7 +44,10 @@ import org.roosster.Registry;
  */
 public class RoossterApiHttpd 
 {
-    private static Logger LOG = Logger.getLogger(RoossterApiHttpd.class);    
+    private static Logger LOG = Logger.getLogger(RoossterApiHttpd.class);
+    
+    private static final String CONTEXT_PATH = "/roosster/api/";    
+    private static String BASE_PATH          = null;    
   
     private HttpServer server   = null;
     private Registry   registry = null;
@@ -58,9 +64,27 @@ public class RoossterApiHttpd
 
         this.registry = registry;
         this.port = port;
+        
+        RoossterApiHttpd.BASE_PATH = "http://localhost:"+ port + CONTEXT_PATH;
     }
     
-
+    
+    /**
+     * Construct a URL to fetch a cached copy of an Entry (uses raw output format for this 
+     */
+    public String constructCachedLink(URL url)
+    {
+        try {
+            return BASE_PATH
+                 +"entry?output.mode=raw&url="
+                 + URLEncoder.encode(url.toString(), "UTF-8");
+        } catch (Exception ex) {
+            // this should not happen, can only be java.io.UnsupportedEncodingException
+            return "";
+        }
+    }
+    
+    
     /**
      *
      */
@@ -81,10 +105,16 @@ public class RoossterApiHttpd
         listener.setPort(port);
         server.addListener(listener);
         
-        HttpContext context = server.addContext("/roosster/api");
+        HttpContext context = server.addContext(CONTEXT_PATH);
         context.addHandler( new ApiHttpHandler(registry) );
         
-        server.addContext("/").addHandler( new NotFoundHandler() );
+        IPAccessHandler ipAccessHandler = new IPAccessHandler();
+        ipAccessHandler.setStandard("deny");
+        ipAccessHandler.setAllowIP("127.0.0.1");
+        
+        HttpContext ctx = server.addContext("/");
+        ctx.addHandler( ipAccessHandler );
+        ctx.addHandler( new NotFoundHandler() );
 
         server.start();
     }

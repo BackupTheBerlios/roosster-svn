@@ -41,5 +41,8 @@ public interface BundleKeys
     public static final String OF                  = "of";
     public static final String TO                  = "to";
     public static final String ENTRIES             = "entries";
+    
+    public static final String DELICIOUS_RUNNING   = "sync.delicious.running";
+    public static final String DELICIOUS_SUCCESS   = "sync.delicious.success";
 
 }

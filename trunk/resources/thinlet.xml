@@ -6,7 +6,7 @@
             <!-- <menuitem text="Open ..." accelerator="Ctrl O" mnemonic="0" action="openIndex()"/> -->
         </menu>
         <menu text="Sync">
-            <menuitem text="Sync del.icio.us ..." accelerator="Ctrl D" mnemonic="5" action="openDialog('delicious_sync_dialog')"/>
+            <menuitem text="Sync del.icio.us ..." accelerator="Ctrl D" mnemonic="5" action="openDeliciousSync()"/>
         </menu>
         <menu text="Help"/>
     </menubar>
@@ -17,7 +17,7 @@
     <panel scrollable="true" weightx="1" weighty="1" gap="4" top="4" left="4" bottom="4" right="4">
         <tabbedpane action="eventTabChanged(tabbedPane)" name="tabbedPane" weightx="1" weighty="1">
             <tab mnemonic="0" name="searchTab" text="Search">
-                <panel colspan="0" columns="4" gap="4" weightx="1" weighty="1">
+                <panel colspan="0" columns="4" top="4" left="4" bottom="4" right="4" gap="4" weightx="1" weighty="1">
                     <label font="14 bold" text="Search"/>
                     <separator colspan="4" weightx="1"/>
                     <label for="queryField" text="Search"/>
@@ -45,12 +45,12 @@
                 </panel>
             </tab>
             <tab mnemonic="0" name="editTab" text="Edit" enabled="false">
-                <panel weightx="1" weighty="1">
-                    <panel columns="2" gap="4" weightx="1" weighty="1">
+                <panel weightx="1" weighty="1" gap="4" top="4" left="4" bottom="4" right="4" >
+                    <panel columns="2" gap="4" weightx="2" weighty="1">
                         <label font="14 bold" text="Edit an Entry"/>
                         <separator colspan="2"/>
                         <label text="URL"/>
-                        <button name="urlButton" type="link" halign="left"/>
+                        <button name="urlButton" type="link" halign="left" action="goUrl(this)"/>
                         <label text="Tags"/>
                         <label name="tagsLabel"/>
                         <label for="titleField" text="Title"/>
@@ -64,6 +64,21 @@
                         <textfield name="authorField"/>
                         <label for="authoremailField" text="Author-Email"/>
                         <textfield name="authoremailField"/>
+                        <separator colspan="2"/>
+                        <label text="Actions"/>
+                        <panel columns="2" weightx="1">
+                            <button name="cachedcopyButton" text="Cached Copy" action="goUrl(this)" />
+                            <button text="Test Copy" />
+                        </panel>
+                        <separator colspan="2"/>
+                        <label text="Added"/>
+                        <label name="addeddateLabel"/>
+                        <label text="Issued"/>
+                        <label name="issueddateLabel"/>
+                        <label text="Modified"/>
+                        <label name="modifieddateLabel"/>
+                        <label text="Edited"/>
+                        <label name="editeddateLabel"/>
                         <label/>
                         <button action="doSave(titleField.text, noteField.text, typeField.text, authorField.text, authoremailField.text, tagsList)" halign="right" text="Save"/>
                     </panel>
@@ -76,7 +91,7 @@
                 </panel>
             </tab>
             <tab mnemonic="0" name="addTab" text="Add">
-                <panel columns="3" gap="4">
+                <panel columns="3" gap="4" top="4" left="4" bottom="4" right="4">
                     <label colspan="2" font="14 bold" text="Add an Entry"/>
                     <separator colspan="3"/>
                     <label text="URL"/>
@@ -94,7 +109,7 @@
                 </panel>
             </tab>
             <tab mnemonic="0" name="tagsTab" text="Tags">
-                <panel columns="2" gap="4" weighty="1">
+                <panel columns="2" gap="4" weighty="1" top="4" left="4" bottom="4" right="4">
                     <label font="14 bold" text="Tags"/>
                     <separator colspan="2" weightx="1"/>
                     <list/>

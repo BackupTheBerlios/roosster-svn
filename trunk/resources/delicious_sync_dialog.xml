@@ -1,5 +1,6 @@
 <dialog name="syndeliciousDialog" text="Sync with del.icio.us" modal="true" columns="2" 
         gap="10" left="5" right="5" top="10" bottom="10">
+        
   <label name="syndeliciousLabel" text="Enter your username and password for del.icio.us:" colspan="2"/>
   
   <label text="Username"/>
@@ -7,6 +8,9 @@
   <label text="Password"/>
   <passwordfield name="syndeliciouspassField" />
   
-  <button text="Cancel" action="closeDialog(syndeliciousDialog)" weightx="1"/>
-  <button text="OK" action="remoteSync('syndelicious', syndelicioususerField.text, syndeliciouspassField.text)" weightx="1"/>
+  <button text="Cancel" action="closeDialog(syndeliciousDialog)" halign="left"/>
+  <panel halign="right" >
+      <label text="  ?  " font="bold" tooltip="Depending on your last sync time and number of your del.icio.us links, this can take a while!"/>
+      <button text="OK" action="runDeliciousSync(syndelicioususerField.text, syndeliciouspassField.text, syndeliciousDialog, this)"/>
+  </panel>
 </dialog>
