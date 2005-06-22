@@ -53,6 +53,19 @@ public class Roosster
     public static final String PROP_PORT        = "server.port";
 
 
+    private RoossterApiHttpd httpd   = null;
+    private RoossterGui      gui     = null;
+
+    
+    
+    /**
+     * 
+     */
+    public Roosster()
+    {
+    }
+    
+    
     /**
      *
      */
@@ -62,31 +75,75 @@ public class Roosster
             final Map cmdLine = MapperUtil.parseCommandLineArguments(arguments);
 
             LogUtil.configureLogging(cmdLine);
-        
+
+            // read arguments 
             if ( cmdLine.containsKey(Constants.PROP_LOCALE) ) 
                 Locale.setDefault( new Locale((String) cmdLine.get(Constants.PROP_LOCALE)) );
 
-            Registry registry = new Registry(Roosster.class.getResourceAsStream(PROP_FILE), cmdLine);
-            new FrameLauncher("Roosster - personal search engine", 
-                              new RoossterGui(
-                                  registry,
-                                  ResourceBundle.getBundle(RES_BUNDLE, Locale.getDefault())
-                              ), 
-                              640, 480);            
-           
-            
-            String port = (String) cmdLine.get(PROP_PORT);
-            if ( port == null )
-                port = DEF_PORT;
+            String portStr = (String) cmdLine.get(PROP_PORT);
+            int port = Integer.valueOf( portStr == null ? DEF_PORT : portStr ).intValue();
 
-           RoossterApiHttpd httpd = new RoossterApiHttpd(registry, 
-                                                         Integer.valueOf(port).intValue() );
-           httpd.start(); 
+            // configure and intialize important objects
+            ResourceBundle resbundle = ResourceBundle.getBundle(RES_BUNDLE, Locale.getDefault());
+            
+            Registry registry = new Registry(Roosster.class.getResourceAsStream(PROP_FILE), cmdLine);
+            
            
+            // now plumb everything together
+            Roosster roosster = new Roosster();
+            
+            roosster.setHttpd( new RoossterApiHttpd(registry, port) );
+            roosster.setGui( new RoossterGui(roosster, registry, resbundle) );            
+           
+            // ... and off it goes 
+            roosster.start();            
+
         } catch (Exception ex) {
             ex.printStackTrace();
         } 
     }  
+    
+    
+    /**
+     * 
+     */
+    public void stop() throws Exception
+    {
+        httpd.stop(true);
+        //Thread.sleep(1000);
+        System.exit(0);
+    }
   
+
+    /**
+     * 
+     */
+    public void start() throws Exception
+    {
+        // start Thinlet GUI
+        new FrameLauncher("Roosster - personal search ", gui, 640, 480);
+        
+        // start Jetty HTTP server
+        httpd.start(); 
+    }
+  
+
+		/**
+		 * Sets the value of httpd.
+		 * @param httpd The value to assign httpd.
+		 */
+		public void setHttpd(RoossterApiHttpd httpd) {
+				this.httpd = httpd;
+		}
+
+
+		/**
+		 * Sets the value of gui.
+		 * @param gui The value to assign gui.
+		 */
+		public void setGui(RoossterGui gui) {
+				this.gui = gui;
+		}
+    
 
 }

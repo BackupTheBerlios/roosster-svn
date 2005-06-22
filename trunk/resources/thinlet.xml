@@ -5,7 +5,9 @@
         <menu text="File" mnemonic="0">
             <!-- <menuitem text="Open ..." accelerator="Ctrl O" mnemonic="0" action="openIndex()"/> -->
         </menu>
-        <menu text="Sync"/>
+        <menu text="Sync">
+            <menuitem text="Sync del.icio.us ..." accelerator="Ctrl D" mnemonic="5" action="openDialog('delicious_sync_dialog')"/>
+        </menu>
         <menu text="Help"/>
     </menubar>
     <panel gap="4" top="4" left="4" bottom="4" right="4">
@@ -42,13 +44,13 @@
                     <label colspan="4" name="emptyresultLabel" text="No Entries found for this search." visible="false"/>
                 </panel>
             </tab>
-            <tab mnemonic="0" name="editTab" text="Edit">
+            <tab mnemonic="0" name="editTab" text="Edit" enabled="false">
                 <panel weightx="1" weighty="1">
                     <panel columns="2" gap="4" weightx="1" weighty="1">
                         <label font="14 bold" text="Edit an Entry"/>
                         <separator colspan="2"/>
                         <label text="URL"/>
-                        <label name="urlLabel"/>
+                        <button name="urlButton" type="link" halign="left"/>
                         <label text="Tags"/>
                         <label name="tagsLabel"/>
                         <label for="titleField" text="Title"/>

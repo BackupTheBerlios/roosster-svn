@@ -30,7 +30,7 @@ import java.util.Properties;
 import org.mortbay.http.HttpServer;
 import org.mortbay.http.HttpContext;
 import org.mortbay.http.SocketListener;
-import org.mortbay.http.handler.DumpHandler;
+import org.mortbay.http.handler.NotFoundHandler;
 import org.apache.log4j.Logger;
 
 import org.roosster.Registry;
@@ -43,8 +43,10 @@ public class RoossterApiHttpd
 {
     private static Logger LOG = Logger.getLogger(RoossterApiHttpd.class);    
   
-    private Registry registry = null;
-    private int      port     = 0;
+    private HttpServer server   = null;
+    private Registry   registry = null;
+    private int        port     = 0;
+    
     
     /**
      *
@@ -62,9 +64,18 @@ public class RoossterApiHttpd
     /**
      *
      */
+    public void stop(boolean graceful) throws Exception
+    {
+        server.stop(graceful);
+    }
+    
+    
+    /**
+     *
+     */
     public void start() throws Exception
     {
-        HttpServer server = new HttpServer();
+        server = new HttpServer();
 
         SocketListener listener = new SocketListener();
         listener.setPort(port);
@@ -72,6 +83,8 @@ public class RoossterApiHttpd
         
         HttpContext context = server.addContext("/roosster/api");
         context.addHandler( new ApiHttpHandler(registry) );
+        
+        server.addContext("/").addHandler( new NotFoundHandler() );
 
         server.start();
     }

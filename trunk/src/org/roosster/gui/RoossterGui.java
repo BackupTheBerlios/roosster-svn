@@ -55,6 +55,7 @@ import org.roosster.InitializeException;
 import org.roosster.OperationException;
 import org.roosster.Registry;
 import org.roosster.Configuration;
+import org.roosster.main.Roosster;
 import org.roosster.store.EntryStore;
 import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
@@ -76,6 +77,8 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     
     private static final String OUTPUT_MODE     = "text";
 
+    private Roosster        roosster       = null;
+    
     private ResourceBundle  resourceBundle = null; 
     private Configuration   configuration  = null;
     private Registry        registry       = null;
@@ -88,8 +91,9 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     /**
      * 
      */
-    public RoossterGui(Registry registry, ResourceBundle bundle) throws Exception 
+    public RoossterGui(Roosster roosster, Registry registry, ResourceBundle bundle) throws Exception 
     {
+        this.roosster = roosster;
         this.registry = registry;
         resourceBundle = bundle;
         
@@ -136,6 +140,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
      */
     public void fillEditForm(Object selectedRow) throws Exception
     {
+        setEnabled(EDIT_TAB, true);
         switchToTab(EDIT_TAB_INDEX);
         
         Object[] cells = getItems(selectedRow);
@@ -247,6 +252,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         } else {
             entry = output.getEntries().getEntry(0);
             fillForm();
+            setEnabled(EDIT_TAB, true);
             switchToTab(EDIT_TAB_INDEX);
             showInfo(BundleKeys.ADD_SUCCESS);
         }
@@ -438,6 +444,49 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     /**
      * 
      */
+    public void remoteSync(String serviceName, String username, String password) throws Exception
+    {
+    }
+    
+    
+    /**
+     * 
+     */
+    public void closeDialog(Object dialog) 
+    {
+        remove(dialog);
+    }
+     
+     
+    /**
+     * 
+     */
+    public void openDialog(String name) throws Exception
+    {
+        String resourceName = "/"+name+".xml";
+        LOG.debug("Opening dialog defined in '"+resourceName+"'");
+        add( parse( getClass().getResourceAsStream(resourceName) ) );
+    }
+    
+    
+    /**
+     * 
+     */
+    public void goUrl(Object component) throws IOException
+    {
+        String url = (String) getProperty(component, "url");
+        
+        if ( url == null ) {
+            LOG.info("goUrl() called on component that has no 'url' property set!");
+        } else {
+            LOG.debug("Launching URL "+url);
+            BrowserLauncher.openURL(url);
+        }
+    }
+    
+    /**
+     * 
+     */
     public void setVisible(String componentName, boolean visible)
     {
         setBoolean(find(componentName), "visible", visible); 
@@ -462,6 +511,22 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         setBoolean(component, "visible", !currentValue); 
     }
     
+    
+    /**
+     * 
+     */
+    public boolean destroy()
+    {
+        try {
+            // TODO persist any properties ?
+            roosster.stop();
+        } catch (Exception ex) {
+            LOG.warn("Exception while shutting down!", ex);
+        }
+
+        return true;
+    }
+      
     
     /**
      * 
@@ -504,8 +569,12 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
      */
     protected void fillForm()
     {
-        if ( entry != null ) {
-            text(URL_LABEL, entry.getUrl().toString());
+        if ( entry != null ) {  
+            Object button = find(URL_BUTTON);
+            setString(button, "text", entry.getUrl().toString());
+            setMethod(button, "action", "goUrl(this)", this, this);
+            putProperty(button, "url", entry.getUrl().toString());
+            
             text(TAGS_LABEL, StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR));
             text(TITLE_FIELD, entry.getTitle());
             text(NOTE_FIELD, entry.getNote());

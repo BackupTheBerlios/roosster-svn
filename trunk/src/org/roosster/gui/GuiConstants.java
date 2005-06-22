@@ -49,7 +49,7 @@ public interface GuiConstants
     public static final String PAGERFORWARD_BUTTON  = "pagerforwardButton";
 
     // fields and label names in the Edit-Tab
-    public static final String URL_LABEL            = "urlLabel";
+    public static final String URL_BUTTON           = "urlButton";
     public static final String TITLE_FIELD          = "titleField";
     public static final String TAGS_FIELD           = "tagsField";
     public static final String TAGS_LABEL           = "tagsLabel";
@@ -65,6 +65,10 @@ public interface GuiConstants
     public static final String ADDPUBLIC_FIELD      = "addpublicCheckbox";
     public static final String ADDFORCE_FIELD       = "addforceCheckbox";
     
+    //
+    public static final String DELICIOUSPASS_FIELD  = "syndeliciouspassField";
+    public static final String DELICIOUSUSER_FIELD  = "syndelicioususerField";
+    public static final String DELICIOUS_DIALOG     = "syndeliciousDialog";
 }
 
 
