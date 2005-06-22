@@ -19,4 +19,6 @@ GUI
 General
 =======
 * find way to let web server run in the background 
+* implement custom close of GUI, so that http server gets stopped
+  properly
 

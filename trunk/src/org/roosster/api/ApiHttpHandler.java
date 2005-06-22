@@ -27,10 +27,11 @@
 package org.roosster.api;
 
 import java.util.Properties;
-import org.mortbay.http.HttpServer;
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.SocketListener;
-import org.mortbay.http.handler.DumpHandler;
+import java.io.IOException;
+import org.mortbay.http.handler.AbstractHttpHandler;
+import org.mortbay.http.HttpRequest;
+import org.mortbay.http.HttpResponse;
+import org.mortbay.http.HttpException;
 import org.apache.log4j.Logger;
 
 import org.roosster.Registry;
@@ -39,41 +40,45 @@ import org.roosster.Registry;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class RoossterApiHttpd 
+public class ApiHttpHandler extends AbstractHttpHandler
 {
-    private static Logger LOG = Logger.getLogger(RoossterApiHttpd.class);    
+    private static Logger LOG = Logger.getLogger(ApiHttpHandler.class);    
   
     private Registry registry = null;
-    private int      port     = 0;
-    
+
+
     /**
      *
      */
-    public RoossterApiHttpd(Registry registry, int port)
+    public ApiHttpHandler(Registry registry)
     {
         if ( registry == null ) 
             throw new IllegalArgumentException("Parameter registry is not allowed to be null");
 
         this.registry = registry;
-        this.port = port;
     }
+
     
+    /**
+     *
+     */
+    public String getName()
+    {
+        return getClass().getName();
+    }
+
 
     /**
      *
      */
-    public void start() throws Exception
+    public void handle(String pathInContext, String pathParams, 
+                       HttpRequest request, HttpResponse response)
+                throws HttpException, IOException
     {
-        HttpServer server = new HttpServer();
-
-        SocketListener listener = new SocketListener();
-        listener.setPort(port);
-        server.addListener(listener);
-        
-        HttpContext context = server.addContext("/roosster/api");
-        context.addHandler( new ApiHttpHandler(registry) );
-
-        server.start();
+        //response.setStatus(HttpResponse.__200_OK);
+        response.sendError(HttpResponse.__400_Bad_Request, "test");
     }
+
 }
+
 

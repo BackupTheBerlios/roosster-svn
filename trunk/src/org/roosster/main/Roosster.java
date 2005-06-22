@@ -49,6 +49,10 @@ public class Roosster
     private static final String PROP_FILE       = "/roosster.properties";
     private static final String RES_BUNDLE      = "roosster_resources";
     
+    public static final String DEF_PORT         = "8181";
+    public static final String PROP_PORT        = "server.port";
+
+
     /**
      *
      */
@@ -62,14 +66,23 @@ public class Roosster
             if ( cmdLine.containsKey(Constants.PROP_LOCALE) ) 
                 Locale.setDefault( new Locale((String) cmdLine.get(Constants.PROP_LOCALE)) );
 
+            Registry registry = new Registry(Roosster.class.getResourceAsStream(PROP_FILE), cmdLine);
             new FrameLauncher("Roosster - personal search engine", 
                               new RoossterGui(
-                                  new Registry(Roosster.class.getResourceAsStream(PROP_FILE), cmdLine),
+                                  registry,
                                   ResourceBundle.getBundle(RES_BUNDLE, Locale.getDefault())
                               ), 
                               640, 480);            
            
             
+            String port = (String) cmdLine.get(PROP_PORT);
+            if ( port == null )
+                port = DEF_PORT;
+
+           RoossterApiHttpd httpd = new RoossterApiHttpd(registry, 
+                                                         Integer.valueOf(port).intValue() );
+           httpd.start(); 
+           
         } catch (Exception ex) {
             ex.printStackTrace();
         } 
