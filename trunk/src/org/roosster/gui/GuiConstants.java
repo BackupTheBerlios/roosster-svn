@@ -51,6 +51,7 @@ public interface GuiConstants
     // fields and label names in the Edit-Tab
     public static final String URL_BUTTON           = "urlButton";
     public static final String CACHEDCOPY_BUTTON    = "cachedcopyButton";
+    public static final String DELETE_BUTTON        = "deleteButton";
     public static final String TITLE_FIELD          = "titleField";
     public static final String TAGS_FIELD           = "tagsField";
     public static final String TAGS_LABEL           = "tagsLabel";
@@ -58,6 +59,7 @@ public interface GuiConstants
     public static final String TYPE_FIELD           = "typeField";
     public static final String AUTHOR_FIELD         = "authorField";
     public static final String AUTHOREMAIL_FIELD    = "authoremailField";
+    public static final String PUBLICPRIVATE_FIELD  = "publicprivateField";
     public static final String TAGS_LIST            = "tagsList";
     public static final String ADDED_LABEL          = "addeddateLabel";
     public static final String ISSUED_LABEL         = "issueddateLabel";

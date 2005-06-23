@@ -95,7 +95,7 @@ public class AddUrlsCommand extends AbstractCommand implements Command, Constant
             
             // now finally store entries in index
             EntryStore store = (EntryStore) registry.getPlugin(Constants.PLUGIN_STORE);
-            store.addEntries(entries, force);
+            entries = store.addEntries(entries, force);
             
             // output informative message to user
             output.addOutputMessage("Number of added Entries: "+entries.length);

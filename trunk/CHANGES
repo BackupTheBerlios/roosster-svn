@@ -14,6 +14,8 @@ Revision XX / 2005-XX-XX / Benjamin Reitzammer
   specified port
 * implemented first draft of del.icio.us sync
 * add button for viewing cached copy
+* show (and make editable) public/private in edit screen
 * shows dates in edit screen
+* added delete button
 
 

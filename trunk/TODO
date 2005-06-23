@@ -1,6 +1,7 @@
 
 GUI
 ========
+* add a menu item that shows logging information
 * make working with index faster by keeping Index* objects open
 * add menu 
 * let user specify index position at runtime through menu
@@ -9,16 +10,15 @@ GUI
   via it's tooltip; give every tab it's own one
 * use i18n feature of thinlet
 * make it a native startable app for MacOS X with a decent menubar
-* add public/private to table
+* add public/private, delete button to table
 * make tags editable (in dialog)
 * decode HTML entities in GUI
 * let simpy and del.icio.us sync run via dialog in bg
 * finish edit tab (content, cached ...)
 * sort search result
 * integrate with clipboard
-* add delete button
-* show public/private in edit screen
-* fix tags list in GUI with mutliple word tags
+* implement search history (only for one session? combobox)
+* maybe not all links should be opened in browser?
 
 General
 =======

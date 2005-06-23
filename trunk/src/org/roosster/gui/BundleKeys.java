@@ -30,6 +30,9 @@ public interface BundleKeys
 {
     public static final String SAVE_SUCCESS        = "save.success";
     public static final String ADD_SUCCESS         = "add.success";
+    public static final String DELETE_SUCCESS      = "delete.success";
+
+    public static final String DELETE_FAILURE      = "delete.failure";
     
     public static final String URL_EMPTY           = "param.empty.url";
     public static final String URL_INVALID         = "param.invalid.url";

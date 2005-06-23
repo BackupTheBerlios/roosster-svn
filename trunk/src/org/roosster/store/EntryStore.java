@@ -399,54 +399,54 @@ public class EntryStore implements Plugin, Constants
     /**
      *
      */
-    public void addEntry(Entry entry) throws IOException
+    public Entry addEntry(Entry entry) throws IOException
     {
-        addEntry(entry, false);
+        return addEntry(entry, false);
     }
 
 
     /**
      *
      */
-    public void addEntry(Entry entry, boolean force) throws IOException
+    public Entry addEntry(Entry entry, boolean force) throws IOException
     {
-        addEntries(new Entry[] {entry}, force);
+        return addEntries(new Entry[] {entry}, force)[0];
     }
 
 
     /**
      *
      */
-    public void addEntries(Entry[] entries) throws IOException
+    public Entry[] addEntries(Entry[] entries) throws IOException
     {
-        addEntries(entries, false);
+        return addEntries(entries, false);
     }
 
     /**
      * @exception DuplicateEntryException
      */
-    public void addEntries(Entry[] entries, boolean force) throws IOException
+    public Entry[] addEntries(Entry[] entries, boolean force) throws IOException
     {
-        if ( entries != null ) {
+        if ( entries == null ) 
+            return new Entry[0];
 
-            if ( !force && IndexReader.indexExists(indexDir) ) {
-                IndexReader reader = null;
-                try {
-                    reader = getReader();
-                    for (int i = 0; i < entries.length; i++) {
-                        Entry[] stored = getEntries(entries[i].getUrl(), reader);
-                        if ( stored.length > 0 )
-                            throw new DuplicateEntryException(entries[i].getUrl());
-                    }
-
-                } finally {
-                    if ( reader != null  )
-                        reader.close();
+        if ( !force && IndexReader.indexExists(indexDir) ) {
+            IndexReader reader = null;
+            try {
+                reader = getReader();
+                for (int i = 0; i < entries.length; i++) {
+                    Entry[] stored = getEntries(entries[i].getUrl(), reader);
+                    if ( stored.length > 0 )
+                        throw new DuplicateEntryException(entries[i].getUrl());
                 }
-            }
 
-            storeEntries(entries);
+            } finally {
+                if ( reader != null  )
+                    reader.close();
+            }
         }
+
+        return storeEntries(entries);
     }
 
 
@@ -575,7 +575,7 @@ public class EntryStore implements Plugin, Constants
      * @exception IllegalStateException if an instance of this class was not properly
      * initialized before calling this method
      */
-    private synchronized void storeEntries(Entry[] entries) throws IOException
+    private synchronized Entry[] storeEntries(Entry[] entries) throws IOException
     {
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
@@ -619,6 +619,8 @@ public class EntryStore implements Plugin, Constants
 
             persistLastUpdate();
         }
+
+        return entries;
     }
 
 

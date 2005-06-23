@@ -76,7 +76,7 @@ public class PutEntriesCommand extends AbstractCommand implements Command, Const
                     //
                     
                     // now finally update entry in index
-                    store.addEntries(new Entry[] {storedEntry}, true);
+                    store.addEntry(storedEntry, true);
                     
                     output.addOutputMessage("Entry saved! "+storedEntry.getUrl());
                     output.addEntry(storedEntry);

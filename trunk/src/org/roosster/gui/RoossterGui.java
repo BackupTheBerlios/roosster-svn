@@ -185,7 +185,8 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
      * 
      */
     public void doSave(String title, String note, String type,
-                       String author, String authorEmail, Object tagsList) 
+                       String author, String authorEmail, 
+                       boolean pub, Object tagsList)
                 throws Exception
     {
         if ( entry == null )
@@ -205,6 +206,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         entry.setFileType(type);
         entry.setAuthor(author);
         entry.setAuthorEmail(authorEmail);
+        entry.setPublic(pub);
         
         List list = new EntryList();
         list.add(entry);
@@ -212,8 +214,9 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         Map args = new HashMap();
         args.put(Constants.PARAM_ENTRIES, list);
         
-        // TODO exception handling
-        new Dispatcher(registry).run("putentries", OUTPUT_MODE, args);
+        Output output = new Dispatcher(registry).run("putentries", OUTPUT_MODE, args);
+
+        entry = output.getEntries().getEntry(0);
 
         // update GUI 
         updateTagsSet(entryTags);
@@ -222,6 +225,30 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         showInfo(BundleKeys.SAVE_SUCCESS);
     }
     
+    
+    /**
+     * 
+     */
+    public void doDelete() throws Exception
+    {
+        if ( entry == null ) {
+            LOG.debug("Called doDelete() while no Entry being currently selected"); 
+            return;
+        }
+
+        Map args = new HashMap();
+        args.put(Constants.ARG_URL, entry.getUrl().toString());
+
+        try {
+            Output output = new Dispatcher(registry).run("delete", OUTPUT_MODE, args);
+            showInfo(BundleKeys.DELETE_SUCCESS);
+        } catch (OperationException ex) {
+            LOG.warn("Exception occurred while deleting Entry", ex);
+            showError(BundleKeys.DELETE_FAILURE);
+        }
+            
+    }
+
     
     /**
      * 
@@ -607,6 +634,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
             text(TYPE_FIELD, entry.getFileType());
             text(AUTHOR_FIELD, entry.getAuthor());
             text(AUTHOREMAIL_FIELD, entry.getAuthorEmail());
+            setBoolean(find(PUBLICPRIVATE_FIELD), "selected", entry.getPublic());
             
             text(ADDED_LABEL,    DateUtil.formatDisplayDate(entry.getAdded()));
             text(ISSUED_LABEL,   DateUtil.formatDisplayDate(entry.getIssued()));

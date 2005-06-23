@@ -29,6 +29,9 @@ package org.roosster.store;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -39,7 +42,6 @@ import org.roosster.util.StringUtil;
 
 /**
  * TODO make dateformat configurable
- * TODO silently remove duplicates when setting tags
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
@@ -444,7 +446,11 @@ public class Entry
      */
     public void setTags(String[] tags)
     {
-      this.tags = tags;
+        if ( tags == null ) 
+            tags = new String[0];
+        
+        Set set = new HashSet(Arrays.asList(tags));
+        this.tags = (String[]) set.toArray(new String[0]);
     }
   
     /**
