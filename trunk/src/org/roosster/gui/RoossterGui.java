@@ -61,7 +61,6 @@ import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
 import org.roosster.store.DuplicateEntryException;
 import org.roosster.logging.LogUtil;
-import org.roosster.util.MapperUtil;
 import org.roosster.util.StringUtil;
 import org.roosster.util.DateUtil;
 
@@ -295,7 +294,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     {
         removeAll(resultTable);
       
-        LOG.debug("direction "+direction+" limitstr "+limitStr);
+        LOG.debug("Executing search query: '"+query+"' direction "+direction+" limitstr "+limitStr);
         
         int limit = !StringUtil.isNullOrBlank(limitStr) ?  Integer.valueOf(limitStr).intValue() : 10;
         if ( limit <= 0 )
@@ -340,6 +339,11 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
                 
                 Object emptyRow = create("row");
                 add(resultTable, emptyRow);
+                
+                Object access = create("cell");
+                setChoice(access, "alignment", "center");
+                setIcon(access, "icon", getIcon( entry.getPublic() ? "/img/public.png" : "/img/private.png"));
+                add(row, access);
                 
                 Object cell = create("cell");
                 putProperty(cell, "id", new Integer(i));

@@ -44,6 +44,10 @@ public interface BundleKeys
     public static final String OF                  = "of";
     public static final String TO                  = "to";
     public static final String ENTRIES             = "entries";
+    public static final String YES                 = "yes";
+    public static final String NO                  = "no";
+    public static final String PUBLIC              = "public";
+    public static final String PRIVATE             = "private";
     
     public static final String DELICIOUS_RUNNING   = "sync.delicious.running";
     public static final String DELICIOUS_SUCCESS   = "sync.delicious.success";

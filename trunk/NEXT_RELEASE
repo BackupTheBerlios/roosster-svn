@@ -17,7 +17,7 @@ General
 * plugin mechanism (drop class file into certain path and it can be used when 
   configured in properties; if includes xml file, this gets included into thinlet
   GUI)
-
+* let simpy and del.icio.us sync run via dialog in bg (run scheduler job on demand)
 
 Scratchpad Feature:
 ====================

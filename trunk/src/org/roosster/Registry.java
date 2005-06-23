@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
-import org.roosster.util.MapperUtil;
+import org.roosster.main.Roosster;
 
 /**
  * <b>NOTE:</b> This class must always be thread-safe
@@ -66,7 +66,7 @@ public class Registry
 
 
         try {
-            MapperUtil.getHomeDir();
+            Roosster.getHomeDir();
 
             conf = new Configuration(stream, commandLine);
             

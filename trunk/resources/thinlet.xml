@@ -23,7 +23,7 @@
                     <label font="14 bold" text="Search"/>
                     <separator colspan="4" weightx="1"/>
                     <label for="queryField" text="Search"/>
-                    <textfield colspan="2" columns="50" name="queryField" perform="doSearch(this.text, searchresultTable, pagersizeBox.text, '')" weightx="1"/>
+                    <textfield editable="true" colspan="2" columns="50" name="queryField" perform="doSearch(this.text, searchresultTable, pagersizeBox.text, '')" weightx="1"/>
                     <button action="doSearch(queryField.text, searchresultTable, pagersizeBox.text, '')" text="Go"/>
                     <label name="pagerLabel" colspan="2"/>
                     <panel colspan="2" halign="right">
@@ -38,6 +38,7 @@
                     </panel>
                     <table colspan="4" name="searchresultTable" perform="fillEditForm(item)" visible="false" weightx="1" weighty="1">
                         <header>
+                            <column name="pubHeader" text="Access" width="30"/>
                             <column name="titleHeader" text="Title" width="150"/>
                             <column name="tagsHeader" text="Tags" width="200"/>
                             <column name="noteHeader" text="Note" width="200"/>
@@ -70,7 +71,7 @@
                         <checkbox name="publicprivateField"/>
                         <separator colspan="2"/>
                         <label text="Actions"/>
-                        <panel columns="2" weightx="1">
+                        <panel columns="2" gap="15" weightx="1">
                             <button name="cachedcopyButton" text="Cached Copy" action="goUrl(this)" />
                             <button name="deleteButton" text="Delete Entry" action="doDelete()"/>
                         </panel>

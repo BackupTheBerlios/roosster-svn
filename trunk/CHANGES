@@ -17,5 +17,11 @@ Revision XX / 2005-XX-XX / Benjamin Reitzammer
 * show (and make editable) public/private in edit screen
 * shows dates in edit screen
 * added delete button
+* removed obsolete/unused classes
+* moved code from MapperUtil to Roosster
+* added generate-apidoc target to build.xml
+* added public/private to table
+
+
 
 

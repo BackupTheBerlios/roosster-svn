@@ -43,6 +43,7 @@
        <property name="src.dir"      location="${basedir}/src" />
        <property name="res.dir"      location="${basedir}/resources" />
        <property name="doc.dir"      location="${basedir}/doc" />
+       <property name="apidoc.dir"   location="${basedir}/apidoc" />
 
        <property name="build.dir"    location="${basedir}/build" />
        <property name="dist.dir"     location="${basedir}/dist" />
@@ -96,9 +97,9 @@
             unless="libs.unpacked"
             description="unpacks all *.jar files in ./lib, for convenient packaging into rosster's jar-file">
 
-       <echo>+ ============================================= +</echo>
-       <echo>+ Roosster - Prepare Libraries                  +</echo>
-       <echo>+ ============================================= +</echo>
+        <echo>+ ============================================= +</echo>
+        <echo>+ Roosster - Prepare Libraries                  +</echo>
+        <echo>+ ============================================= +</echo>
        
         <mkdir dir="${dist.dir}/lib" />
 
@@ -109,12 +110,30 @@
     </target>
 
     
+    <target name="generate-apidoc" depends="init" description="name speaks for itself doesn't it?">
+        <echo>+ ============================================= +</echo>
+        <echo>+ Roosster - Generate API javadoc               +</echo>
+        <echo>+ ============================================= +</echo>
+       
+        <mkdir dir="${apidoc.dir}" />
+        
+        <javadoc destdir="${apidoc.dir}"
+                 classpathref="classpath" 
+                 access="protected"
+                 Windowtitle="Roosster API v${roosster.version}"
+                 Author="true" >
+            <fileset dir="${src.dir}">
+                <include name="**/*.java"/>
+            </fileset>
+        </javadoc>
+    </target>
+    
     <target name="dist-jar"
             depends="compile, prepare-libs"
             description="Builds the .jar file that containes the application and is startable" >
 
         <echo>+ ============================================= +</echo>
-        <echo>+ Roosster - Build ${dist.jar.file} file      +</echo>
+        <echo>+ Roosster - Build ${dist.jar.file} file        +</echo>
         <echo>+ ============================================= +</echo>
         
         <touch file="${dist.dir}/timestamp-${ant.project.name}-${roosster.version}" />
@@ -163,6 +182,7 @@
         <echo>+ Roosster - Clean all generated/compiled files +</echo>
         <echo>+ ============================================= +</echo>
 
+        <delete dir="${apidoc.dir}" />
         <delete dir="${dist.dir}" />
         <delete dir="${build.dir}" />
     </target>

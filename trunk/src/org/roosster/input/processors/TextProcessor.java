@@ -36,13 +36,35 @@ import org.roosster.InitializeException;
 import org.roosster.input.ContentTypeProcessor;
 
 /**
- *
+ * Simple InputProcessor that doesn't alter the incoming stream in any way.
+ * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
 public class TextProcessor implements ContentTypeProcessor
 {
+    /**
+     * Contains the MIME type of text documents: <code>text/plain</code>
+     */
     public static final String FILE_TYPE = "text/plain";
     
+    
+    /**
+     * Sets the filetype of the returned <code>Entry</code> always to the value
+     * of the public <code>FILE_TYPE</code> constant of this class.
+     * 
+     * @return an array of <code>Entry</code>-objects that always contain on
+     * object, that's never <code>null</code>.
+     */
+    public Entry[] process(URL url, InputStream stream, String encoding) throws Exception
+    {
+        Entry entry = new Entry(url);
+        entry.setContent(IOUtils.toString(stream, encoding));
+        entry.setFileType(FILE_TYPE);
+        entry.setAdded(new Date());
+        return new Entry[] { entry };
+    }
+
+
     /**
      *
      */
@@ -63,21 +85,7 @@ public class TextProcessor implements ContentTypeProcessor
      *
      */
     public void shutdown(Registry registry) throws Exception
-    {
-    }
-
-
-    /**
-     *
-     */
-    public Entry[] process(URL url, InputStream stream, String encoding) throws Exception
-    {
-        Entry entry = new Entry(url);
-        entry.setContent(IOUtils.toString(stream, encoding));
-        entry.setFileType(FILE_TYPE);
-        entry.setAdded(new Date());
-        return new Entry[] { entry };
-    }
+    {}
 
 
 }

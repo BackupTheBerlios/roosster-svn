@@ -249,7 +249,7 @@ public class Configuration
      */
     public String getHomeDir()
     {
-        return org.roosster.util.MapperUtil.getHomeDir();
+        return org.roosster.main.Roosster.getHomeDir();
     }
 
     
