@@ -114,6 +114,7 @@ public class RoossterApiHttpd
         
         HttpContext ctx = server.addContext("/");
         ctx.addHandler( ipAccessHandler );
+        ctx.addHandler( new ClasspathResourceHandler(registry, "/docroot") );
         ctx.addHandler( new NotFoundHandler() );
 
         server.start();
