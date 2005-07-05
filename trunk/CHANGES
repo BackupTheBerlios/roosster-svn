@@ -7,6 +7,7 @@ Revision XX / 2005-XX-XX / Benjamin Reitzammer
   server running in the background, that offers an API (for 
   bookmarklet and scripting support)
 * implemented autocomplete for tags
+* internationalized thinlet GUI
 * implemented pager
 * implemented clickable links (needs 'mozilla' executable in PATH on unix/linux)o
 * embedded jetty server
@@ -20,7 +21,9 @@ Revision XX / 2005-XX-XX / Benjamin Reitzammer
 * removed obsolete/unused classes
 * moved code from MapperUtil to Roosster
 * added generate-apidoc target to build.xml
+* add nogui option to CLI to run webserver only
 * added public/private to table
+* use icons for public/private
 
 
 

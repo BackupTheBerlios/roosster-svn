@@ -97,6 +97,8 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         this.registry = registry;
         resourceBundle = bundle;
         
+        setResourceBundle(bundle);
+        
         store = (EntryStore) registry.getPlugin(Constants.PLUGIN_STORE);
         configuration = registry.getConfiguration();
         

@@ -7,14 +7,11 @@ GUI
 * add help and about system
 * find nice help icon (question mark?) and provide first tips and help
   via it's tooltip; give every tab it's own one
-* use i18n feature of thinlet
 * make it a native startable app for MacOS X with a decent menubar
 * make tags editable (in dialog)
 * decode HTML entities in GUI
 * sort search result
 * integrate with clipboard
-* implement search history (only for one session? combobox)
-* use icons for public/private
 * implement search history (for the current session only, for now)
 
 General
@@ -27,4 +24,4 @@ General
 * handle network errors better
 * implement getTags for API
 * make bookmarklet to add pages via API to index
-* add nogui option to CLI to run webserver only
+* integrate js client in distribution?

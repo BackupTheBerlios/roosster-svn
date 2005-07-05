@@ -143,6 +143,12 @@ public interface Constants
      */
     public static final String PROP_FETCH_CONTENT = "fetch.content";
     
+    public static final String PROP_SIMPY_USER       = "simpy.username";
+    public static final String PROP_SIMPY_PASS       = "simpy.password";
+    public static final String PROP_SIMPY_LASTSYNC   = "simpy.lastsync";
+    public static final String PROP_SIMPY_DELETE     = "simpy.sync.delete";
+    public static final String PROP_SIMPY_APIENDPOINT= "simpy.api.endpoint";
+    
     public static final String PROP_DELICIOUS_USER       = "delicious.username";
     public static final String PROP_DELICIOUS_PASS       = "delicious.password";
     public static final String PROP_DELICIOUS_LASTSYNC   = "delicious.lastsync";

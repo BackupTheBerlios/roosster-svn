@@ -3,13 +3,13 @@
 <panel columns="1" weightx="1" weighty="1">
     <panel gap="4" top="4" bottom="4" weightx="1">
         <menubar weightx="1">
-            <menu text="File" mnemonic="0">
-                <!-- <menuitem text="Open ..." accelerator="Ctrl O" mnemonic="0" action="openIndex()"/> -->
+            <menu text="i18n.File" mnemonic="0">
+                <!-- <menuitem text="i18n.Open" accelerator="Ctrl O" mnemonic="0" action="openIndex()"/> -->
             </menu>
             <menu text="Sync">
-                <menuitem text="Sync del.icio.us ..." accelerator="Ctrl D" mnemonic="5" action="openDeliciousSync()"/>
+                <menuitem text="i18n.SyncDel" accelerator="Ctrl D" mnemonic="5" action="openDeliciousSync()"/>
             </menu>
-            <menu text="Help"/>
+            <menu text="i18n.Help"/>
         </menubar>
     </panel>
     <panel gap="4" top="4" left="4" bottom="4" right="4">
@@ -18,13 +18,13 @@
     </panel>
     <panel scrollable="true" weightx="1" weighty="1" gap="4" top="4" left="4" bottom="4" right="4">
         <tabbedpane action="eventTabChanged(tabbedPane)" name="tabbedPane" weightx="1" weighty="1">
-            <tab mnemonic="0" name="searchTab" text="Search">
+            <tab mnemonic="0" name="searchTab" text="i18n.Search">
                 <panel colspan="0" columns="4" top="4" left="4" bottom="4" right="4" gap="4" weightx="1" weighty="1">
-                    <label font="14 bold" text="Search"/>
+                    <label font="14 bold" text="i18n.Search"/>
                     <separator colspan="4" weightx="1"/>
-                    <label for="queryField" text="Search"/>
+                    <label for="queryField" text="i18n.Search"/>
                     <textfield editable="true" colspan="2" columns="50" name="queryField" perform="doSearch(this.text, searchresultTable, pagersizeBox.text, '')" weightx="1"/>
-                    <button action="doSearch(queryField.text, searchresultTable, pagersizeBox.text, '')" text="Go"/>
+                    <button action="doSearch(queryField.text, searchresultTable, pagersizeBox.text, '')" text="i18n.Go"/>
                     <label name="pagerLabel" colspan="2"/>
                     <panel colspan="2" halign="right">
                       <button text="&lt;-" name="pagerbackButton" action="doSearch(queryField.text, searchresultTable, pagersizeBox.text, pagerbackButton.name)" enabled="false"/>
@@ -38,84 +38,84 @@
                     </panel>
                     <table colspan="4" name="searchresultTable" perform="fillEditForm(item)" visible="false" weightx="1" weighty="1">
                         <header>
-                            <column name="pubHeader" text="Access" width="30"/>
-                            <column name="titleHeader" text="Title" width="150"/>
-                            <column name="tagsHeader" text="Tags" width="200"/>
-                            <column name="noteHeader" text="Note" width="200"/>
+                            <column name="pubHeader" text="i18n.Pub" width="30"/>
+                            <column name="titleHeader" text="i18n.Title" width="150"/>
+                            <column name="tagsHeader" text="i18n.Tags" width="200"/>
+                            <column name="noteHeader" text="i18n.Note" width="200"/>
                         </header>
                     </table>
-                    <label colspan="4" name="emptyresultLabel" text="No Entries found for this search." visible="false"/>
+                    <label colspan="4" name="emptyresultLabel" text="i18n.EmptyResult" visible="false"/>
                 </panel>
             </tab>
-            <tab mnemonic="0" name="editTab" text="Edit" enabled="false">
+            <tab mnemonic="0" name="editTab" text="i18n.Edit" enabled="false">
                 <panel weightx="1" weighty="1" gap="4" top="4" left="4" bottom="4" right="4" >
                     <panel columns="2" gap="4" weightx="2" weighty="1">
-                        <label font="14 bold" text="Edit an Entry"/>
+                        <label font="14 bold" text="i18n.EditEntry"/>
                         <separator colspan="2"/>
-                        <label text="URL"/>
+                        <label text="i18n.URL"/>
                         <button name="urlButton" type="link" halign="left" action="goUrl(this)"/>
-                        <label text="Tags"/>
+                        <label text="i18n.Tags"/>
                         <label name="tagsLabel"/>
-                        <label for="titleField" text="Title"/>
+                        <label for="titleField" text="i18n.Title"/>
                         <textfield name="titleField"/>
-                        <label for="noteField" mnemonic="0" text="Note" valign="top"/>
+                        <label for="noteField" mnemonic="0" text="i18n.Note" valign="top"/>
                         <textarea columns="30" name="noteField" rows="4"/>
                         <separator colspan="2"/>
-                        <label for="typeField" text="Type"/>
+                        <label for="typeField" text="i18n.Type"/>
                         <textfield name="typeField"/>
-                        <label for="authorField" text="Author"/>
+                        <label for="authorField" text="i18n.Author"/>
                         <textfield name="authorField"/>
-                        <label for="authoremailField" text="Author-Email"/>
+                        <label for="authoremailField" text="i18n.AuthorEmail"/>
                         <textfield name="authoremailField"/>
-                        <label for="publicprivateField" text="Public ?"/>
+                        <label for="publicprivateField" text="i18n.Public"/>
                         <checkbox name="publicprivateField"/>
                         <separator colspan="2"/>
-                        <label text="Actions"/>
+                        <label text="i18n.Actions"/>
                         <panel columns="2" gap="15" weightx="1">
-                            <button name="cachedcopyButton" text="Cached Copy" action="goUrl(this)" />
-                            <button name="deleteButton" text="Delete Entry" action="doDelete()"/>
+                            <button name="cachedcopyButton" text="i18n.CachedCopy" action="goUrl(this)" />
+                            <button name="deleteButton" text="i18n.DeleteEntry" action="doDelete()"/>
                         </panel>
                         <separator colspan="2"/>
-                        <label text="Added"/>
+                        <label text="i18n.Added"/>
                         <label name="addeddateLabel"/>
-                        <label text="Issued"/>
+                        <label text="i18n.Issued"/>
                         <label name="issueddateLabel"/>
-                        <label text="Modified"/>
+                        <label text="i18n.Modified"/>
                         <label name="modifieddateLabel"/>
-                        <label text="Edited"/>
+                        <label text="i18n.Edited"/>
                         <label name="editeddateLabel"/>
                         <label/>
-                        <button action="doSave(titleField.text, noteField.text, typeField.text, authorField.text, authoremailField.text, publicprivateField.selected, tagsList)" halign="right" text="Save"/>
+                        <button action="doSave(titleField.text, noteField.text, typeField.text, authorField.text, authoremailField.text, publicprivateField.selected, tagsList)" halign="right" text="i18n.Save"/>
                     </panel>
                     <panel columns="2" weightx="1">
-                        <label colspan="2" for="tagsField" mnemonic="1" text="Tags" weightx="1"/>
+                        <label colspan="2" for="tagsField" mnemonic="1" text="i18n.Tags" weightx="1"/>
                         <textfield colspan="2" insert="suggestTag(this)" name="tagsField" perform="markTag(this)"/>
-                        <label colspan="2" halign="left" text="Tags"/>
+                        <label colspan="2" halign="left" text="i18n.AllTags"/>
                         <list colspan="2" name="tagsList" selection="multiple" weighty="1"/>
                     </panel>
                 </panel>
             </tab>
-            <tab mnemonic="0" name="addTab" text="Add">
+            <tab mnemonic="0" name="addTab" text="i18n.Add">
                 <panel columns="3" gap="4" top="4" left="4" bottom="4" right="4">
-                    <label colspan="2" font="14 bold" text="Add an Entry"/>
+                    <label colspan="2" font="14 bold" text="i18n.AddEntry"/>
                     <separator colspan="3"/>
-                    <label text="URL"/>
+                    <label text="i18n.URL"/>
                     <textfield columns="50" name="addurlField" perform="doAdd(addurlField.text, addfetchcontentCheckbox.selected, addpublicCheckbox.selected, addforceCheckbox.selected)"/>
-                    <button action="doAdd(addurlField.text, addfetchcontentCheckbox.selected, addpublicCheckbox.selected, addforceCheckbox.selected)" text="Add URL"/>
-                    <togglebutton action="toggleVisible(advancedaddPanel)" colspan="2" halign="left" text="Show Advanced Options"/>
+                    <button action="doAdd(addurlField.text, addfetchcontentCheckbox.selected, addpublicCheckbox.selected, addforceCheckbox.selected)" text="i18n.AddURL"/>
+                    <togglebutton action="toggleVisible(advancedaddPanel)" colspan="2" halign="left" text="i18n.AdvancedAddOptions"/>
                     <panel colspan="3" columns="2" name="advancedaddPanel" visible="false">
                         <checkbox name="addfetchcontentCheckbox" selected="true"/>
-                        <label text="Fetch Content?"/>
+                        <label text="i18n.FetchContent"/>
                         <checkbox name="addpublicCheckbox"/>
-                        <label text="Public ?"/>
+                        <label text="i18n.Public"/>
                         <checkbox name="addforceCheckbox"/>
-                        <label text="Force Add ?"/>
+                        <label text="i18n.ForceAdd"/>
                     </panel>
                 </panel>
             </tab>
-            <tab mnemonic="0" name="tagsTab" text="Tags">
+            <tab mnemonic="0" name="tagsTab" text="i18n.Tags">
                 <panel columns="2" gap="4" weighty="1" top="4" left="4" bottom="4" right="4">
-                    <label font="14 bold" text="Tags"/>
+                    <label font="14 bold" text="i18n.Tags"/>
                     <separator colspan="2" weightx="1"/>
                     <list/>
                     <label/>

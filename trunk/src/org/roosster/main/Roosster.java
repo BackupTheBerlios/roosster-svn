@@ -52,6 +52,7 @@ import org.roosster.gui.RoossterGui;
 public class Roosster 
 {
   
+    private static final String PROP_NOGUI      = "nogui";
     private static final String PROP_FILE       = "/roosster.properties";
     private static final String RES_BUNDLE      = "roosster_resources";
     
@@ -99,7 +100,9 @@ public class Roosster
             Roosster roosster = new Roosster();
             
             roosster.setHttpd( new RoossterApiHttpd(registry, port) );
-            roosster.setGui( new RoossterGui(roosster, registry, resbundle) );            
+
+            if ( !cmdLine.containsKey(PROP_NOGUI) )
+                roosster.setGui( new RoossterGui(roosster, registry, resbundle) );            
            
             // ... and off it goes 
             roosster.start();            
@@ -127,7 +130,8 @@ public class Roosster
     public void start() throws Exception
     {
         // start Thinlet GUI
-        new FrameLauncher("Roosster - personal search ", gui, 800, 600);
+        if ( gui != null )  
+            new FrameLauncher("Roosster - personal search ", gui, 800, 600);
         
         // start Jetty HTTP server
         httpd.start(); 
