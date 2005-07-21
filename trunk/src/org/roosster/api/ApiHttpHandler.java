@@ -40,6 +40,7 @@ import org.mortbay.http.HttpException;
 import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 
+import org.roosster.OperationException;
 import org.roosster.Registry;
 import org.roosster.Constants;
 import org.roosster.Configuration;
@@ -48,6 +49,7 @@ import org.roosster.Dispatcher;
 import org.roosster.store.EntryList;
 import org.roosster.util.StringUtil;
 import org.roosster.xml.EntryParser;
+import org.roosster.xml.TagGenerator;
 
 /**
  *
@@ -97,6 +99,7 @@ public class ApiHttpHandler extends AbstractHttpHandler
         methodCommandMatrix.put(HttpRequest.__DELETE, new String[] {"/entry", "delete"});
         
         methodCommandMatrix.put(HttpRequest.__GET,    new String[] {"/entry", "entry", 
+                                                                    "/tags",  "tags",
                                                                     "/search", "search"});
     }
 
@@ -122,33 +125,44 @@ public class ApiHttpHandler extends AbstractHttpHandler
             String commandName = getCommandName(pathInContext, request.getMethod());
           
             if ( commandName != null ) {
-            
-                Map args = parseRequestArguments(request);
-                
-                // override configuration for this request
-                configuration.setRequestArguments(args);
-                
-                String outputEncoding = configuration.getProperty(PROP_OUTENC, DEF_ENC);
-                String outputMode     = configuration.getProperty(PROP_OUTPUTMODE, DEF_OUTPUTMODE);
-                
-                
-                // ... let it roll
-                Output output = new Dispatcher(registry).run(commandName, outputMode, args);
-                
-                if ( output.entriesSize() < 1 ) {
-
-                    // save bandwidth and be RESTian ;)
-                    response.setStatus(HttpResponse.__204_No_Content);
-                    response.setReason("Request returned no Entries");
+              
+                // special behaviour for 'tags' command
+                if ( "tags".equals(commandName) ) {
+                  
+                    TagGenerator tagGen = new TagGenerator();
+                    tagGen.outputAllTags(registry,
+                                         new PrintStream(response.getOutputStream(), true));
                     
                 } else {
-                
-                    String type = output.getContentType();
+              
+                    Map args = parseRequestArguments(request);
                     
-                    response.setCharacterEncoding(outputEncoding);
-                    response.setContentType(type == null ? DEF_CONTENT_TYPE : type);
+                    // override configuration for this request
+                    configuration.setRequestArguments(args);
                     
-                    output.output( new PrintStream(response.getOutputStream(), true)  );
+                    String outputEncoding = configuration.getProperty(PROP_OUTENC, DEF_ENC);
+                    String outputMode     = configuration.getProperty(PROP_OUTPUTMODE, DEF_OUTPUTMODE);
+                    
+                    
+                    // ... let it roll
+                    Output output = new Dispatcher(registry).run(commandName, outputMode, args);
+                    
+                    if ( output.entriesSize() < 1 ) {
+    
+                        // save bandwidth and be RESTian ;)
+                        response.setStatus(HttpResponse.__204_No_Content);
+                        response.setReason("Request returned no Entries");
+                        
+                    } else {
+                    
+                        String type = output.getContentType();
+                        
+                        response.setCharacterEncoding(outputEncoding);
+                        response.setContentType(type == null ? DEF_CONTENT_TYPE : type);
+                        
+                        output.output( new PrintStream(response.getOutputStream(), true)  );
+                    }
+                    
                 }
                 
             } else {
@@ -159,7 +173,8 @@ public class ApiHttpHandler extends AbstractHttpHandler
         } catch (Exception ex) {
           
             LOG.warn("Exception occured while serving an API request", ex);
-            response.sendError(HttpResponse.__500_Internal_Server_Error, ex.getMessage());
+            response.sendError(HttpResponse.__500_Internal_Server_Error, 
+                               "RoossterException: <"+ex.getClass().getName()+"> "+ex.getMessage());
             
         } finally {
             configuration.clearRequestArguments();
@@ -187,33 +202,29 @@ public class ApiHttpHandler extends AbstractHttpHandler
         
         configuration.setRequestArguments(args);
         
-        try {
-            InputStream stream = request.getInputStream();
+        InputStream stream = request.getInputStream();
+        
+        if (  stream != null ) {
+        
+            String bodyEnc = request.getCharacterEncoding();
+            if ( bodyEnc == null ) 
+                bodyEnc = configuration.getProperty(PROP_INENC, DEF_ENC);;
             
-            if (  stream != null ) {
+            String body = IOUtils.toString(stream, bodyEnc);
             
-                String bodyEnc = request.getCharacterEncoding();
-                if ( bodyEnc == null ) 
-                    bodyEnc = configuration.getProperty(PROP_INENC, DEF_ENC);;
+            if ( body != null && !"".equals(body) ) {
+              
+                // parse request body through entry parser
+                EntryList entryList = new EntryParser().parse(body, bodyEnc);
+                args.put(Constants.PARAM_ENTRIES, entryList);
                 
-                String body = IOUtils.toString(stream, bodyEnc);
-                
-                if ( body != null && !"".equals(body) ) {
-                  
-                    // parse request body through entry parser
-                    EntryList entryList = new EntryParser().parse(body, bodyEnc);
-                    args.put(Constants.PARAM_ENTRIES, entryList);
-                    
-                    if ( LOG.isDebugEnabled() ) {
-                        LOG.debug("**************************************************");
-                        LOG.debug("RequestBody: encoding "+bodyEnc+"\n");
-                        LOG.debug(body);
-                        LOG.debug("**************************************************");
-                    }
+                if ( LOG.isDebugEnabled() ) {
+                    LOG.debug("**************************************************");
+                    LOG.debug("RequestBody: encoding "+bodyEnc+"\n");
+                    LOG.debug(body);
+                    LOG.debug("**************************************************");
                 }
             }
-        } catch(Exception ex) {
-            LOG.warn("Exception while parsing request body", ex);
         }
         
         return args;
@@ -243,7 +254,7 @@ public class ApiHttpHandler extends AbstractHttpHandler
             }
         }
 
-        LOG.debug("Is path "+pathInContext+" available via method "+method+"? "+command);
+        LOG.debug("Is path "+pathInContext+" available via method "+method+"? Command: "+command);
         
         return command;
     }

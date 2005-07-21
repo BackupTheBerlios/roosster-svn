@@ -36,6 +36,10 @@ public interface Constants
   
     /**
      */
+    public static final String BOOKMARKLET_FILE = "bookmarklets.html";
+  
+    /**
+     */
     public static final String PROP_LOCALE = "locale";
   
     /**
@@ -163,7 +167,6 @@ public interface Constants
     // args are used in commands, and only an a request basis (although they could be
     // defined in property files, this wouldn't make much sense
     public static final String ARG_QUERY        = "query";
-    public static final String ARG_JUMPTO       = "jumpto";
     
     public static final String ARG_URL          = "url";
     public static final String ARG_PUBLIC       = "pub";

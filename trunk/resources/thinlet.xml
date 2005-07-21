@@ -4,17 +4,17 @@
     <panel gap="4" top="4" bottom="4" weightx="1">
         <menubar weightx="1">
             <menu text="i18n.File" mnemonic="0">
-                <!-- <menuitem text="i18n.Open" accelerator="Ctrl O" mnemonic="0" action="openIndex()"/> -->
+                <menuitem text="i18n.Open" accelerator="Ctrl O" mnemonic="0"/>
+                <separator/>
+                <menuitem text="i18n.Exit" accelerator="Ctrl Q" action="exitRoosster()" />
             </menu>
-            <menu text="Sync">
+            <menu text="i18n.Sync">
                 <menuitem text="i18n.SyncDel" accelerator="Ctrl D" mnemonic="5" action="openDeliciousSync()"/>
             </menu>
-            <menu text="i18n.Help"/>
+            <menu text="i18n.Help">
+                <menuitem text="i18n.About" action="openDialog('about_dialog')"/>
+            </menu>
         </menubar>
-    </panel>
-    <panel gap="4" top="4" left="4" bottom="4" right="4">
-        <label font="bold" foreground="#00df00" name="infomessagesLabel" text=" "/>
-        <label font="bold" foreground="#df0000" name="errormessagesLabel"/>
     </panel>
     <panel scrollable="true" weightx="1" weighty="1" gap="4" top="4" left="4" bottom="4" right="4">
         <tabbedpane action="eventTabChanged(tabbedPane)" name="tabbedPane" weightx="1" weighty="1">
@@ -23,25 +23,39 @@
                     <label font="14 bold" text="i18n.Search"/>
                     <separator colspan="4" weightx="1"/>
                     <label for="queryField" text="i18n.Search"/>
-                    <textfield editable="true" colspan="2" columns="50" name="queryField" perform="doSearch(this.text, searchresultTable, pagersizeBox.text, '')" weightx="1"/>
-                    <button action="doSearch(queryField.text, searchresultTable, pagersizeBox.text, '')" text="i18n.Go"/>
-                    <label name="pagerLabel" colspan="2"/>
-                    <panel colspan="2" halign="right">
-                      <button text="&lt;-" name="pagerbackButton" action="doSearch(queryField.text, searchresultTable, pagersizeBox.text, pagerbackButton.name)" enabled="false"/>
-                      <combobox editable="false" name="pagersizeBox" action="determinePagerEnabled()" selected="0">
-                          <choice text="5"/>
-                          <choice text="10"/>
-                          <choice text="20"/>
-                          <choice text="50"/>
+                    <textfield editable="true" colspan="2" columns="50" name="queryField" perform="doSearch(this.text, searchresultTable, pagersizeBox.text, '', sortBox)" weightx="1"/>
+                    <button action="doSearch(queryField.text, searchresultTable, pagersizeBox.text, '', sortBox)" text="i18n.Go"/>
+                    <label name="pagerLabel" colspan="2" weightx="1"/>
+                    <panel colspan="2" halign="right" gap="10">
+                      <label text="i18n.SortField" />
+                      <combobox halign="left" editable="false" name="sortBox" action="doSortedSearch(queryField.text, searchresultTable, pagersizeBox.text, pagerbackButton.name, sortBox)" selected="0">
+                          <choice text="i18n.Relevance" property="sortfield=" />
+                          <choice text="i18n.Title" property="sortfield=_titlesort" />
+                          <choice text="i18n.URL" property="sortfield=url" />
+                          <choice text="i18n.Author" property="sortfield=_authorsort" />
+                          <choice text="i18n.AuthorEmail" property="sortfield=_authormailsort" />
+                          <choice text="i18n.Type" property="sortfield=filetype" />
+                          <choice text="i18n.Issued" property="sortfield=issued" />
+                          <choice text="i18n.Added" property="sortfield=added" />
+                          <choice text="i18n.Modified" property="sortfield=modified" />
+                          <choice text="i18n.Edited" property="sortfield=edited" />
                       </combobox>
-                      <button text="-&gt;" name="pagerforwardButton" action="doSearch(queryField.text, searchresultTable, pagersizeBox.text, pagerforwardButton.name)" enabled="false" />
+                      <panel>
+                          <button text="&lt;-" name="pagerbackButton" action="doSearch(queryField.text, searchresultTable, pagersizeBox.text, pagerbackButton.name, sortBox)" enabled="false"/>
+                          <combobox editable="false" name="pagersizeBox" action="determinePagerEnabled()" selected="0">
+                              <choice text="10"/>
+                              <choice text="20"/>
+                              <choice text="50"/>
+                          </combobox>
+                          <button text="-&gt;" name="pagerforwardButton" action="doSearch(queryField.text, searchresultTable, pagersizeBox.text, pagerforwardButton.name, sortBox)" enabled="false" />
+                      </panel>
                     </panel>
                     <table colspan="4" name="searchresultTable" perform="fillEditForm(item)" visible="false" weightx="1" weighty="1">
                         <header>
                             <column name="pubHeader" text="i18n.Pub" width="30"/>
-                            <column name="titleHeader" text="i18n.Title" width="150"/>
-                            <column name="tagsHeader" text="i18n.Tags" width="200"/>
-                            <column name="noteHeader" text="i18n.Note" width="200"/>
+                            <column name="titleHeader" text="i18n.Title" width="250"/>
+                            <column name="tagsHeader" text="i18n.Tags" width="150"/>
+                            <column name="noteHeader" text="i18n.Note" width="150"/>
                         </header>
                     </table>
                     <label colspan="4" name="emptyresultLabel" text="i18n.EmptyResult" visible="false"/>
@@ -96,31 +110,28 @@
                 </panel>
             </tab>
             <tab mnemonic="0" name="addTab" text="i18n.Add">
-                <panel columns="3" gap="4" top="4" left="4" bottom="4" right="4">
-                    <label colspan="2" font="14 bold" text="i18n.AddEntry"/>
-                    <separator colspan="3"/>
+                <panel columns="4" gap="4" top="4" left="4" bottom="4" right="4">
+                    <label colspan="3"  font="14 bold" text="i18n.AddEntry"/>
+                    <separator colspan="4" weightx="1"/>
                     <label text="i18n.URL"/>
                     <textfield columns="50" name="addurlField" perform="doAdd(addurlField.text, addfetchcontentCheckbox.selected, addpublicCheckbox.selected, addforceCheckbox.selected)"/>
                     <button action="doAdd(addurlField.text, addfetchcontentCheckbox.selected, addpublicCheckbox.selected, addforceCheckbox.selected)" text="i18n.AddURL"/>
                     <togglebutton action="toggleVisible(advancedaddPanel)" colspan="2" halign="left" text="i18n.AdvancedAddOptions"/>
-                    <panel colspan="3" columns="2" name="advancedaddPanel" visible="false">
+                    <panel colspan="4" columns="2" name="advancedaddPanel" visible="false">
                         <checkbox name="addfetchcontentCheckbox" selected="true"/>
-                        <label text="i18n.FetchContent"/>
+                        <label for="addfetchcontentCheckbox" text="i18n.FetchContent"/>
                         <checkbox name="addpublicCheckbox"/>
-                        <label text="i18n.Public"/>
+                        <label for="addpublicCheckbox" text="i18n.Public"/>
                         <checkbox name="addforceCheckbox"/>
-                        <label text="i18n.ForceAdd"/>
+                        <label for="addforceCheckbox" text="i18n.ForceAdd"/>
                     </panel>
-                </panel>
-            </tab>
-            <tab mnemonic="0" name="tagsTab" text="i18n.Tags">
-                <panel columns="2" gap="4" weighty="1" top="4" left="4" bottom="4" right="4">
-                    <label font="14 bold" text="i18n.Tags"/>
-                    <separator colspan="2" weightx="1"/>
-                    <list/>
-                    <label/>
                 </panel>
             </tab>
         </tabbedpane>
     </panel>
+    <panel name="status" columns="1" left="5" bottom="2" right="5">
+        <label weightx="1" font="bold" foreground="#00df00" name="infomessagesLabel" text=" " />
+        <label weightx="1" font="bold" foreground="#df0000" name="errormessagesLabel" visible="false" />    
+        <label weightx="1" name="statusmessagesLabel" visible="false"/>    
+    </panel>    
 </panel>

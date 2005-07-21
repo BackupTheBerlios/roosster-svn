@@ -62,9 +62,10 @@ public class AddUrlsCommand extends AbstractCommand implements Command, Constant
             
             // shall existing entries get overwritten, or an exception thrown?
             boolean force = Boolean.valueOf(conf.getProperty(ARG_FORCE, "false")).booleanValue();
-            boolean pub = Boolean.valueOf(conf.getProperty(ARG_PUBLIC, "false")).booleanValue();
             boolean fetch = Boolean.valueOf(conf.getProperty(PROP_FETCH_CONTENT, "true")).booleanValue();
 
+            LOG.debug("FORCE "+force);
+            
             Entry[] entries = new Entry[0];
             if ( fetch ) {
               
@@ -82,16 +83,9 @@ public class AddUrlsCommand extends AbstractCommand implements Command, Constant
                     // overwrite the fetched values, if others have been provided (in entryList)
                     if ( entry != null ) 
                         entries[i].overwrite(entry);
-                    
-                    entries[i].setPublic(pub);
                 } 
                     
-            } else {
-                entries = (Entry[]) entryList.toArray(new Entry[0]);
-                for ( int i = 0; i < entries.length; i++ ) {
-                    entries[i].setPublic(pub);
-                }
-            }
+            } 
             
             // now finally store entries in index
             EntryStore store = (EntryStore) registry.getPlugin(Constants.PLUGIN_STORE);

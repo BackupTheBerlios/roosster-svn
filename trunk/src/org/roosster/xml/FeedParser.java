@@ -38,15 +38,17 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.roosster.OperationException;
-import org.roosster.input.processors.HtmlProcessor;
-import org.roosster.store.Entry;
 import org.xml.sax.InputSource;
 
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
+
+import org.roosster.OperationException;
+import org.roosster.input.processors.HtmlProcessor;
+import org.roosster.store.Entry;
+import org.roosster.util.StringUtil;
 
 /**
  * 
@@ -181,7 +183,7 @@ public class FeedParser
             
             try {
                 // spoof my stypid ContentHandler in thinking this is a normal HTML doc
-                LOG.debug("content "+ content+"\n\n");
+                LOG.debug("content "+ StringUtil.truncate(content, 120) +"\n\n");
                 new HtmlProcessor.HtmlParser(entry)
                                  .parse(new InputSource(new StringReader(content)));
                 

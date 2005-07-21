@@ -75,7 +75,6 @@ public class EntryStore implements Plugin, Constants
      */
     public static final String PROP_INDEXDIR  = "store.indexdir";
     public static final String PROP_ANALYZER  = "store.analyzerclass";
-    public static final String PROP_CREATEIND = "store.createindex";
 
     public static final String DEF_INDEXDIR   = "index";
 
@@ -84,10 +83,9 @@ public class EntryStore implements Plugin, Constants
     private Registry registry        = null;
     private String   indexDir        = null;
     private Class    analyzerClass   = null;
-    private String   createIndexProp = null;
     private boolean  initialized     = false;
-
-
+    
+    
     /**
      */
     public EntryStore()
@@ -140,7 +138,6 @@ public class EntryStore implements Plugin, Constants
         LOG.debug("Directory of index is: "+indexDir);
         LOG.info("Finished initialize of "+getClass());
 
-        createIndexProp = conf.getProperty(PROP_CREATEIND);
         initialized = true;
     }
 
@@ -150,6 +147,8 @@ public class EntryStore implements Plugin, Constants
      */
     public void shutdown(Registry registry) throws Exception
     {
+        LOG.debug("Shutting down EntryStore!");
+        
         initialized = false;
     }
 
@@ -230,29 +229,29 @@ public class EntryStore implements Plugin, Constants
      */
     public List getAllTags() throws IOException 
     {
-       List tags = new ArrayList();
+        List tags = new ArrayList();
        
-       IndexReader reader = null;
-       try {
-           LOG.debug("Getting all Tags from index");
+        if ( IndexReader.indexExists(indexDir) ) {
            
-           reader = getReader();
-           TermEnum terms = reader.terms(new Term(Entry.TAGS, ""));
-           
-           while ( Entry.TAGS.equals( terms.term().field() ) ) {
-               LOG.debug("Found tag '"+terms.term().text()+"'");
+           IndexReader reader = null;
+           try {
+               LOG.debug("Getting all Tags from index");
                
-               tags.add( terms.term().text() );
-
-               if ( !terms.next() )
-                   break;
-           }           
-           
-       } finally {
-           if ( reader != null )
-               reader.close();
+               reader = getReader();
+               TermEnum terms = reader.terms(new Term(Entry.TAGS, ""));
+               
+               while ( Entry.TAGS.equals( terms.term().field() ) ) {
+                   tags.add( terms.term().text() );
+    
+                   if ( !terms.next() )
+                       break;
+               }           
+               
+           } finally {
+               if ( reader != null )
+                   reader.close();
+           }
        }
-       
        return tags;
     }
     
@@ -274,6 +273,10 @@ public class EntryStore implements Plugin, Constants
     {
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
+
+        if ( !IndexReader.indexExists(indexDir) ) 
+            return new EntryList();
+        
         
         IndexSearcher searcher = null;
         try {      
@@ -314,6 +317,10 @@ public class EntryStore implements Plugin, Constants
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
 
+        if ( !IndexReader.indexExists(indexDir) ) 
+            return new EntryList();
+
+        
         IndexSearcher searcher = null;
         try {     
             QueryParser parser = new QueryParser(Entry.ALL, createAnalyzer());
@@ -352,10 +359,15 @@ public class EntryStore implements Plugin, Constants
         if ( field == null || "".equals(field) )
             throw new IllegalArgumentException("Parameter 'field' is not allowed to be null or empty");
         
+        if ( !IndexReader.indexExists(indexDir) ) 
+            return new EntryList();
+
+        
         if ( after == null )
             after = new Date();
         if ( before == null )
             before = new Date();
+        
         
         IndexSearcher searcher = null;
         try {        
@@ -387,10 +399,14 @@ public class EntryStore implements Plugin, Constants
      */
     public Entry getEntry(URL url) throws IOException
     {
-        Entry[] entries = getEntries(url, null);
-
-        if ( entries.length > 1 )
-            LOG.warn("More than one Entry found for URL "+url);
+        Entry[] entries = new Entry[0];
+        
+        if ( IndexReader.indexExists(indexDir) ) {
+            entries = getEntries(url, null);
+    
+            if ( entries.length > 1 )
+                LOG.warn("More than one Entry found for URL "+url);
+        }
 
         return entries.length > 0 ? entries[0] : null;
     }
@@ -455,7 +471,7 @@ public class EntryStore implements Plugin, Constants
      */
     public int deleteEntry(URL url) throws IOException
     {
-      return deleteEntries(new URL[] {url}, null);
+        return deleteEntries(new URL[] {url}, null);
     }
 
 
@@ -481,17 +497,18 @@ public class EntryStore implements Plugin, Constants
             if ( entries[i] != null )
                 urls.add(entries[i].getUrl());
         }
+        
         return deleteEntries((URL[]) urls.toArray(new URL[0]), null);
     }
 
 
-    // ============ protected Helper methods ============
+    // ============ private Helper methods ============
 
 
     /**
      *
      */
-    protected Entry[] getEntries(URL url, IndexReader reader) throws IOException
+    private Entry[] getEntries(URL url, IndexReader reader) throws IOException
     {
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
@@ -509,7 +526,7 @@ public class EntryStore implements Plugin, Constants
                 closeReader = true;
             }
 
-            Term term = new Term( URLHASH, computeHash(url.toString()) );
+            Term term = new Term( URLHASH, computeHash(url) );
             docs = reader.termDocs(term);
 
             List entries = new ArrayList();
@@ -531,11 +548,18 @@ public class EntryStore implements Plugin, Constants
         }
     }
 
-
+    
     /**
-     *
+     * The deletion of the specified Entries is synchronized with the adding of
+     * Entries. So it's not possible to simultaneously add and delete Entries.
+     * 
+     * @param urls the URLs of the Entries that should be deleted, may not be null
+     * @return number of deleted Entries
+     * @exception IOException if the writing to the index fails due to some I/O reason
+     * @exception IllegalStateException if the object was not properly initialized yet.
+     * @exception IllegalArgumentException if parameter <code>urls</code> is null.
      */
-    protected int deleteEntries(URL[] urls, IndexReader reader) throws IOException
+    private int deleteEntries(URL[] urls, IndexReader reader) throws IOException
     {
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
@@ -543,37 +567,41 @@ public class EntryStore implements Plugin, Constants
         if ( urls == null )
             throw new IllegalArgumentException("Parameter 'urls' is not allowed to be null");
 
+        
+        int numDeleted = 0;
         boolean closeReader = false;
+        
         try {
             if ( reader == null ) {
                 reader = getReader();
                 closeReader = true;
             }
 
-            int numDeleted = 0;
+            
             for (int i = 0; i < urls.length; i++) { 
-                numDeleted += reader.delete( new Term(URLHASH, computeHash(urls[i].toString())) );
+                numDeleted += reader.delete( new Term(URLHASH, computeHash(urls[i])) );
             }
 
             LOG.debug("Deleted "+numDeleted+" Entries for URLs: "+ Arrays.asList(urls));
-            return numDeleted;
 
         } finally {
             if  ( closeReader && reader != null )
                 reader.close();
-
-            persistLastUpdate();
         }
+        
+        persistLastUpdate();
+        
+        return numDeleted;
     }
 
-
-
+    
     /**
+     * It's not possible to simultaneously add and delete Entries.
+     *
      * @param entry the <code>Entry</code>-object that should be added to the store,
      * if this is null, no action will be taken.
      * @exception IOException if the writing to the index fails due to some I/O reason
-     * @exception IllegalStateException if an instance of this class was not properly
-     * initialized before calling this method
+     * @exception IllegalStateException if the object was not properly initialized yet.
      */
     private synchronized Entry[] storeEntries(Entry[] entries) throws IOException
     {
@@ -583,6 +611,7 @@ public class EntryStore implements Plugin, Constants
         if ( entries == null )
             throw new IllegalArgumentException("Parameter 'entries' is not allowed to be null");
 
+        
         IndexWriter writer = null;
         IndexReader reader = null;
         try {
@@ -604,7 +633,7 @@ public class EntryStore implements Plugin, Constants
                 entries[i].setEdited(now);
                 
                 Document doc = entries[i].getDocument();
-                doc.add( Field.Keyword(URLHASH, computeHash(entries[i].getUrl().toString())) );
+                doc.add( Field.Keyword(URLHASH, computeHash(entries[i].getUrl())) );
                 writer.addDocument(doc);
             }
 
@@ -616,9 +645,9 @@ public class EntryStore implements Plugin, Constants
 
             if ( reader != null )
                 reader.close();
-
-            persistLastUpdate();
         }
+        
+        persistLastUpdate();
 
         return entries;
     }
@@ -627,8 +656,9 @@ public class EntryStore implements Plugin, Constants
     /**
      * @exception IllegalArgumentException if the provided sort field is not available
      * for sorting
+     * @exception IllegalStateException if the object was not properly initialized yet.     
      */
-     protected Sort determineSort() 
+     private Sort determineSort() 
      {
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
@@ -665,23 +695,18 @@ public class EntryStore implements Plugin, Constants
      */
     private IndexWriter getWriter() throws IOException
     {
-        boolean createIndex = false;
-
-        if ( createIndexProp == null  ) {
-            // if it's not defined, see if an index exists, if not set flag to create one
-            createIndex = IndexReader.indexExists(indexDir) ? false : true ;
-        } else if ( "1".equals(createIndexProp.trim()) || "true".equalsIgnoreCase(createIndexProp.trim()) ) {
-            createIndex = true;
-        }
+        boolean createIndex = IndexReader.indexExists(indexDir) ? false : true ;
 
         IndexWriter writer = new IndexWriter(indexDir, createAnalyzer(), createIndex);
         writer.maxFieldLength = 1000000;
+        
         return writer;
     }
 
 
     /**
-     *
+     * @return the current {@link #reader reader}-object. Creates a new instance
+     * if not happened already.
      */
     private IndexReader getReader() throws IOException
     {
@@ -773,14 +798,14 @@ public class EntryStore implements Plugin, Constants
     /**
      *
      */
-    private String computeHash(String str)
+    private String computeHash(URL url)
     {
         String algorithm = "MD5";
 
         try {
 
             MessageDigest md5 = MessageDigest.getInstance(algorithm);
-            byte[] end = md5.digest(str.getBytes());
+            byte[] end = md5.digest(url.toString().getBytes());
 
             StringBuffer endString = new StringBuffer();
             for (int i=0; i < end.length; i++) {

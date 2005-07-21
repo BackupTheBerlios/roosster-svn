@@ -38,11 +38,15 @@ public interface GuiConstants
     // the global message label
     public static final String INFO_MSG_LABEL       = "infomessagesLabel";
     public static final String ERR_MSG_LABEL        = "errormessagesLabel";
+    public static final String STATUS_MSG_LABEL     = "statusmessagesLabel";
     
     // fields and label names in the Search-Tab    
+    public static final String TABLE_HEADER         = "tableHeader";
     public static final String QUERY_FIELD          = "queryField";
     public static final String SEARCH_RESULT        = "searchresultTable";
     public static final String EMPTYRESULT_LABEL    = "emptyresultLabel";
+    public static final String SORT_BOX             = "sortBox";
+    public static final String SORT_LABEL           = "sortLabel";
     public static final String PAGER_LABEL          = "pagerLabel";
     public static final String PAGERSIZE_BOX        = "pagersizeBox";
     public static final String PAGERBACK_BUTTON     = "pagerbackButton";

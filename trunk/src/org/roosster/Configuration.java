@@ -121,11 +121,11 @@ public class Configuration
             Map args = getRequestArguments();
             if ( args != null )
                 returnStr = (String) args.get(propName);
-
+            
             if ( returnStr == null )
                 returnStr = properties.getProperty(propName);
         }
-
+        
         return returnStr;
     }
 

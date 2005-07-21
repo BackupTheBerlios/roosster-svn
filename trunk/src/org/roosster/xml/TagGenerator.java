@@ -24,46 +24,57 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.commands;
+package org.roosster.xml;
 
-import java.util.Map;
-import java.util.Date;
+import java.io.PrintStream;
+import java.util.List;
 
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.log4j.Logger;
 import org.roosster.Constants;
-import org.roosster.Command;
+import org.roosster.OperationException;
 import org.roosster.Registry;
-import org.roosster.Output;
 import org.roosster.store.EntryStore;
-import org.roosster.store.Entry;
+import org.roosster.util.XmlUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class SearchCommand extends AbstractCommand implements Command
+public class TagGenerator implements EntryTags 
 {
-
-
-    public void execute(Map arguments, Registry registry, Output output)
-                 throws Exception
-    {
-        String query = (String) arguments.get(Constants.ARG_QUERY);
-        
-        EntryStore store = (EntryStore) registry.getPlugin("store");
-        
-        if ( query != null && !"".equals(query) ) {
-            output.setEntries( store.search(query) );
-        } else {
-            output.addOutputMessage("No queryString specified. Returning recently all Entries!");
-            output.setEntries( store.getAllEntries(false) );
-        }
-    }
-
+    private static Logger LOG = Logger.getLogger(TagGenerator.class);
+    
+    public static final String TAGS = "tags";
+    public static final String TAG  = "tag";
+    
 
     /**
      */
-    public String getName()
+    public void outputAllTags(Registry registry, PrintStream stream) throws OperationException
     {
-        return "Search Entries";
+        try {
+            EntryStore store = (EntryStore) registry.getPlugin(Constants.PLUGIN_STORE);
+            List allTags = store.getAllTags();
+            
+            
+            Document doc = XmlUtil.getDocumentBuilder().newDocument();
+            Element root = XmlUtil.createChild(doc, TAGS);
+            
+            for ( int i = 0; i < allTags.size(); i++ ) {
+                XmlUtil.createTextChild(root, TAG, (String) allTags.get(i));
+            }
+            
+            // now serialize it to the output stream
+            XmlUtil.getTransformer().transform(new DOMSource(doc), new StreamResult(stream));
+            
+        } catch (Exception ex) {
+            throw new OperationException("Error while generating <tags>", ex);
+        }
+        
     }
 }

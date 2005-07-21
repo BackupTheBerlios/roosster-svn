@@ -1,5 +1,5 @@
 
-Revision XX / 2005-XX-XX / Benjamin Reitzammer
+Revision 99 / 2005-07-21 / Benjamin Reitzammer
 
 * started fresh with version 0.5, thrown out obsolete junk,
   will only develop one version of roosster, which will be a GUI
@@ -24,7 +24,18 @@ Revision XX / 2005-XX-XX / Benjamin Reitzammer
 * add nogui option to CLI to run webserver only
 * added public/private to table
 * use icons for public/private
-
+* added small 'about'-dialog
+* SearchCommand returns now all Entries (paged) when given an empty query string
+* added inurl field to Entry.class
+* implemented access to Tags via HTTP API 
+* decode HTML entities in GUI
+* move message area to bottom and style it like standard status bars 
+  distinguish between warning, info and standard via color
+* search results can be sorted
+* ApiHttpHandler now returns <RoossterException> formatted errors
+* added simple HTML and JS to docroot, for user friendly Bookmarklet support
+* implemented Bookmarklets
+* auto-complete for tags in HTML interface
 
 
 

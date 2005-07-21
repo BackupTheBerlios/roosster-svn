@@ -34,6 +34,8 @@ public interface BundleKeys
 
     public static final String DELETE_FAILURE      = "delete.failure";
     
+    public static final String ADD_NOENTRIES       = "add.noentries";
+    
     public static final String URL_EMPTY           = "param.empty.url";
     public static final String URL_INVALID         = "param.invalid.url";
     

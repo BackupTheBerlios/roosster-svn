@@ -47,6 +47,8 @@ import java.net.MalformedURLException;
 
 import thinlet.Thinlet;
 
+import org.htmlparser.util.Translate;
+
 import org.apache.log4j.Logger;
 import org.roosster.Output;
 import org.roosster.Constants;
@@ -103,6 +105,8 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         configuration = registry.getConfiguration();
         
         allTags = new TreeSet( store.getAllTags() );
+        
+        currentEntries = new EntryList();
         
         add( parse( getClass().getResourceAsStream(GUI_DEFINITON) ) );
 
@@ -241,8 +245,10 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         args.put(Constants.ARG_URL, entry.getUrl().toString());
 
         try {
+          
             Output output = new Dispatcher(registry).run("delete", OUTPUT_MODE, args);
             showInfo(BundleKeys.DELETE_SUCCESS);
+            
         } catch (OperationException ex) {
             LOG.warn("Exception occurred while deleting Entry", ex);
             showError(BundleKeys.DELETE_FAILURE);
@@ -276,14 +282,38 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         
         Output output = new Dispatcher(registry).run("addurls", OUTPUT_MODE, args);
         
+        // if the entries were force-added then it's possible that some old 
+        // entries were overwritten in the process, so we have to refresh the tags list 
+        if ( force ) {
+            allTags.clear();
+            allTags.addAll( store.getAllTags() );
+        }
+        
         if ( output.entriesSize() > 1 ) {
             showInfo(BundleKeys.MULTIPLE_ADDED);
-        } else {
+            
+            // if we force-added the entries, and there was already an entry 
+            // selected we have to make sure 
+            if ( force && entry != null ) {
+              
+                // only if the current selected entry was overwritten by the newly
+                // added entries, we have to refresh the display
+                if ( output.getEntries().getEntry(entry.getUrl()) != null ) {
+                    entry = output.getEntries().getEntry(entry.getUrl());
+                    fillForm();
+                }
+            }
+            
+        } else if ( output.entriesSize() == 1 ) {
+          
             entry = output.getEntries().getEntry(0);
             fillForm();
             setEnabled(EDIT_TAB, true);
             switchToTab(EDIT_TAB_INDEX);
             showInfo(BundleKeys.ADD_SUCCESS);
+            
+        } else {
+            showError(BundleKeys.ADD_NOENTRIES);
         }
          
     }
@@ -292,37 +322,41 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     /**
      * 
      */
-    public void doSearch(String query, Object resultTable, String limitStr, String direction) throws Exception 
+    public void doSortedSearch(String query, Object resultTable, String limitStr, 
+                               String direction, Object sortBox) 
+                  throws Exception 
+    {
+        if ( StringUtil.isNullOrBlank(query) )
+            return;
+        else 
+            doSearch(query, resultTable, limitStr, direction, sortBox);
+    }
+    
+    
+    /**
+     * 
+     */
+    public void doSearch(String query, Object resultTable, String limitStr, 
+                         String direction, Object sortBox) 
+                  throws Exception 
     {
         removeAll(resultTable);
       
         LOG.debug("Executing search query: '"+query+"' direction "+direction+" limitstr "+limitStr);
+
+        int[] limitOffset = handlePaging(limitStr, direction);        
         
-        int limit = !StringUtil.isNullOrBlank(limitStr) ?  Integer.valueOf(limitStr).intValue() : 10;
-        if ( limit <= 0 )
-            limit = 10;        
+        String sortStr = (String) getProperty(getSelectedItem(sortBox), "sortfield");
         
-        if ( currentEntries != null ) {
-        
-            if ( PAGERFORWARD_BUTTON.equals(direction) ) 
-                currentOffset += limit;
-            else if ( PAGERBACK_BUTTON.equals(direction) )
-                currentOffset -= limit;
-            else 
-                currentOffset = 0;
-            
-        } else {
-            currentOffset = 0;
-        }
-        
-        LOG.debug("currentOffset "+currentOffset+" limit "+limit);
+        LOG.debug(sortStr);
         
         // put together arguments
         Map args = new HashMap();
         args.put("query", query);
         
-        configuration.setProperty(Constants.PROP_OFFSET, String.valueOf(currentOffset));
-        configuration.setProperty(Constants.PROP_LIMIT, String.valueOf(limit));
+        configuration.setProperty(Constants.PROP_OFFSET, String.valueOf(limitOffset[1]));
+        configuration.setProperty(Constants.PROP_LIMIT, String.valueOf(limitOffset[0]));
+        configuration.setProperty(Constants.PROP_SORTFIELD, sortStr);
         
         // run search
         Output output = new Dispatcher(registry).run("search", OUTPUT_MODE, args);
@@ -505,7 +539,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         text(DELICIOUSUSER_FIELD, configuration.getProperty(Constants.PROP_DELICIOUS_USER));
     }
     
-    
+        
     /**
      * 
      */
@@ -572,7 +606,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     /**
      * 
      */
-    public boolean destroy()
+    public boolean exitRoosster()
     {
         try {
             // TODO persist any properties ?
@@ -606,6 +640,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
                     entry = store.getEntry(e.getUrl());
                     fillForm();
                     
+                    setEnabled(EDIT_TAB, true);
                     switchToTab(EDIT_TAB_INDEX);
                     showInfo(BundleKeys.DUPLICATE_URL);
                 } 
@@ -618,13 +653,34 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     }
     
 
+    // ============ overriden methods ============
+    
+    
+    /**
+     * 
+     */
+    public void setString(Object component, String key, String value) 
+    {
+        super.setString(component, key, Translate.decode(value));
+    }
+    
+    
     // ============ protected Helper methods ============
 
     
     /**
      * 
      */
-    protected void fillForm() 
+    protected void fillForm()
+    {
+        fillForm(true);
+    }
+    
+    
+    /**
+     * 
+     */
+    protected void fillForm(boolean buildTags) 
     {
         if ( entry != null ) {  
             Object button = find(URL_BUTTON);
@@ -647,7 +703,9 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
             text(MODIFIED_LABEL, DateUtil.formatDisplayDate(entry.getModified()));
             text(EDITED_LABEL,   DateUtil.formatDisplayDate(entry.getEdited()));
             
-            buildTagsList();
+            
+            if ( buildTags ) 
+                buildTagsList();
         }
     }
     
@@ -710,9 +768,25 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     /**
      * 
      */
+    protected void showStatus(String bundleKey)
+    {
+        setVisible(ERR_MSG_LABEL, false);
+        setVisible(INFO_MSG_LABEL, false);
+        
+        setVisible(STATUS_MSG_LABEL, true);
+        text(STATUS_MSG_LABEL, resourceBundle.getString(bundleKey));
+    }
+    
+    
+    /**
+     * 
+     */
     protected void showInfo(String bundleKey)
     {
-        text(ERR_MSG_LABEL, "");
+        setVisible(STATUS_MSG_LABEL, false);
+        setVisible(ERR_MSG_LABEL, false);
+        
+        setVisible(INFO_MSG_LABEL, true);
         text(INFO_MSG_LABEL, resourceBundle.getString(bundleKey));
     }
     
@@ -722,7 +796,10 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
      */
     protected void showError(String bundleKey)
     {
-        text(INFO_MSG_LABEL, "");
+        setVisible(STATUS_MSG_LABEL, false);
+        setVisible(INFO_MSG_LABEL, false);
+        
+        setVisible(ERR_MSG_LABEL, true);
         text(ERR_MSG_LABEL, resourceBundle.getString(bundleKey));
     }
     
@@ -762,6 +839,35 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     
     
     /**
+     * @return an array of int, that's never null, where the first element
+     * is the limit, and the second the offset
+     */
+    private int[] handlePaging(String limitStr, String direction)
+    {
+        int limit = !StringUtil.isNullOrBlank(limitStr) ?  Integer.valueOf(limitStr).intValue() : 10;
+        if ( limit <= 0 )
+            limit = 10;        
+        
+        if ( currentEntries != null ) {
+        
+            if ( PAGERFORWARD_BUTTON.equals(direction) ) 
+                currentOffset += limit;
+            else if ( PAGERBACK_BUTTON.equals(direction) )
+                currentOffset -= limit;
+            else 
+                currentOffset = 0;
+            
+        } else {
+            currentOffset = 0;
+        }
+        
+        LOG.debug("currentOffset "+currentOffset+" limit "+limit);
+        
+        return new int[] {limit, currentOffset};
+    }
+    
+    
+    /**
      * 
      */
     private void updateTagsSet(String[] tags)
@@ -784,43 +890,3 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     }
     
 }
-
-/*
-first autocomplete test:
-
-        removeAll(comboBox);  
-            
-        String text = completeText;
-        int indexLastComma = completeText.lastIndexOf(Entry.TAG_SEPARATOR);
-        if ( indexLastComma != -1 ) {
-            text = completeText.substring(indexLastComma+1).trim();
-            
-            putProperty(comboBox, TAGS_PREVIOUS, completeText.substring(0, indexLastComma));
-        }
-      
-        if ( !allTags.isEmpty() && !StringUtil.isNullOrBlank(text) && selected == -1 ) {
-            // selected is -1 if the user has typed a custom value 
-          
-            Iterator iter = allTags.iterator();
-            while ( iter.hasNext() ) {
-                String tag = (String) iter.next();
-                
-                if ( tag.startsWith(text) ) {
-                    LOG.debug("Tag "+tag+" starts with "+text );
-                    add(comboBox, newtext("choice", tag));
-                }
-            }
-            
-        } else if ( selected != -1 &&  getProperty(comboBox, TAGS_PREVIOUS) != null ) {
-            // this is the case, if previous tags were entered and a new one was
-            // selected from a suggested choice
-          
-            String newText = getProperty(comboBox, TAGS_PREVIOUS) 
-                           + Entry.TAG_SEPARATOR 
-                           + getString(comboBox, "text");
-            
-            setString(comboBox, "text", newText);
-            setInteger(comboBox, "start", newText.length()); 
-            setInteger(comboBox, "end", newText.length()); 
-        }
-*/

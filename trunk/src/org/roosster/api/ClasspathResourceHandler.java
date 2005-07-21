@@ -27,14 +27,22 @@
 package org.roosster.api;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.Hashtable;
+
+import org.apache.log4j.Logger;
+import org.apache.commons.io.CopyUtils;
+import org.apache.commons.io.IOUtils;
+import org.javaby.jbyte.Template;
+import org.javaby.jbyte.TemplateCreationException;
 import org.mortbay.http.handler.AbstractHttpHandler;
 import org.mortbay.http.HttpRequest;
 import org.mortbay.http.HttpResponse;
 import org.mortbay.http.HttpException;
 import org.mortbay.http.HttpFields;
-import org.apache.log4j.Logger;
-import org.apache.commons.io.CopyUtils;
 
 import org.roosster.Registry;
 
@@ -46,23 +54,27 @@ public class ClasspathResourceHandler extends AbstractHttpHandler
 {
     private static Logger LOG = Logger.getLogger(ClasspathResourceHandler.class);
     
-    private Registry   registry = null;
-    private String     basePath = null;    
+    public static final String TMPL_BASEPATH    = "basepath";
+    public static final String TMPL_APIBASEPATH = "apibasepath";
+    
+    private Registry          registry = null;
+    private String            docRoot  = null;    
+    private RoossterApiHttpd  httpd    = null;
+    private Map               cache    = new Hashtable();    
     
     
     /**
      *
      */
-    public ClasspathResourceHandler(Registry registry, String basePath)
+    public ClasspathResourceHandler(Registry registry, RoossterApiHttpd httpd, String docRoot)
     {
-        if ( registry == null || basePath == null ) 
-            throw new IllegalArgumentException("Parameter 'registry' and/or 'basePath' "+
-                                               "are not allowed to be null");
+        if ( registry == null || docRoot == null || httpd == null ) 
+            throw new IllegalArgumentException("No Parameter is allowed to be null");
 
-        this.registry = registry;
-        this.basePath = basePath.startsWith("/") ? basePath : "/"+basePath;
+        this.registry  = registry;
+        this.docRoot   = docRoot.startsWith("/") ? docRoot : "/"+docRoot;
+        this.httpd     = httpd;
     }
-    
     
     
     /**
@@ -94,19 +106,52 @@ public class ClasspathResourceHandler extends AbstractHttpHandler
             return;
         }
         
-        String loc = basePath+request.getPath();
-        InputStream input = getClass().getResourceAsStream(loc);
-
-        LOG.debug("Found Resource '"+loc+"' in classpath? "+ (input != null ? "YES" : "NO"));
+        String loc = docRoot+request.getPath();
         
-        if ( input != null ) {
-            int bytesCopied = CopyUtils.copy(input, response.getOutputStream());
+        if ( cache.containsKey(loc) ) {
+          
+            // serve request from already processed cache
+            CopyUtils.copy((String) cache.get(loc), response.getOutputStream());
+            request.setHandled(true);
             
-            if ( bytesCopied > 0 )
-                request.setHandled(true);
-            else 
-                response.setStatus(HttpResponse.__204_No_Content);
-        } 
+        } else {
+        
+            InputStream input = getClass().getResourceAsStream(loc);
+    
+            LOG.debug("Found Resource '"+loc+"' in classpath? "+ (input != null ? "YES" : "NO"));
+            
+            if ( input != null ) {
+                
+                BufferedReader reader = null;
+                try {
+                    reader = new BufferedReader( new StringReader( IOUtils.toString(input) ) );
+                    
+                    Template tmpl = new Template(reader);
+                    tmpl.set(TMPL_BASEPATH, httpd.getBasePath());
+                    tmpl.set(TMPL_APIBASEPATH, httpd.getApiBasePath());
+                    
+                    String str = tmpl.toString();
+                    CopyUtils.copy(str, response.getOutputStream());
+                    
+                    cache.put(loc, str);
+                    
+                    request.setHandled(true);
+                    
+                } catch (TemplateCreationException ex) {
+                    throw new IOException("Can't create template! Message: "+ex.getMessage());
+                } finally {
+                    input.close();
+                    reader.close();
+                }
+                
+            }
+            
+        }
+
+                
+                    
+        
+        
     }
 }
 

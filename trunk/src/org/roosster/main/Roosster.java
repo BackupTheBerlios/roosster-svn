@@ -38,6 +38,7 @@ import java.util.ResourceBundle;
 
 import thinlet.FrameLauncher;
 
+import org.roosster.InitializeException;
 import org.roosster.Constants;
 import org.roosster.Registry;
 import org.roosster.main.Roosster;
@@ -60,16 +61,22 @@ public class Roosster
     public static final String PROP_PORT        = "server.port";
 
 
-    private RoossterApiHttpd httpd   = null;
-    private RoossterGui      gui     = null;
-
+    private RoossterApiHttpd httpd    = null;
+    private RoossterGui      gui      = null;
+    
+    private Registry         registry = null;
+    
+    private Map              cmdLine  = null;
     
     
     /**
      * 
      */
-    public Roosster()
+    public Roosster(Map args) throws InitializeException
     {
+        this.cmdLine = args;
+      
+        registry = new Registry(getClass().getResourceAsStream(PROP_FILE), cmdLine);
     }
     
     
@@ -82,31 +89,9 @@ public class Roosster
             final Map cmdLine = Roosster.parseCommandLineArguments(arguments);
 
             LogUtil.configureLogging(cmdLine);
-
-            // read arguments 
-            if ( cmdLine.containsKey(Constants.PROP_LOCALE) ) 
-                Locale.setDefault( new Locale((String) cmdLine.get(Constants.PROP_LOCALE)) );
-
-            String portStr = (String) cmdLine.get(PROP_PORT);
-            int port = Integer.valueOf( portStr == null ? DEF_PORT : portStr ).intValue();
-
-            // configure and intialize important objects
-            ResourceBundle resbundle = ResourceBundle.getBundle(RES_BUNDLE, Locale.getDefault());
-            
-            Registry registry = new Registry(Roosster.class.getResourceAsStream(PROP_FILE), cmdLine);
-            
            
-            // now plumb everything together
-            Roosster roosster = new Roosster();
+            new Roosster(cmdLine).init().start();
             
-            roosster.setHttpd( new RoossterApiHttpd(registry, port) );
-
-            if ( !cmdLine.containsKey(PROP_NOGUI) )
-                roosster.setGui( new RoossterGui(roosster, registry, resbundle) );            
-           
-            // ... and off it goes 
-            roosster.start();            
-
         } catch (Exception ex) {
             ex.printStackTrace();
         } 
@@ -116,16 +101,41 @@ public class Roosster
     /**
      * 
      */
+    public Roosster init() throws Exception
+    {
+        // init GUI
+        if ( !cmdLine.containsKey(PROP_NOGUI) ) {
+            ResourceBundle resbundle = ResourceBundle.getBundle(RES_BUNDLE, Locale.getDefault());            
+            gui = new RoossterGui(this, registry, resbundle);
+        }            
+       
+        
+        // init HTTP server
+        if ( cmdLine.containsKey(Constants.PROP_LOCALE) ) 
+            Locale.setDefault( new Locale((String) cmdLine.get(Constants.PROP_LOCALE)) );
+
+        String portStr = (String) cmdLine.get(PROP_PORT);
+        int port = Integer.valueOf( portStr == null ? DEF_PORT : portStr ).intValue();
+
+        httpd = new RoossterApiHttpd(registry, port);
+        
+        // to allow easy call chaining
+        return this;
+    }
+    
+    /**
+     */
     public void stop() throws Exception
     {
         httpd.stop(true);
-        //Thread.sleep(1000);
+        
+        registry.shutdown();
+        
         System.exit(0);
     }
   
 
     /**
-     * 
      */
     public void start() throws Exception
     {
@@ -139,29 +149,20 @@ public class Roosster
   
     
     /**
-     * 
      */
     public String constructCachedLink(URL url)
     {
         return httpd.constructCachedLink(url);
     }
-
-		/**
-		 * Sets the value of httpd.
-		 * @param httpd The value to assign httpd.
-		 */
-		public void setHttpd(RoossterApiHttpd httpd) {
-				this.httpd = httpd;
-		}
-
-
-		/**
-		 * Sets the value of gui.
-		 * @param gui The value to assign gui.
-		 */
-		public void setGui(RoossterGui gui) {
-				this.gui = gui;
-		}
+    
+    
+    
+    /**
+     */
+    public String getBasePath()
+    {
+        return httpd.getBasePath();
+    }    
     
 
     /**

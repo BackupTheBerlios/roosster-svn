@@ -1,27 +1,15 @@
 
 GUI
 ========
-* add a menu item that shows logging information
-* make working with index faster by keeping Index* objects open
-* let user specify index position at runtime through menu
-* add help and about system
-* find nice help icon (question mark?) and provide first tips and help
-  via it's tooltip; give every tab it's own one
+
 * make it a native startable app for MacOS X with a decent menubar
-* make tags editable (in dialog)
-* decode HTML entities in GUI
-* sort search result
-* integrate with clipboard
 * implement search history (for the current session only, for now)
+* give locale to QueryParser
 
 General
 =======
 * secure http server, make it only accessible from localhost
-* make general syncservice interface and refactor SyncDeliciousCommand into it,
-  implement simpy sync as class for it
-* let sync commands be executable from REST API 
-* make new field 'inurl' in index which contains tokenized URL 
 * handle network errors better
-* implement getTags for API
-* make bookmarklet to add pages via API to index
-* integrate js client in distribution?
+* clean up behaviour, when entries get added via a feed, and one of many entries
+  of this feed is duplicate (currently throws Exception, when encountering
+  duplicate, and dumping remaining entries), do it in EntryStore

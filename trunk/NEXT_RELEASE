@@ -2,6 +2,9 @@ General
 ===========
 
 * highlight search results
+* migrate HtmlProcessor.HtmlParser to HtmlParser lib instead of TagSoup
+* implement custom analyzer, that does a better job at tokenizing and filtering
+  stop words
 * index pdf documents
 * handle Frames in HTMLProcessor see http://javaboutique.internet.com/tutorials/HTMLParser/article.html
 * emit HTTP response codes correctly (302, 301, 404, 401 ... )
@@ -18,8 +21,20 @@ General
   configured in properties; if includes xml file, this gets included into thinlet
   GUI)
 * let simpy and del.icio.us sync run via dialog in bg (run scheduler job on demand)
+* put search result table in a tabbedpane and offer simultaneous search via webservices
+  on Google and Yahoo
+* make tags editable (in dialog)
+* add real help system
+* let user specify index position at runtime through menu
+* add a menu item that shows logging information
+* internationalize HTML interface
+
+
 
 Scratchpad Feature:
 ====================
 
 - make own url scheme, like http://roosster.org/notes
+* make general syncservice interface and refactor SyncDeliciousCommand into it,
+  implement simpy sync as class for it
+* let sync commands be executable from REST API 

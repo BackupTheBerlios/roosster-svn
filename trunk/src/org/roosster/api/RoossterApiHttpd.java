@@ -32,6 +32,7 @@ import java.util.Properties;
 import org.mortbay.http.HttpServer;
 import org.mortbay.http.HttpContext;
 import org.mortbay.http.SocketListener;
+import org.mortbay.http.handler.ResourceHandler;
 import org.mortbay.http.handler.NotFoundHandler;
 import org.mortbay.http.handler.IPAccessHandler;
 import org.apache.log4j.Logger;
@@ -46,7 +47,8 @@ public class RoossterApiHttpd
 {
     private static Logger LOG = Logger.getLogger(RoossterApiHttpd.class);
     
-    private static final String CONTEXT_PATH = "/roosster/api/";    
+    private static final String CONTEXT_PATH = "/roosster/api";    
+    private static String API_BASE_PATH      = null;    
     private static String BASE_PATH          = null;    
   
     private HttpServer server   = null;
@@ -65,7 +67,8 @@ public class RoossterApiHttpd
         this.registry = registry;
         this.port = port;
         
-        RoossterApiHttpd.BASE_PATH = "http://localhost:"+ port + CONTEXT_PATH;
+        RoossterApiHttpd.API_BASE_PATH = "http://localhost:"+ port + CONTEXT_PATH;
+        RoossterApiHttpd.BASE_PATH     = "http://localhost:"+ port;
     }
     
     
@@ -75,13 +78,29 @@ public class RoossterApiHttpd
     public String constructCachedLink(URL url)
     {
         try {
-            return BASE_PATH
+            return API_BASE_PATH
                  +"entry?output.mode=raw&url="
                  + URLEncoder.encode(url.toString(), "UTF-8");
         } catch (Exception ex) {
             // this should not happen, can only be java.io.UnsupportedEncodingException
             return "";
         }
+    }
+    
+    
+    /**
+     */
+    public String getApiBasePath()
+    {
+        return RoossterApiHttpd.API_BASE_PATH;
+    }
+    
+    
+    /**
+     */
+    public String getBasePath()
+    {
+        return RoossterApiHttpd.BASE_PATH;
     }
     
     
@@ -114,7 +133,7 @@ public class RoossterApiHttpd
         
         HttpContext ctx = server.addContext("/");
         ctx.addHandler( ipAccessHandler );
-        ctx.addHandler( new ClasspathResourceHandler(registry, "/docroot") );
+        ctx.addHandler( new ClasspathResourceHandler(registry, this, "/docroot") );
         ctx.addHandler( new NotFoundHandler() );
 
         server.start();

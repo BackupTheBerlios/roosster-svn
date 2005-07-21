@@ -62,6 +62,7 @@ public class Entry
     public static final String EDITED       = "edited";
     public static final String ISSUED       = "issued";
     public static final String URL          = "url";
+    public static final String INURL        = "inurl";
     public static final String TITLE        = "title";
     public static final String AUTHOR       = "author";
     public static final String AUTHOREMAIL  = "authormail";
@@ -71,16 +72,21 @@ public class Entry
     public static final String PUBLIC       = "pub";
     public static final String RAW          = "raw";
     
+    public static final String __TITLE_SORT      = "_titlesort";
+    public static final String __AUTHOR_SORT     = "_authorsort";
+    public static final String __AUTHORMAIL_SORT = "_authormailsort";
+    
     private static final String __ADDED     = "_unindexed_added"; 
     private static final String __EDITED    = "_unindexed_edited"; 
 
     public static final float  TITLE_BOOST  = 100;
-    public static final float  TAG_BOOST    = 5;
-    public static final float  NOTE_BOOST   = 5;
+    public static final float  NOTE_BOOST   = 60;
+    public static final float  INURL_BOOST  = 50;
+    public static final float  TAG_BOOST    = 25;
     
     // enumerate the fields, by which result can be sorted
     public static final String[] STRING_SORT_FIELDS     = new String[]
-    {URL, TITLE, AUTHOR, AUTHOREMAIL, FILETYPE};
+    {URL, __TITLE_SORT, __AUTHOR_SORT, __AUTHORMAIL_SORT, FILETYPE};
     
     public static final String[] INTEGER_SORT_FIELDS     = new String[]
     {MODIFIED, ADDED, ISSUED, EDITED};
@@ -151,20 +157,24 @@ public class Entry
 
         doc.add( Field.Keyword(ENTRY_MARKER,  ENTRY_MARKER) );
         doc.add( Field.Keyword(URL,           url.toString()) );
-        doc.add( Field.Keyword(AUTHOR,        author) );
-        doc.add( Field.Keyword(AUTHOREMAIL,   authorEmail) );
         doc.add( Field.Keyword(FILETYPE,      fileType) );
         doc.add( Field.Keyword(MODIFIED,      DateUtil.formatSearchableEntryDate(modified)) );
         doc.add( Field.Keyword(ADDED,         DateUtil.formatSearchableEntryDate(added)) );
         doc.add( Field.Keyword(EDITED,        DateUtil.formatSearchableEntryDate(edited)) );
         doc.add( Field.Keyword(ISSUED,        DateUtil.formatSearchableEntryDate(issued)) );
         doc.add( Field.Keyword(PUBLIC,        pub ? "true" : "false") );
+        doc.add( Field.Text(AUTHOR,           author) );
+        doc.add( Field.Text(AUTHOREMAIL,      authorEmail) );
         doc.add( Field.Text(CONTENT,          content.toString()) );
         
         doc.add( Field.UnIndexed(__ADDED,  DateUtil.formatPreciseEntryDate(added)) );
         doc.add( Field.UnIndexed(__EDITED, DateUtil.formatPreciseEntryDate(edited)) );
         
-        Field titleField =  Field.Keyword(TITLE, title);
+        Field inurlField =  Field.Text(INURL, url.toString());
+        inurlField.setBoost(INURL_BOOST); 
+        doc.add(inurlField);
+        
+        Field titleField =  Field.Text(TITLE, title);
         titleField.setBoost(TITLE_BOOST); 
         doc.add(titleField);
         
@@ -175,6 +185,11 @@ public class Entry
         Field tagField = Field.Text(TAGS, StringUtil.join(tags, TAG_SEPARATOR));
         tagField.setBoost(TAG_BOOST);
         doc.add(tagField);
+
+        doc.add( Field.Keyword(__TITLE_SORT,      title) );
+        doc.add( Field.Keyword(__AUTHOR_SORT,     title) );
+        doc.add( Field.Keyword(__AUTHORMAIL_SORT, title) );
+
         
         doc.add( Field.UnIndexed(RAW, getRaw()) );
         doc.add( Field.UnStored(ALL,  title +" "+ author+" "+authorEmail+" "+
