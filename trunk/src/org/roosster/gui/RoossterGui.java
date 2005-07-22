@@ -61,7 +61,7 @@ import org.roosster.main.Roosster;
 import org.roosster.store.EntryStore;
 import org.roosster.store.EntryList;
 import org.roosster.store.Entry;
-import org.roosster.store.DuplicateEntryException;
+import org.roosster.store.DuplicateEntriesException;
 import org.roosster.logging.LogUtil;
 import org.roosster.util.StringUtil;
 import org.roosster.util.DateUtil;
@@ -115,8 +115,85 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
 
 
     // ============ GUI event methods ============
+
+
     
+    /**
+     * 
+     */
+    public void openIndex() throws Exception
+    {
+        /*
+        Container frame = this;
+        while ( !(frame instanceof Frame) ) { 
+            frame = frame.getParent(); 
+        }
+               
+        FileDialog fileDialog = new FileDialog((Frame)frame, "Open ...", FileDialog.LOAD);
+        fileDialog.show();
         
+        File fileSelected = new File(fileDialog.getDirectory());
+        
+        LOG.debug("Selected "+fileDialog.getDirectory()+" for opening the index");
+        */
+    }
+    
+    
+    // ============ "Business" methods ============
+    
+    
+    /**
+     * 
+     */
+    public void saveEntry() throws Exception
+    {
+        doSaveEntry(getText(TITLE_FIELD),
+                    getText(NOTE_FIELD),
+                    getText(TYPE_FIELD),
+                    getText(AUTHOR_FIELD),
+                    getText(AUTHOREMAIL_FIELD),
+                    getBool(PUBLICPRIVATE_FIELD, "selected"),
+                    find(TAGS_LIST));
+    }
+    
+    
+    /**
+     * 
+     */
+    public void deleteEntry() throws Exception
+    {
+        doDeleteEntry();
+    }
+    
+    
+    /**
+     * 
+     */
+    public void addEntry()throws Exception
+    {
+        doAddEntry(getText(ADDURL_FIELD),
+                   getBool(ADDFETCH_FIELD, "selected"),
+                   getBool(ADDPUBLIC_FIELD, "selected"),
+                   getBool(ADDFORCE_FIELD, "selected") );
+    }   
+    
+    
+    /**
+     * 
+     */
+    public void searchEntries(String direction) throws Exception 
+    {
+        doSearchEntries(getText(QUERY_FIELD),
+                        find(SEARCH_RESULT),
+                        getText(PAGERSIZE_BOX),
+                        direction,
+                        find(SORT_BOX));
+    }
+    
+    
+    // ============ GUI control methods ============
+    
+    
     /**
      * 
      */
@@ -164,249 +241,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         fillForm();
     }
 
-    
-    /**
-     * 
-     */
-    public void openIndex() throws Exception
-    {
-        /*
-        Container frame = this;
-        while ( !(frame instanceof Frame) ) { 
-            frame = frame.getParent(); 
-        }
-               
-        FileDialog fileDialog = new FileDialog((Frame)frame, "Open ...", FileDialog.LOAD);
-        fileDialog.show();
-        
-        File fileSelected = new File(fileDialog.getDirectory());
-        
-        LOG.debug("Selected "+fileDialog.getDirectory()+" for opening the index");
-        */
-    }
-    
-    
-    /**
-     * 
-     */
-    public void doSave(String title, String note, String type,
-                       String author, String authorEmail, 
-                       boolean pub, Object tagsList)
-                throws Exception
-    {
-        if ( entry == null )
-            return;
-          
-        LOG.debug("Saving Entry "+entry);
-        
-        Set entryTags = new HashSet();
-        Object[] selectedTags = getSelectedItems(tagsList);
-        for (int i = 0; i < selectedTags.length; i++) {
-           entryTags.add( getString(selectedTags[i], "text") ); 
-        }
-        
-        entry.setTitle(title);
-        entry.setTags((String[]) entryTags.toArray(new String[0]));
-        entry.setNote(note);
-        entry.setFileType(type);
-        entry.setAuthor(author);
-        entry.setAuthorEmail(authorEmail);
-        entry.setPublic(pub);
-        
-        List list = new EntryList();
-        list.add(entry);
-        
-        Map args = new HashMap();
-        args.put(Constants.PARAM_ENTRIES, list);
-        
-        Output output = new Dispatcher(registry).run("putentries", OUTPUT_MODE, args);
 
-        entry = output.getEntries().getEntry(0);
-
-        // update GUI 
-        updateTagsSet(entryTags);
-        fillForm();
-        setString(find(TAGS_FIELD), "text", "");
-        showInfo(BundleKeys.SAVE_SUCCESS);
-    }
-    
-    
-    /**
-     * 
-     */
-    public void doDelete() throws Exception
-    {
-        if ( entry == null ) {
-            LOG.debug("Called doDelete() while no Entry being currently selected"); 
-            return;
-        }
-
-        Map args = new HashMap();
-        args.put(Constants.ARG_URL, entry.getUrl().toString());
-
-        try {
-          
-            Output output = new Dispatcher(registry).run("delete", OUTPUT_MODE, args);
-            showInfo(BundleKeys.DELETE_SUCCESS);
-            
-        } catch (OperationException ex) {
-            LOG.warn("Exception occurred while deleting Entry", ex);
-            showError(BundleKeys.DELETE_FAILURE);
-        }
-            
-    }
-
-    
-    /**
-     * 
-     */
-    public void doAdd(String urlString, boolean fetchContent, boolean pub, boolean force) 
-               throws Exception 
-    {
-        LOG.debug("Trying to add Entry with URL "+urlString+", public: "+pub+", fetchContent: "+fetchContent);
-        
-        if ( StringUtil.isNullOrBlank(urlString) ) {
-            showError(BundleKeys.URL_EMPTY);
-            return;
-        }
-        
-        configuration.setProperty(Constants.PROP_FETCH_CONTENT, String.valueOf(fetchContent));
-        configuration.setProperty(Constants.ARG_PUBLIC, String.valueOf(pub));
-        configuration.setProperty(Constants.ARG_FORCE, String.valueOf(force));
-        
-        List list = new EntryList();
-        list.add(new Entry(new URL(urlString)));
-        
-        Map args = new HashMap();
-        args.put(Constants.PARAM_ENTRIES, list);
-        
-        Output output = new Dispatcher(registry).run("addurls", OUTPUT_MODE, args);
-        
-        // if the entries were force-added then it's possible that some old 
-        // entries were overwritten in the process, so we have to refresh the tags list 
-        if ( force ) {
-            allTags.clear();
-            allTags.addAll( store.getAllTags() );
-        }
-        
-        if ( output.entriesSize() > 1 ) {
-            showInfo(BundleKeys.MULTIPLE_ADDED);
-            
-            // if we force-added the entries, and there was already an entry 
-            // selected we have to make sure 
-            if ( force && entry != null ) {
-              
-                // only if the current selected entry was overwritten by the newly
-                // added entries, we have to refresh the display
-                if ( output.getEntries().getEntry(entry.getUrl()) != null ) {
-                    entry = output.getEntries().getEntry(entry.getUrl());
-                    fillForm();
-                }
-            }
-            
-        } else if ( output.entriesSize() == 1 ) {
-          
-            entry = output.getEntries().getEntry(0);
-            fillForm();
-            setEnabled(EDIT_TAB, true);
-            switchToTab(EDIT_TAB_INDEX);
-            showInfo(BundleKeys.ADD_SUCCESS);
-            
-        } else {
-            showError(BundleKeys.ADD_NOENTRIES);
-        }
-         
-    }
-    
-    
-    /**
-     * 
-     */
-    public void doSortedSearch(String query, Object resultTable, String limitStr, 
-                               String direction, Object sortBox) 
-                  throws Exception 
-    {
-        if ( StringUtil.isNullOrBlank(query) )
-            return;
-        else 
-            doSearch(query, resultTable, limitStr, direction, sortBox);
-    }
-    
-    
-    /**
-     * 
-     */
-    public void doSearch(String query, Object resultTable, String limitStr, 
-                         String direction, Object sortBox) 
-                  throws Exception 
-    {
-        removeAll(resultTable);
-      
-        LOG.debug("Executing search query: '"+query+"' direction "+direction+" limitstr "+limitStr);
-
-        int[] limitOffset = handlePaging(limitStr, direction);        
-        
-        String sortStr = (String) getProperty(getSelectedItem(sortBox), "sortfield");
-        
-        LOG.debug(sortStr);
-        
-        // put together arguments
-        Map args = new HashMap();
-        args.put("query", query);
-        
-        configuration.setProperty(Constants.PROP_OFFSET, String.valueOf(limitOffset[1]));
-        configuration.setProperty(Constants.PROP_LIMIT, String.valueOf(limitOffset[0]));
-        configuration.setProperty(Constants.PROP_SORTFIELD, sortStr);
-        
-        // run search
-        Output output = new Dispatcher(registry).run("search", OUTPUT_MODE, args);
-        
-        // extract result ... 
-        currentEntries = output.getEntries();
-        currentOffset = currentEntries.getOffset();
-
-        // ... and display it in table 
-        if ( currentEntries.size() > 0 ) {
-            for (int i = 0; i < currentEntries.size(); i++) {
-                Entry entry = currentEntries.getEntry(i);
-              
-                Object row = create("row");
-                add(resultTable, row);
-                
-                Object emptyRow = create("row");
-                add(resultTable, emptyRow);
-                
-                Object access = create("cell");
-                setChoice(access, "alignment", "center");
-                setIcon(access, "icon", getIcon( entry.getPublic() ? "/img/public.png" : "/img/private.png"));
-                add(row, access);
-                
-                Object cell = create("cell");
-                putProperty(cell, "id", new Integer(i));
-                setString(cell, "text", entry.getTitle());
-                setString(cell, "tooltip", entry.getUrl().toString());
-                add(row, cell);
-            
-                add(row, newtext("cell", StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR)));
-                add(row, newtext("cell", entry.getNote()));
-            }
-            setVisible(SEARCH_RESULT, true);
-            setVisible(EMPTYRESULT_LABEL, false);
-            
-            text(PAGER_LABEL, string(ENTRIES) +" "+ currentOffset +" "+ string(TO) 
-                            +" "+ (currentOffset+currentEntries.size()) +" "+ string(OF) 
-                            +" "+ currentEntries.getTotalSize());
-
-        } else {
-            setVisible(SEARCH_RESULT, false);
-            setVisible(EMPTYRESULT_LABEL, true);
-            text(PAGER_LABEL, "");
-        }
-        
-        determinePagerEnabled();
-    }
-    
-    
     /**
      * 
      */
@@ -606,18 +441,14 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     /**
      * 
      */
-    public boolean exitRoosster()
+    public void exitRoosster()
     {
-        try {
-            // TODO persist any properties ?
-            roosster.stop();
-        } catch (Exception ex) {
-            LOG.warn("Exception while shutting down!", ex);
-        }
-
-        return true;
+        System.exit(0);
     }
       
+    
+    // ============ overriden methods ============
+    
     
     /**
      * 
@@ -635,14 +466,20 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
               
             } else if ( throwable instanceof OperationException ) {
               
-                if ( throwable.getCause() instanceof DuplicateEntryException ) {
-                    DuplicateEntryException e = (DuplicateEntryException) throwable.getCause();
-                    entry = store.getEntry(e.getUrl());
-                    fillForm();
+                if ( throwable.getCause() instanceof DuplicateEntriesException ) {
+                    DuplicateEntriesException e = (DuplicateEntriesException) throwable.getCause();
                     
-                    setEnabled(EDIT_TAB, true);
-                    switchToTab(EDIT_TAB_INDEX);
-                    showInfo(BundleKeys.DUPLICATE_URL);
+                    URL[] urls = e.getUrls();
+                    if ( urls != null && urls.length == 1 ) {
+                        entry = store.getEntry(urls[0]);
+                        fillForm();
+                        
+                        setEnabled(EDIT_TAB, true);
+                        switchToTab(EDIT_TAB_INDEX);
+                        showInfo(BundleKeys.DUPLICATE_URL);
+                    } else {
+                        showError(BundleKeys.MULTIPLE_DUPLICATE_URL);
+                    }
                 } 
                 
             }
@@ -653,9 +490,6 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     }
     
 
-    // ============ overriden methods ============
-    
-    
     /**
      * 
      */
@@ -667,6 +501,213 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     
     // ============ protected Helper methods ============
 
+    
+    /**
+     * 
+     */
+    protected void doAddEntry(String urlString, boolean fetchContent, boolean pub, boolean force) 
+                       throws Exception 
+    {
+        LOG.debug("Trying to add Entry with URL "+urlString+", public: "+pub+", fetchContent: "+fetchContent);
+        
+        if ( StringUtil.isNullOrBlank(urlString) ) {
+            showError(BundleKeys.URL_EMPTY);
+            return;
+        }
+        
+        configuration.setProperty(Constants.PROP_FETCH_CONTENT, String.valueOf(fetchContent));
+        configuration.setProperty(Constants.ARG_PUBLIC, String.valueOf(pub));
+        configuration.setProperty(Constants.ARG_FORCE, String.valueOf(force));
+        
+        List list = new EntryList();
+        list.add(new Entry(new URL(urlString)));
+        
+        Map args = new HashMap();
+        args.put(Constants.PARAM_ENTRIES, list);
+        
+        Output output = new Dispatcher(registry).run("addurls", OUTPUT_MODE, args);
+        
+        // if the entries were force-added then it's possible that some old 
+        // entries were overwritten in the process, so we have to refresh the tags list 
+        if ( force ) {
+            allTags.clear();
+            allTags.addAll( store.getAllTags() );
+        }
+        
+        if ( output.entriesSize() > 1 ) {
+            showInfo(BundleKeys.MULTIPLE_ADDED);
+            
+            // if we force-added the entries, and there was already an entry 
+            // selected we have to make sure 
+            if ( force && entry != null ) {
+              
+                // only if the current selected entry was overwritten by the newly
+                // added entries, we have to refresh the display
+                if ( output.getEntries().getEntry(entry.getUrl()) != null ) {
+                    entry = output.getEntries().getEntry(entry.getUrl());
+                    fillForm();
+                }
+            }
+            
+        } else if ( output.entriesSize() == 1 ) {
+          
+            entry = output.getEntries().getEntry(0);
+            fillForm();
+            setEnabled(EDIT_TAB, true);
+            switchToTab(EDIT_TAB_INDEX);
+            showInfo(BundleKeys.ADD_SUCCESS);
+            
+        } else {
+            showError(BundleKeys.ADD_NOENTRIES);
+        }
+         
+    }
+    
+    
+    /**
+     * 
+     */
+    protected void doSearchEntries(String query, Object resultTable, String limitStr, 
+                                   String direction, Object sortBox) 
+                            throws Exception 
+    {
+        removeAll(resultTable);
+      
+        LOG.debug("Executing search query: '"+query+"' direction "+direction+" limitstr "+limitStr);
+
+        int[] limitOffset = handlePaging(limitStr, direction);        
+        
+        String sortStr = (String) getProperty(getSelectedItem(sortBox), "sortfield");
+        
+        LOG.debug(sortStr);
+        
+        // put together arguments
+        Map args = new HashMap();
+        args.put("query", query);
+        
+        configuration.setProperty(Constants.PROP_OFFSET, String.valueOf(limitOffset[1]));
+        configuration.setProperty(Constants.PROP_LIMIT, String.valueOf(limitOffset[0]));
+        configuration.setProperty(Constants.PROP_SORTFIELD, sortStr);
+        
+        // run search
+        Output output = new Dispatcher(registry).run("search", OUTPUT_MODE, args);
+        
+        // extract result ... 
+        currentEntries = output.getEntries();
+        currentOffset = currentEntries.getOffset();
+
+        // ... and display it in table 
+        if ( currentEntries.size() > 0 ) {
+            for (int i = 0; i < currentEntries.size(); i++) {
+                Entry entry = currentEntries.getEntry(i);
+              
+                Object row = create("row");
+                add(resultTable, row);
+                
+                Object emptyRow = create("row");
+                add(resultTable, emptyRow);
+                
+                Object access = create("cell");
+                setChoice(access, "alignment", "center");
+                setIcon(access, "icon", getIcon( entry.getPublic() ? "/img/public.png" : "/img/private.png"));
+                add(row, access);
+                
+                Object cell = create("cell");
+                putProperty(cell, "id", new Integer(i));
+                setString(cell, "text", entry.getTitle());
+                setString(cell, "tooltip", entry.getUrl().toString());
+                add(row, cell);
+            
+                add(row, newtext("cell", StringUtil.join(entry.getTags(), Entry.TAG_SEPARATOR)));
+                add(row, newtext("cell", entry.getNote()));
+            }
+            setVisible(SEARCH_RESULT, true);
+            setVisible(EMPTYRESULT_LABEL, false);
+            
+            text(PAGER_LABEL, string(ENTRIES) +" "+ currentOffset +" "+ string(TO) 
+                            +" "+ (currentOffset+currentEntries.size()) +" "+ string(OF) 
+                            +" "+ currentEntries.getTotalSize());
+
+        } else {
+            setVisible(SEARCH_RESULT, false);
+            setVisible(EMPTYRESULT_LABEL, true);
+            text(PAGER_LABEL, "");
+        }
+        
+        determinePagerEnabled();
+    }
+    
+    
+    /**
+     * 
+     */
+    public void doDeleteEntry() throws Exception
+    {
+        if ( entry == null ) {
+            LOG.debug("Called doDelete() while no Entry being currently selected"); 
+            return;
+        }
+
+        Map args = new HashMap();
+        args.put(Constants.ARG_URL, entry.getUrl().toString());
+
+        try {
+          
+            Output output = new Dispatcher(registry).run("delete", OUTPUT_MODE, args);
+            showInfo(BundleKeys.DELETE_SUCCESS);
+            
+        } catch (OperationException ex) {
+            LOG.warn("Exception occurred while deleting Entry", ex);
+            showError(BundleKeys.DELETE_FAILURE);
+        }
+            
+    }
+
+    
+    /**
+     * 
+     */
+    protected void doSaveEntry(String title, String note, String type,
+                          String author, String authorEmail, 
+                          boolean pub, Object tagsList)
+                   throws Exception
+    {
+        if ( entry == null )
+            return;
+          
+        LOG.debug("Saving Entry "+entry);
+        
+        Set entryTags = new HashSet();
+        Object[] selectedTags = getSelectedItems(tagsList);
+        for (int i = 0; i < selectedTags.length; i++) {
+           entryTags.add( getString(selectedTags[i], "text") ); 
+        }
+        
+        entry.setTitle(title);
+        entry.setTags((String[]) entryTags.toArray(new String[0]));
+        entry.setNote(note);
+        entry.setFileType(type);
+        entry.setAuthor(author);
+        entry.setAuthorEmail(authorEmail);
+        entry.setPublic(pub);
+        
+        List list = new EntryList();
+        list.add(entry);
+        
+        Map args = new HashMap();
+        args.put(Constants.PARAM_ENTRIES, list);
+        
+        Output output = new Dispatcher(registry).run("putentries", OUTPUT_MODE, args);
+
+        entry = output.getEntries().getEntry(0);
+
+        // update GUI 
+        updateTagsSet(entryTags);
+        fillForm();
+        setString(find(TAGS_FIELD), "text", "");
+        showInfo(BundleKeys.SAVE_SUCCESS);
+    }
+    
     
     /**
      * 
@@ -812,6 +853,33 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
         return resourceBundle.getString(bundleKey);
     }
     
+    
+    /**
+     * 
+     */
+    protected int getInt(String objName, String key)
+    {
+        return getInteger(find(objName), key);
+    }    
+
+    
+    /**
+     * 
+     */
+    protected boolean getBool(String objName, String key)
+    {
+        return getBoolean(find(objName), key);
+    }    
+
+    
+    /**
+     * 
+     */
+    protected String getText(String objName)
+    {
+        return getString(find(objName), "text");
+    }    
+
     
     /**
      * 

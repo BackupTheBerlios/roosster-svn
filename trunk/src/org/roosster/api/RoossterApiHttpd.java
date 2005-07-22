@@ -79,7 +79,7 @@ public class RoossterApiHttpd
     {
         try {
             return API_BASE_PATH
-                 +"entry?output.mode=raw&url="
+                 +"/entry?output.mode=raw&url="
                  + URLEncoder.encode(url.toString(), "UTF-8");
         } catch (Exception ex) {
             // this should not happen, can only be java.io.UnsupportedEncodingException

@@ -165,8 +165,6 @@ public class UrlFetcher implements Plugin, Constants
         LOG.debug("Got Reponse Code "+resource.getResponseCode()+" for URL "+url);
         // TODO respect HTTP response codes here, especially 301 (moved permanently) and 4xx and 5xx
         
-                        Thread.sleep(4000);
-        
         ContentTypeProcessor proc = getProcessor(resource.getContentType()); 
         LOG.debug("Using Processor "+proc);
 

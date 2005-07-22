@@ -106,8 +106,7 @@ public class SyncSimpyCommand extends AbstractCommand implements Command, Consta
         }
 
         // store current time in properties
-        conf.setRequestProperty(PROP_SIMPY_LASTSYNC, System.currentTimeMillis() +"");
-        conf.setRequestProperty(LAST_UPDATE, System.currentTimeMillis() +"");
+        conf.setProperty(PROP_SIMPY_LASTSYNC, System.currentTimeMillis() +"");
         conf.persist(new String[] {PROP_SIMPY_LASTSYNC, LAST_UPDATE});
     }
 

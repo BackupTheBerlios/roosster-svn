@@ -114,14 +114,40 @@ public class StringUtil
         
         StringBuffer sb = new StringBuffer();
         for(int i = 0; i < strings.length; i++) {
-            sb.append(strings[i].trim());
-            if ( i+1 < strings.length )
-                sb.append(joinStr);
+            if ( strings[i] != null ) {
+                sb.append(strings[i].trim());
+                if ( i+1 < strings.length )
+                    sb.append(joinStr);
+            }
         }
         
         return sb.toString().trim();
     }
     
+
+    /**
+     * 
+     */
+    public static String join(Object[] arr, String joinStr)
+    {
+        if ( arr == null )
+            return null;
+        else if ( arr.length < 1 || joinStr == null )
+            return "";
+        
+        StringBuffer sb = new StringBuffer();
+        for(int i = 0; i < arr.length; i++) {
+            if ( arr[i] != null ) {
+                sb.append(arr[i].toString());
+                if ( i+1 < arr.length )
+                    sb.append(joinStr);
+            }
+        }
+        
+        return sb.toString().trim();
+    }
+    
+
     /**
      * 
      */

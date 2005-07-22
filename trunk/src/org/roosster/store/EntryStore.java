@@ -148,7 +148,6 @@ public class EntryStore implements Plugin, Constants
     public void shutdown(Registry registry) throws Exception
     {
         LOG.debug("Shutting down EntryStore!");
-        
         initialized = false;
     }
 
@@ -446,20 +445,29 @@ public class EntryStore implements Plugin, Constants
         if ( entries == null ) 
             return new Entry[0];
 
+        // check if any of the Entries are already stored in index 
         if ( !force && IndexReader.indexExists(indexDir) ) {
+          
             IndexReader reader = null;
             try {
+                List duplicateUrls = new ArrayList();
+              
                 reader = getReader();
                 for (int i = 0; i < entries.length; i++) {
                     Entry[] stored = getEntries(entries[i].getUrl(), reader);
                     if ( stored.length > 0 )
-                        throw new DuplicateEntryException(entries[i].getUrl());
+                        duplicateUrls.add(entries[i].getUrl());
                 }
-
+                    
+                // now throw exception if we encountered one or more duplicate Entries
+                if ( duplicateUrls.size() > 0 )
+                    throw new DuplicateEntriesException((URL[]) duplicateUrls.toArray(new URL[0]) );                    
+    
             } finally {
                 if ( reader != null  )
                     reader.close();
             }
+            
         }
 
         return storeEntries(entries);
@@ -790,7 +798,7 @@ public class EntryStore implements Plugin, Constants
      */
     private void persistLastUpdate() throws IOException
     {
-        registry.getConfiguration().setRequestProperty(LAST_UPDATE, System.currentTimeMillis() +"");
+        registry.getConfiguration().setProperty(LAST_UPDATE, System.currentTimeMillis() +"");
         registry.getConfiguration().persist(new String[] {LAST_UPDATE});
     }
 

@@ -50,7 +50,7 @@ import org.roosster.gui.RoossterGui;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class Roosster 
+public class Roosster implements Runnable
 {
   
     private static final String PROP_NOGUI      = "nogui";
@@ -90,7 +90,11 @@ public class Roosster
 
             LogUtil.configureLogging(cmdLine);
            
-            new Roosster(cmdLine).init().start();
+            Roosster roosster = new Roosster(cmdLine).init();
+            
+            Runtime.getRuntime().addShutdownHook( new Thread(roosster) );
+            
+            roosster.start();
             
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -123,18 +127,23 @@ public class Roosster
         return this;
     }
     
+    
     /**
+     * Implemented to use this class as shutdown hook for Runtime. Simply calls
+     * {@link #stop() stop()}.
      */
-    public void stop() throws Exception
+    public void run()
     {
-        httpd.stop(true);
-        
-        registry.shutdown();
-        
-        System.exit(0);
+        try {
+            httpd.stop(true);
+            registry.shutdown();
+        } catch(Exception ex) {
+            System.out.println("ERROR while shutting down application!");
+            ex.printStackTrace();
+        }
     }
-  
-
+    
+    
     /**
      */
     public void start() throws Exception

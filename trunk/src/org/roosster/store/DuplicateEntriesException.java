@@ -28,25 +28,27 @@ package org.roosster.store;
 
 import java.net.URL;
 
+import org.roosster.util.StringUtil;
+
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class DuplicateEntryException extends RuntimeException
+public class DuplicateEntriesException extends RuntimeException
 {
     private static final long serialVersionUID = 3906364909439694905L;
     
-    private URL url = null;
+    private URL[] urls = null;
     
-    public DuplicateEntryException(URL url) {
-        super(url == null ? "null" : url.toString());
-        this.url = url;
+    public DuplicateEntriesException(URL[] urls) {
+        super(urls == null ? "null" : StringUtil.join(urls, "\n") );
+        this.urls = urls;
     }
     
     
     /**
      *
      */
-     public URL getUrl() { return url; }
+     public URL[] getUrls() { return urls; }
 
 }

@@ -5,11 +5,11 @@ GUI
 * make it a native startable app for MacOS X with a decent menubar
 * implement search history (for the current session only, for now)
 * give locale to QueryParser
+* implement LOG viewer
+* show user when some action is being executed instead of freezing app
 
 General
 =======
 * secure http server, make it only accessible from localhost
-* handle network errors better
-* clean up behaviour, when entries get added via a feed, and one of many entries
-  of this feed is duplicate (currently throws Exception, when encountering
-  duplicate, and dumping remaining entries), do it in EntryStore
+* handle network errors better, and handle status codes 301, 302, 4xx and 5xx 
+

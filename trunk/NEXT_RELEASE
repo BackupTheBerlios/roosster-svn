@@ -28,6 +28,8 @@ General
 * let user specify index position at runtime through menu
 * add a menu item that shows logging information
 * internationalize HTML interface
+* think about alternative to storing requestProperties in ThreadLocal variable
+* let actions run async
 
 
 

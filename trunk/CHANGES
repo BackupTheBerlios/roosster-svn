@@ -1,4 +1,16 @@
 
+Revision 100 / 2005-07-22 / Benjamin Reitzammer
+
+* cleaned up behaviour, when entries get added via a feed, and one of many entries
+  of this feed is duplicate (currently throws Exception, when encountering
+  duplicate, and dumping remaining entries), do it in EntryStore
+* refactored DuplicateEntryException to DuplicateEntriesException, accepts
+  now an array of URLs
+* implemented shutdown hook
+* fixed del.icio.us sync which didn't properly store it's last sync time, and
+  produced wrong sync behaviour because of this.
+* small GUI changes
+  
 Revision 99 / 2005-07-21 / Benjamin Reitzammer
 
 * started fresh with version 0.5, thrown out obsolete junk,

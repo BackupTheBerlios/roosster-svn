@@ -40,6 +40,7 @@ public interface BundleKeys
     public static final String URL_INVALID         = "param.invalid.url";
     
     public static final String DUPLICATE_URL       = "duplicate.url";
+    public static final String MULTIPLE_DUPLICATE_URL = "multipleduplicate.url";
     
     public static final String MULTIPLE_ADDED      = "add.multiple.added";
     

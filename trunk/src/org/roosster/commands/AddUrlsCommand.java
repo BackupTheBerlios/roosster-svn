@@ -64,8 +64,6 @@ public class AddUrlsCommand extends AbstractCommand implements Command, Constant
             boolean force = Boolean.valueOf(conf.getProperty(ARG_FORCE, "false")).booleanValue();
             boolean fetch = Boolean.valueOf(conf.getProperty(PROP_FETCH_CONTENT, "true")).booleanValue();
 
-            LOG.debug("FORCE "+force);
-            
             Entry[] entries = new Entry[0];
             if ( fetch ) {
               

@@ -121,7 +121,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         }
 
         // store current time in properties
-        conf.setRequestProperty(PROP_DELICIOUS_LASTSYNC, System.currentTimeMillis() +"");
+        conf.setProperty(PROP_DELICIOUS_LASTSYNC, System.currentTimeMillis() +"");
         conf.persist(new String[] {PROP_DELICIOUS_LASTSYNC});
     }
 
