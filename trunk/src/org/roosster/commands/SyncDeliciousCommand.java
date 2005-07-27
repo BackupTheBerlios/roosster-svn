@@ -91,6 +91,12 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
                                             conf.getProperty(PROP_DELICIOUS_PASS),
                                             apiEndPoint);
 
+
+        // store current time in properties
+        conf.setProperty(PROP_DELICIOUS_LASTSYNC, System.currentTimeMillis() +"");
+        conf.persist(new String[] {PROP_DELICIOUS_LASTSYNC});
+                                            
+                                            
         if ( timeMillisString == null ) {
             // if last update time of roosster is null, then roosster was never synced 
             // with del.icio.us so we get all posts and say a big "Sorry Joshua"
@@ -119,10 +125,6 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
                 syncDelicious(delicious, registry, lastSync);
             
         }
-
-        // store current time in properties
-        conf.setProperty(PROP_DELICIOUS_LASTSYNC, System.currentTimeMillis() +"");
-        conf.persist(new String[] {PROP_DELICIOUS_LASTSYNC});
     }
 
 
