@@ -7,9 +7,7 @@
  * it under the terms of the Artistic License. 
  * See http://www.opensource.org/licenses/artistic-license.php for details
  */
- 
-var API_ENDPOINT    = "{v:apibasepath}";
-var OUTPUT_MESSAGES = 'output-messages';
+
 
 //*****************************************************************************
 // ONLOAD INITIALIZATION

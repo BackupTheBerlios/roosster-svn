@@ -35,7 +35,7 @@ import del.icio.us.DeliciousUtils;
 import org.apache.log4j.Logger;
 
 import org.roosster.store.EntryStore;
-import org.roosster.store.EntryList;
+import org.roosster.store.EntryHitList;
 import org.roosster.store.Entry;
 import org.roosster.input.UrlFetcher;
 import org.roosster.util.StringUtil;
@@ -125,6 +125,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
                 syncDelicious(delicious, registry, lastSync);
             
         }
+        
     }
 
 
@@ -151,13 +152,13 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         
         LOG.debug("Getting all Posts from del.icio.us now");
         List allDelPosts = delicious.getAllPosts(); // remote call
-        LOG.debug("Fetched "+allDelPosts.size()+" from del.icio.us");
+        LOG.info("Fetched "+allDelPosts.size()+" from del.icio.us");
 
         EntryStore store = (EntryStore) registry.getPlugin(Constants.PLUGIN_STORE);
-        EntryList allRsstEntries = store.getAllEntries(0, Integer.MAX_VALUE, false);
+        EntryHitList allRsstEntries = store.getAllEntries(true);
           
         // parse del.icio.us posts into map, to allow easy access by URL
-        LOG.debug("Building lookup Map for del.icio.us posts");
+        LOG.debug("Building lookup Map for "+allDelPosts.size()+" del.icio.us posts");
         Map allPostsMap = new HashMap();
         for (int i = 0; i < allDelPosts.size(); i++) {
             Post post = (Post) allDelPosts.get(i);
@@ -189,7 +190,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
                     // only post to del.icio.us if it's a public bookmark
                     if ( entry.getPublic() ) {
                         updateDelicious.add(post);
-                        LOG.debug(post.getHref()+" is public! Will be added/updated in del.icio.us!");
+                        LOG.info(post.getHref()+" CHANGED and is public! Will be added/updated in del.icio.us!");
                     }
                 } else {  
                     LOG.debug(entry+" didn't change! No action needed!");
@@ -202,6 +203,9 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
             }
         }
         
+        // free index searcher
+        allRsstEntries.close();
+        
         volatileDelicious.addAll(allPostsMap.values());
         
         // for entries/posts in volatile*, determine if they are deletes or 
@@ -210,10 +214,10 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         for(int i = 0; i < volatileRoosster.size(); i++) {
             Entry entry = (Entry) volatileRoosster.get(i);
             if ( lastSync.after(entry.getAdded()) && entry.getPublic() ) {
-                LOG.debug(entry+" was deleted from del.icio.us! Will be deleted from roosster!\n");
+                LOG.info(entry+" was deleted from del.icio.us! Will be deleted from roosster!\n");
                 deleteRoosster.add(entry);
             } else if ( entry.getPublic() ) {
-                LOG.debug(entry+" was added to roosster and is public! Will be added to del.icio.us\n");
+                LOG.info(entry+" was added to roosster and is public! Will be added to del.icio.us\n");
                 updateDelicious.add( entry2Post(entry) );
             }
         }
@@ -222,10 +226,10 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         for(int i = 0; i < volatileDelicious.size(); i++) {
             Post post = (Post) volatileDelicious.get(i);
             if ( lastSync.after(post.getTimeAsDate()) ) {
-                LOG.debug(post.getHref()+" -- was deleted from roosster! Will be deleted from del.icio.us!\nAdded: "+post.getTimeAsDate()+"\n");
+                LOG.info(post.getHref()+" -- was deleted from roosster! Will be deleted from del.icio.us! Added: "+post.getTimeAsDate()+"\n");
                 deleteDelicious.add(post);
             } else {
-                LOG.debug(post.getHref()+" -- was added to del.icio.us! Will be added to roosster!\n Added: "+post.getTimeAsDate()+"\n");
+                LOG.info(post.getHref()+" -- was added to del.icio.us! Will be added to roosster! Added: "+post.getTimeAsDate()+"\n");
                 Entry entry = post2Entry(post); 
                 addToRoosster.put(entry.getUrl().toString(), entry);
             }
@@ -237,7 +241,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
         for(int i = 0; i < updateDelicious.size(); i++) {
             Post post = (Post) updateDelicious.get(i);
             
-            LOG.debug("Updating/Adding <"+post.getHref()+"> to del.icio.us!");
+            LOG.info("Updating/Adding <"+post.getHref()+"> to del.icio.us!");
             
             // fulfill Joshua's restriction by posting calling API once per second 
             Thread.sleep(1000);
@@ -276,7 +280,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
             for(int i = 0; i < deleteDelicious.size(); i++) {
                 Post post = (Post) deleteDelicious.get(i);        
                 
-                LOG.debug("DELETING "+post.getHref()+" from del.icio.us!");
+                LOG.info("DELETING "+post.getHref()+" from del.icio.us!");
                             
                 // fulfill Joshua's restriction by posting calling API once per second 
                 Thread.sleep(1000);
@@ -285,7 +289,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
             }
             
             // delete from roosster
-            LOG.debug("Deleting "+deleteRoosster.size()+" Entries from roosster now\n\n");
+            LOG.info("DELETING "+deleteRoosster.size()+" Entries from roosster now\n\n");
             store.deleteEntries((Entry[]) deleteRoosster.toArray(new Entry[0]));
         }
         
@@ -307,7 +311,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
             else if ( !"".equals(note) && "".equals(ext) )
                 post.setExtended(note);
             
-            LOG.debug("Note does not match on Entry/Post with URL "+entry.getUrl());
+            LOG.debug("Synchronization: Note does not match on Entry/Post with URL "+entry.getUrl());
         }
         
         if ( !entry.getTitle().equals(post.getDescription()) ) {
@@ -319,7 +323,7 @@ public class SyncDeliciousCommand extends AbstractCommand implements Command, Co
             else if ( !"".equals(title) && "".equals(desc) )
                 post.setDescription(title);
           
-            LOG.debug("Title does not match on Entry/Post with URL "+entry.getUrl());
+            LOG.debug("Synchronization: Title does not match on Entry/Post with URL "+entry.getUrl());
         }
 
         Set tagSet = new HashSet( Arrays.asList(entry.getTags()) );

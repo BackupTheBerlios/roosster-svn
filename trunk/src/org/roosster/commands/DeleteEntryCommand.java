@@ -32,13 +32,14 @@ import java.net.URL;
 import org.roosster.store.EntryStore;
 import org.roosster.Command;
 import org.roosster.Registry;
+import org.roosster.Constants;
 import org.roosster.Output;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class DeleteEntryCommand extends AbstractCommand implements Command
+public class DeleteEntryCommand extends AbstractCommand implements Command, Constants
 {
     public static final String ARG_URL = "url";
 
@@ -54,6 +55,9 @@ public class DeleteEntryCommand extends AbstractCommand implements Command
 
         EntryStore store = (EntryStore) registry.getPlugin("store");
         int numDeleted = store.deleteEntry( new URL(url) );
+        
+        registry.getConfiguration().setProperty(LAST_UPDATE, System.currentTimeMillis() +"");
+        registry.getConfiguration().persist(new String[] {LAST_UPDATE});               
 
         output.addOutputMessage("Deleted "+numDeleted+" entry with URL "+url);
     }

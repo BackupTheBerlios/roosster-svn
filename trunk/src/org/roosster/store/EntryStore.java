@@ -234,7 +234,7 @@ public class EntryStore implements Plugin, Constants
            
            IndexReader reader = null;
            try {
-               LOG.debug("Getting all Tags from index");
+               LOG.info("Getting all Tags from index");
                
                reader = getReader();
                TermEnum terms = reader.terms(new Term(Entry.TAGS, ""));
@@ -258,17 +258,51 @@ public class EntryStore implements Plugin, Constants
     /**
      * 
      */
-    public EntryList getAllEntries(boolean pub) throws IOException
+    public EntryHitList getAllEntries(boolean pub) throws IOException
     {
-        return getAllEntries(getOffset(), getLimit(), pub);
+        if ( !isInitialized() )
+            throw new IllegalStateException("Database must be initialized before use!");
+
+        if ( !IndexReader.indexExists(indexDir) ) 
+            return new EntryHitList(null, null);
+        
+        
+        BooleanQuery query = new BooleanQuery();
+        
+        TermQuery term = new TermQuery(new Term(Entry.ENTRY_MARKER, Entry.ENTRY_MARKER));
+        query.add(term, true, false);
+        
+        if ( pub ) {
+            TermQuery pubTerm = new TermQuery(new Term(Entry.PUBLIC, "true"));
+            query.add(pubTerm, true, false);
+        }
+        
+        IndexSearcher searcher = new IndexSearcher(indexDir);
+        
+        Sort sort = determineSort();
+        LOG.debug("Sort Instance: "+sort);
+        
+        Hits hits = searcher.search(query, sort);        
+
+        LOG.info("Found "+hits.length()+" matches for query: <"+query+"> Returning ALL!");            
+        
+        return new EntryHitList(hits,searcher);
     }
 
 
     /**
+     */
+    public EntryList getEntries(boolean pub) throws IOException
+    {
+        return getEntries(getOffset(), getLimit(), pub);
+    }
+
+    
+    /**
      * @param pub if true, this method returns only Entries which pub: field is 
      * set to "true", if false all Entries are returned
      */
-    public EntryList getAllEntries(int offset, int limit, boolean pub) throws IOException
+    public EntryList getEntries(int offset, int limit, boolean pub) throws IOException
     {
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
@@ -297,7 +331,7 @@ public class EntryStore implements Plugin, Constants
             
             Hits hits = searcher.search(query, sort);        
     
-            LOG.debug("Found "+hits.length()+" matches for query: <"+query+">");            
+            LOG.info("Found "+hits.length()+" matches for query: <"+query+">");            
             
             return fillEntryList(hits, offset, limit);
             
@@ -567,7 +601,7 @@ public class EntryStore implements Plugin, Constants
      * @exception IllegalStateException if the object was not properly initialized yet.
      * @exception IllegalArgumentException if parameter <code>urls</code> is null.
      */
-    private int deleteEntries(URL[] urls, IndexReader reader) throws IOException
+    private synchronized int deleteEntries(URL[] urls, IndexReader reader) throws IOException
     {
         if ( !isInitialized() )
             throw new IllegalStateException("Database must be initialized before use!");
@@ -587,6 +621,7 @@ public class EntryStore implements Plugin, Constants
 
             
             for (int i = 0; i < urls.length; i++) { 
+                LOG.info("DELETING Entry for URL: "+urls[i]);
                 numDeleted += reader.delete( new Term(URLHASH, computeHash(urls[i])) );
             }
 
@@ -596,8 +631,6 @@ public class EntryStore implements Plugin, Constants
             if  ( closeReader && reader != null )
                 reader.close();
         }
-        
-        persistLastUpdate();
         
         return numDeleted;
     }
@@ -619,6 +652,7 @@ public class EntryStore implements Plugin, Constants
         if ( entries == null )
             throw new IllegalArgumentException("Parameter 'entries' is not allowed to be null");
 
+        int newAdded = entries.length;
         
         IndexWriter writer = null;
         IndexReader reader = null;
@@ -636,7 +670,7 @@ public class EntryStore implements Plugin, Constants
             
             Date now = new Date();
             for (int i = 0; i < entries.length; i++ ) {
-                LOG.debug("Adding Entry to index: "+ entries[i].getUrl().toString());
+                LOG.info("Adding Entry to index: "+ entries[i].getUrl().toString());
 
                 entries[i].setEdited(now);
                 
@@ -645,7 +679,12 @@ public class EntryStore implements Plugin, Constants
                 writer.addDocument(doc);
             }
 
-            writer.optimize(); // TODO should this be delayed in a web env?
+            // TODO defer this to worker thread in background
+            if ( optimizeNeeded(newAdded) ) {
+                LOG.debug("Optimize Threshold reached! Optimizing index!");
+                writer.optimize(); 
+                newAdded = Integer.MIN_VALUE;
+            } 
 
         } finally {
             if ( writer != null )
@@ -655,12 +694,30 @@ public class EntryStore implements Plugin, Constants
                 reader.close();
         }
         
-        persistLastUpdate();
+        persistProperties(newAdded);
 
         return entries;
     }
 
 
+    /**
+     * 
+     */
+    private boolean optimizeNeeded(int newAdded) {
+        String addedStr = registry.getConfiguration().getProperty(ADDED_SINCE_OPTIMIZE, "0");
+        String thresStr = registry.getConfiguration().getProperty(OPTIMIZE_THRESHOLD, "1");
+            
+        int added = Integer.valueOf(addedStr).intValue() + newAdded;
+        int threshold = Integer.valueOf(thresStr).intValue();
+        
+        if ( LOG.isDebugEnabled() ) {
+            LOG.debug("Added since last IndexWriter.optimize(): "+added);
+            LOG.debug("Optimize Threshold: "+threshold);
+        }
+        
+        return added >= threshold;
+    }
+    
     /**
      * @exception IllegalArgumentException if the provided sort field is not available
      * for sorting
@@ -673,7 +730,7 @@ public class EntryStore implements Plugin, Constants
         
         String sortField = registry.getConfiguration().getProperty(PROP_SORTFIELD);
         
-        LOG.info("Specified Sort Field: "+sortField);
+        LOG.debug("Specified Sort Field: "+sortField);
             
         Sort sort = Sort.RELEVANCE; 
         if ( sortField != null && !"".equals(sortField) ) {
@@ -796,10 +853,18 @@ public class EntryStore implements Plugin, Constants
     /**
      *
      */
-    private void persistLastUpdate() throws IOException
+    private void persistProperties(int newAdded) throws IOException
     {
-        registry.getConfiguration().setProperty(LAST_UPDATE, System.currentTimeMillis() +"");
-        registry.getConfiguration().persist(new String[] {LAST_UPDATE});
+        Configuration conf = registry.getConfiguration();
+        
+        if ( newAdded == Integer.MIN_VALUE ) {
+            conf.setProperty(ADDED_SINCE_OPTIMIZE, "0");
+        } else {
+            int oldAdded = Integer.valueOf(conf.getProperty(ADDED_SINCE_OPTIMIZE, "0")).intValue();
+            conf.setProperty(ADDED_SINCE_OPTIMIZE, String.valueOf(oldAdded + newAdded));
+        }
+        
+        conf.persist(new String[] {ADDED_SINCE_OPTIMIZE});
     }
 
     

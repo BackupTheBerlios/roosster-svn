@@ -55,7 +55,7 @@ public class SearchCommand extends AbstractCommand implements Command
             output.setEntries( store.search(query) );
         } else {
             output.addOutputMessage("No queryString specified. Returning recently all Entries!");
-            output.setEntries( store.getAllEntries(false) );
+            output.setEntries( store.getEntries(false) );
         }
     }
 

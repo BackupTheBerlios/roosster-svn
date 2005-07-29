@@ -36,6 +36,7 @@ import org.roosster.Constants;
 import org.roosster.Output;
 import org.roosster.Registry;
 import org.roosster.input.UrlFetcher;
+import org.roosster.util.StringUtil;
 import org.roosster.store.Entry;
 import org.roosster.store.EntryList;
 import org.roosster.store.EntryStore;
@@ -64,6 +65,13 @@ public class AddUrlsCommand extends AbstractCommand implements Command, Constant
             boolean force = Boolean.valueOf(conf.getProperty(ARG_FORCE, "false")).booleanValue();
             boolean fetch = Boolean.valueOf(conf.getProperty(PROP_FETCH_CONTENT, "true")).booleanValue();
 
+            // by going via the "bare" String we check if the property is given 
+            // at all, if it's the case, then we use it to override "public"
+            // values of all processed entries, if not we leave the Entries' 
+            // values untouched
+            String pubStr = conf.getProperty(ARG_PUBLIC);
+            
+            
             Entry[] entries = new Entry[0];
             if ( fetch ) {
               
@@ -81,6 +89,9 @@ public class AddUrlsCommand extends AbstractCommand implements Command, Constant
                     // overwrite the fetched values, if others have been provided (in entryList)
                     if ( entry != null ) 
                         entries[i].overwrite(entry);
+                    
+                    if ( ! StringUtil.isNullOrBlank(pubStr) ) 
+                        entries[i].setPublic( Boolean.valueOf(pubStr).booleanValue() );
                 } 
                     
             } 
@@ -88,6 +99,9 @@ public class AddUrlsCommand extends AbstractCommand implements Command, Constant
             // now finally store entries in index
             EntryStore store = (EntryStore) registry.getPlugin(Constants.PLUGIN_STORE);
             entries = store.addEntries(entries, force);
+            
+            conf.setProperty(LAST_UPDATE, System.currentTimeMillis() +"");
+            conf.persist(new String[] {LAST_UPDATE});            
             
             // output informative message to user
             output.addOutputMessage("Number of added Entries: "+entries.length);

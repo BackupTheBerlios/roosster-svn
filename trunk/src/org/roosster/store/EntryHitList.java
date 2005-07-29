@@ -24,39 +24,69 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.commands;
+package org.roosster.store;
 
-import java.util.Map;
+import java.io.IOException;
+import java.util.AbstractList;
 
-import org.roosster.Command;
-import org.roosster.Output;
-import org.roosster.Registry;
-import org.roosster.store.EntryStore;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class ListAllCommand extends AbstractCommand implements Command
+public class EntryHitList extends AbstractList
 {
-    public static final String ARG_URL = "url";
-
+    private static Logger LOG = Logger.getLogger(EntryHitList.class);
+    private Hits hits;
+    private IndexSearcher searcher;
+  
     /**
+     * Creates a new <code>HitList</code> instance.
      *
+     * @param hits <code>Hits</code> to wrap
      */
-    public void execute(Map arguments, Registry registry, Output output)
-                 throws Exception
+    public EntryHitList(Hits hits, IndexSearcher searcher)
     {
-        EntryStore store = (EntryStore) registry.getPlugin("store");
-        output.setEntries( store.getEntries(false) );
+        this.hits = hits;
+        this.searcher = searcher;
     }
-
-
+  
+      
     /**
+     * @return Objects of class Entry
      */
-    public String getName()
+    public Object get(int index)
     {
-        return "List all Entries";
+        if ( hits == null || index < 0 || index >= size() )
+            throw new ArrayIndexOutOfBoundsException(index);
+      
+        try {
+            return new Entry(hits.doc(index), hits.score(index));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+  
+      
+    /**
+     * @see java.util.List#size()
+     */
+    public int size() 
+    {
+        return hits == null ? 0 : hits.length();
     }
     
+    
+    /**
+     * 
+     */
+    public void close() throws IOException 
+    {
+        if ( searcher != null ) 
+            searcher.close(); 
+    }
+
 }

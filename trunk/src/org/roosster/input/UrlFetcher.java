@@ -28,6 +28,7 @@ package org.roosster.input;
 
 import java.io.IOException;
 import java.net.URL;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -45,6 +46,7 @@ import org.roosster.OperationException;
 import org.roosster.Plugin;
 import org.roosster.Registry;
 import org.roosster.store.Entry;
+import org.roosster.util.StringUtil;
 
 
 /**
@@ -135,8 +137,6 @@ public class UrlFetcher implements Plugin, Constants
 
             try {
                 entries.addAll( Arrays.asList( fetch(urls[i]) ) );
-            } catch (IOException ex) {
-                LOG.warn("I/O Error while fetching URL "+urls[i]+": "+ex.getMessage(), ex);
             } catch (Exception ex) {
                 LOG.warn("Error while processing URL "+urls[i]+": "+ex.getMessage(), ex);
             }
@@ -156,16 +156,24 @@ public class UrlFetcher implements Plugin, Constants
      * URLs will be fetched a second time, if the entry's lastFetched
      * object is <code>null</code>, when processed the first time.
      */
-    private Entry[] fetch(URL url) throws IOException, Exception
+    private Entry[] fetch(URL url) throws Exception
     {
         LOG.debug("Opening connection to URL "+url);
 
-        Resource resource = fetcher.fetchResource(url);
+        Resource resource = null;
+        try {
+            resource = fetcher.fetchResource(url);
+        } catch(IOException ex) {
+            LOG.warn("I/O Error while fetching URL "+url+": "+ex.getMessage()+
+                     "\n --> Returning minimal Entry object!", ex);
+                     
+            return new Entry[] {new Entry(url)};
+        }
         
         LOG.debug("Got Reponse Code "+resource.getResponseCode()+" for URL "+url);
         // TODO respect HTTP response codes here, especially 301 (moved permanently) and 4xx and 5xx
         
-        ContentTypeProcessor proc = getProcessor(resource.getContentType()); 
+        ContentTypeProcessor proc = getProcessor(resource.getContentType(), url); 
         LOG.debug("Using Processor "+proc);
 
         Entry[] entries = null;
@@ -289,29 +297,34 @@ public class UrlFetcher implements Plugin, Constants
     /**
      * @return null if no appropriate processor is found
      */
-    private ContentTypeProcessor getProcessor(String contentType)
+    private ContentTypeProcessor getProcessor(String contentType, URL url)
     {
-        if ( contentType == null || "".equals(contentType) )
-            throw new IllegalArgumentException("Parameter contentType is not allowed to be null");
-        
         ContentTypeProcessor proc = null;
 
-        String forcedProc = registry.getConfiguration().getProperty(PROP_INPUT_PROC);
-        if ( forcedProc != null ) {
-            proc = (ContentTypeProcessor) procsByName.get(forcedProc);
-            if ( proc == null )
-                throw new IllegalArgumentException("Wrong input processor "+
-                                                   "specified by "+PROP_INPUT_PROC);
-            else 
-                return proc;
+        if ( StringUtil.isNullOrBlank(contentType) )
+            contentType = StringUtil.getFileType(url);
+        
+        
+        if ( contentType == null ) {
+          
+            LOG.debug("Couldn't determine contentType using default Processor");
+            proc = defaultProc;
+            
+        } else {
+        
+            String forcedProc = registry.getConfiguration().getProperty(PROP_INPUT_PROC);
+            if ( forcedProc != null ) {
+              
+                proc = (ContentTypeProcessor) procsByName.get(forcedProc);
+                if ( proc == null )
+                    throw new IllegalArgumentException("Wrong input processor "+
+                                                       "specified by "+PROP_INPUT_PROC);
+                                                       
+            } else {
+                proc = (ContentTypeProcessor) processors.get(contentType);
+            }
         }
         
-        return  (ContentTypeProcessor) processors.get(contentType);
-        /*
-        if ( proc == null ) 
-            return defaultProc;
-        else
-            return proc;
-        */
+        return proc;
     }
 }

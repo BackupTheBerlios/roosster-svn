@@ -77,12 +77,16 @@ public class PutEntriesCommand extends AbstractCommand implements Command, Const
                     
                     // now finally update entry in index
                     store.addEntry(storedEntry, true);
+                            
+                    registry.getConfiguration().setProperty(LAST_UPDATE, System.currentTimeMillis() +"");
+                    registry.getConfiguration().persist(new String[] {LAST_UPDATE});                           
                     
                     output.addOutputMessage("Entry saved! "+storedEntry.getUrl());
                     output.addEntry(storedEntry);
-                  
+                    
                 } else {
                     // TODO is this behaviour a bit tame?
+                    LOG.debug("Can't edit unstored entry: "+entry.getUrl());
                     output.addOutputMessage("Can't edit unstored entry: "+entry.getUrl());
                 }
             }

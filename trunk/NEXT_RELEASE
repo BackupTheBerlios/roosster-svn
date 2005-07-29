@@ -30,6 +30,8 @@ General
 * internationalize HTML interface
 * think about alternative to storing requestProperties in ThreadLocal variable
 * let actions run async
+* bulk editing
+* file system monitoring
 
 
 

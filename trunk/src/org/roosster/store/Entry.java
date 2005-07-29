@@ -367,12 +367,23 @@ public class Entry
     }
 
     /**
-     * Sets the value of url.
-     * @param url The value to assign url.
+     * Sets the value of url. Adds a slash to the end of the URL if the 
+     * <code>path</code> of the URL is <code>null</code> or an empty String
+     * @param url The value to assign url. If this is null, no action is taken
      */
     public void setUrl(URL url)
     {
-        this.url = url;
+        if ( url != null ) {
+            if ( StringUtil.isNullOrBlank(url.getPath()) ) {
+                try {
+                    url = new URL(url.toString() +"/");
+                } catch(MalformedURLException ex) {
+                    LOG.warn("Exception while setting an Entry's URL", ex);
+                }
+            }
+            
+            this.url = url;
+        }
     }
 
 

@@ -6,10 +6,13 @@ GUI
 * implement search history (for the current session only, for now)
 * give locale to QueryParser
 * implement LOG viewer
-* show user when some action is being executed instead of freezing app
+* implement custom analyzer
+* implement simple search.html page
+* show user when some action is being executed instead of only freezing the app
 
 General
 =======
 * secure http server, make it only accessible from localhost
 * handle network errors better, and handle status codes 301, 302, 4xx and 5xx 
-
+* fix del.icio.us sync, where http://google.com gets added as http://google.com/
+  and this messes up roosster

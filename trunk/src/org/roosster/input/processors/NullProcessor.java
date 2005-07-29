@@ -24,39 +24,66 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.commands;
+package org.roosster.input.processors;
 
-import java.util.Map;
-
-import org.roosster.Command;
-import org.roosster.Output;
+import java.net.URL;
+import java.util.Date;
+import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
+import org.roosster.store.Entry;
 import org.roosster.Registry;
-import org.roosster.store.EntryStore;
+import org.roosster.InitializeException;
+import org.roosster.input.ContentTypeProcessor;
 
 /**
- *
+ * 
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class ListAllCommand extends AbstractCommand implements Command
+public class NullProcessor implements ContentTypeProcessor
 {
-    public static final String ARG_URL = "url";
+    /**
+     * Contains the MIME type of text documents: <code>text/plain</code>
+     */
+    public static final String FILE_TYPE = "text/plain";
+    
+    
+    /**
+     * Sets the filetype of the returned <code>Entry</code> always to the value
+     * of the public <code>FILE_TYPE</code> constant of this class.
+     * 
+     * @return an array of <code>Entry</code>-objects that always contain on
+     * object, that's never <code>null</code>.
+     */
+    public Entry[] process(URL url, InputStream stream, String encoding) throws Exception
+    {
+        Entry entry = new Entry(url);
+        entry.setFileType(FILE_TYPE);
+        entry.setAdded(new Date());
+        return new Entry[] { entry };
+    }
+
 
     /**
      *
      */
-    public void execute(Map arguments, Registry registry, Output output)
-                 throws Exception
+    public void init(Registry registry) throws InitializeException
+    {}
+
+
+    /**
+     *
+     */
+    public boolean isInitialized()
     {
-        EntryStore store = (EntryStore) registry.getPlugin("store");
-        output.setEntries( store.getEntries(false) );
+        return true;
     }
 
 
     /**
+     *
      */
-    public String getName()
-    {
-        return "List all Entries";
-    }
-    
+    public void shutdown(Registry registry) throws Exception
+    {}
+
+
 }

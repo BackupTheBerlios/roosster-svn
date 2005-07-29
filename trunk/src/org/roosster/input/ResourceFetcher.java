@@ -105,6 +105,11 @@ public class ResourceFetcher
             }
         }
         
+        // no content type defined the standard way, so let's guess a bit 
+        if ( contentType == null ) {
+            LOG.debug("Guessing Content-Type for URL "+url);
+        }
+        
         String contentEnc  = con.getContentEncoding();
         if ( contentEnc == null ) 
             contentEnc = embeddedContentEnc != null ? embeddedContentEnc : defaultEncoding;

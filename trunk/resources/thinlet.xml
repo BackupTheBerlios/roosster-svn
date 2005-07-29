@@ -61,7 +61,7 @@
                     <label colspan="4" name="emptyresultLabel" text="i18n.EmptyResult" visible="false"/>
                 </panel>
             </tab>
-            <tab mnemonic="0" name="editTab" text="i18n.Edit" enabled="false">
+            <tab mnemonic="0" name="editTab" text="i18n.Edit" enabled="true">
                 <panel weightx="1" weighty="1" gap="4" top="4" left="4" bottom="4" right="4" >
                     <panel columns="2" gap="4" weightx="2" weighty="1">
                         <label font="14 bold" text="i18n.EditEntry"/>
@@ -85,7 +85,8 @@
                         <checkbox name="publicprivateField"/>
                         <separator colspan="2"/>
                         <label text="i18n.Actions"/>
-                        <panel columns="2" gap="15" weightx="1">
+                        <panel columns="3" gap="15" weightx="1">
+                            <button text="i18n.ViewIndexedContent" action="toggleVisible(indexedcontentArea)" />
                             <button name="cachedcopyButton" text="i18n.CachedCopy" action="goUrl(this)" />
                             <button name="deleteButton" foreground="#ff0000" text="i18n.DeleteEntry" action="deleteEntry()"/>
                         </panel>
@@ -100,6 +101,8 @@
                         <label name="editeddateLabel"/>
                         <label/>
                         <button action="saveEntry()" halign="right" font="bold" text="i18n.Save"/>
+                        <label/>
+                        <textarea name="indexedcontentArea" visible="false" colspan="2" wrap="true" editable="false" columns="50"/>
                     </panel>
                     <panel columns="2" weightx="1">
                         <label colspan="2" for="tagsField" mnemonic="1" text="i18n.Tags" weightx="1"/>

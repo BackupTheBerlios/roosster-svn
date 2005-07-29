@@ -69,6 +69,7 @@ public interface GuiConstants
     public static final String ISSUED_LABEL         = "issueddateLabel";
     public static final String MODIFIED_LABEL       = "modifieddateLabel";
     public static final String EDITED_LABEL         = "editeddateLabel";
+    public static final String INDEXED_CONTENT_AREA = "indexedcontentArea";
     
     // fields and label names in the add Tab
     public static final String ADDURL_FIELD         = "addurlField";

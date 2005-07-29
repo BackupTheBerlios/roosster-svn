@@ -109,6 +109,15 @@ public interface Constants
     
     /**
      */
+    public static final String ADDED_SINCE_OPTIMIZE = "roosster.addedsincelastoptimize";
+    
+    /**
+     * number of entries that are added before an optimize is performed
+     */
+    public static final String OPTIMIZE_THRESHOLD = "roosster.optimizethreshold";
+    
+    /**
+     */
     public static final String PROP_LIMIT       = "output.limit";
 
     /**

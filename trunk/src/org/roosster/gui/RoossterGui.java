@@ -282,7 +282,6 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
                 String tag = (String) iter.next();
                 
                 if ( tag.startsWith(text) ) {
-                    LOG.debug("Tag '"+tag+"' starts with '"+text+"'");
                     setString(textField, "text", tag);
                     setInteger(textField, "start", text.length());
                     setInteger(textField, "end", tag.length());                    
@@ -609,7 +608,8 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
                 
                 Object access = create("cell");
                 setChoice(access, "alignment", "center");
-                setIcon(access, "icon", getIcon( entry.getPublic() ? "/img/public.png" : "/img/private.png"));
+                setIcon(access, "icon", getIcon( entry.getPublic() ? "/docroot/img/public.png" 
+                                                                   : "/docroot/img/private.png"));
                 add(row, access);
                 
                 Object cell = create("cell");
@@ -641,7 +641,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
     /**
      * 
      */
-    public void doDeleteEntry() throws Exception
+    protected void doDeleteEntry() throws Exception
     {
         if ( entry == null ) {
             LOG.debug("Called doDelete() while no Entry being currently selected"); 
@@ -737,6 +737,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
             text(TYPE_FIELD, entry.getFileType());
             text(AUTHOR_FIELD, entry.getAuthor());
             text(AUTHOREMAIL_FIELD, entry.getAuthorEmail());
+            text(INDEXED_CONTENT_AREA, entry.getContent());
             setBoolean(find(PUBLICPRIVATE_FIELD), "selected", entry.getPublic());
             
             text(ADDED_LABEL,    DateUtil.formatDisplayDate(entry.getAdded()));
@@ -949,6 +950,7 @@ public class RoossterGui extends Thinlet implements GuiConstants, BundleKeys
      */
     private void updateTagsSet(Set tags)
     {
+        LOG.debug("Updating local tags cache!");
         Iterator iter = tags.iterator();
         while ( iter.hasNext() ) {
             String tag = (String) iter.next();

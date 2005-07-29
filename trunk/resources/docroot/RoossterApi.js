@@ -85,7 +85,82 @@ function Entry(url) {
     this.modifiedDate = null;
     this.addedDate    = null;
     this.editedDate   = null;
+
+ /**
+     * Appends the following structure to the provided node:
+     * 
+     * <ul class="entry">
+     *     <li class="entry-url"><a href="$entry.url">$entry.title</a></li> 
+     *     <li class="entry-content">#truncate($entry.content)<strong>[...]</strong></li> 
+     *     <li class="entry-info">$entry.issued (<a href="#url('entry')?url=$entry.url">show all details</a>)</li>
+     * </ul>
+     */
+    this.attachAsList = function(node) {
+        var ulEntryList = XmlCreateElement("ul");
+        ulEntryList.className = 'entry';
+
+        // <li class="entry-url">        
+        var liEntryUrl = XmlCreateElement("li");
+        liEntryUrl.className = 'entrylist-entry-url';
+        if ( this.pub == true )  liEntryUrl.appendChild(__pubImageNode.cloneNode(true));
+        else liEntryUrl.appendChild(__privateImageNode.cloneNode(true));
+          
+        liEntryUrl.appendChild(createLink(this.url, this.title, "_blank"));
+        ulEntryList.appendChild(liEntryUrl);
+        
+        // <li class="entry-content">        
+        var liEntryContent = XmlCreateElement("li");
+        liEntryContent.className = 'entry-content';
+        liEntryContent.appendChild( XmlCreateText(this.content) );
+        liEntryContent.appendChild( createLink("{v:apibasepath}/entry?output.mode=raw&url="+this.url, " (cached page)", "_blank") );
+        ulEntryList.appendChild(liEntryContent);
+
+        // <li class="entry-dates">        
+        var liEntryDates = XmlCreateElement("li");
+        liEntryDates.className = 'entry-dates';
+        liEntryDates.appendChild( XmlCreateText("MODIFIED: ") );
+        liEntryDates.appendChild( createLink("javascript:searchEntries('modified:"+this.searchableDate(this.modifiedDate)+"')", displayDate(this.modifiedDate)) );
+        liEntryDates.appendChild( XmlCreateText(" -- ISSUED: ") );
+        liEntryDates.appendChild( createLink("javascript:searchEntries('issued:"+this.searchableDate(this.issuedDate)+"')", displayDate(this.issuedDate)) );
+        liEntryDates.appendChild( XmlCreateText(" -- ADDED: ") );
+        liEntryDates.appendChild( createLink("javascript:searchEntries('added:"+this.searchableDate(this.addedDate)+"')", displayDate(this.addedDate)) );
+        liEntryDates.appendChild( XmlCreateText(" -- EDITED: ") );
+        liEntryDates.appendChild( createLink("javascript:searchEntries('edited:"+this.searchableDate(this.editedDate)+"')", displayDate(this.editedDate)) );
+        ulEntryList.appendChild(liEntryDates);
+        
+        // <li class="entry-dates">        
+        var liEntryTags = XmlCreateElement("li");
+
+        var table = XmlCreateElement('table');
+        //table.style.width = '100%';
+        table.className = 'entry-tags-table';
+        var row = XmlCreateElement('tr');
+        var cell1 = XmlCreateElement('td');
+        var cell2 = XmlCreateElement('td');
+        var cell3 = XmlCreateElement('td');
+        table.appendChild(row);
+        row.appendChild(cell1);
+        row.appendChild(cell2);
+        row.appendChild(cell3);
+        
+        cell1.appendChild( XmlCreateText(" tags: ") );
+        for (var i = 0; i < this.tags.length; i++) {
+            cell1.appendChild( createLink("javascript:searchEntries('tags:"+this.tags[i]+"')", this.tags[i]) );
+            
+            if ( i+1 < this.tags.length )
+                cell1.appendChild( XmlCreateText(" | ") );
+        }
+        
+        liEntryTags.className = 'entry-tags';
+        liEntryTags.appendChild(table);
+        ulEntryList.appendChild(liEntryTags);
+        
+        node.appendChild(ulEntryList);
+    }
     
+    /**
+     * 
+     */
     this.asDomDocument = function() {
         var xmlDoc = XmlCreateDocument();
 		
@@ -116,6 +191,24 @@ function Entry(url) {
         
         return xmlDoc;
     }
+
+    /**
+     * 
+     */
+    this.searchableDate = function(date) {
+        if ( date instanceof Date ) {
+            var day = new String(date.getDate());
+            day = day.length > 1 ? day : "0"+day;
+            
+            var month = new String(date.getMonth());
+            month = month.length > 1 ? month : "0" + month;
+            
+            return date.getFullYear()+month+day;
+            
+        } else {
+            return "";
+        }        
+    }    
     
 }
 
@@ -246,4 +339,10 @@ function formatAsW3cDate(date) {
     return date.getUTCFullYear() +"-"+ month +"-"+ day +"T"+ time;
 }
 
+var __pubImageNode = document.createElement('img');
+__pubImageNode.setAttribute('src', '{v:basepath}/img/public.png');
+__pubImageNode.className = "entry-image";
 
+var __privateImageNode = document.createElement('img');
+__privateImageNode.setAttribute('src', '{v:basepath}/img/private.png');
+__privateImageNode.className = "entry-image";

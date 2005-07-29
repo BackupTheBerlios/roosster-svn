@@ -122,26 +122,35 @@ public class ClasspathResourceHandler extends AbstractHttpHandler
             
             if ( input != null ) {
                 
-                BufferedReader reader = null;
-                try {
-                    reader = new BufferedReader( new StringReader( IOUtils.toString(input) ) );
-                    
-                    Template tmpl = new Template(reader);
-                    tmpl.set(TMPL_BASEPATH, httpd.getBasePath());
-                    tmpl.set(TMPL_APIBASEPATH, httpd.getApiBasePath());
-                    
-                    String str = tmpl.toString();
-                    CopyUtils.copy(str, response.getOutputStream());
-                    
-                    cache.put(loc, str);
-                    
+                if ( loc.endsWith("jpg") || loc.endsWith("png") || loc.endsWith("gif") ) {
+                  
+                    CopyUtils.copy(input, response.getOutputStream());
                     request.setHandled(true);
                     
-                } catch (TemplateCreationException ex) {
-                    throw new IOException("Can't create template! Message: "+ex.getMessage());
-                } finally {
-                    input.close();
-                    reader.close();
+                } else {
+              
+                    BufferedReader reader = null;
+                    try {
+                        reader = new BufferedReader( new StringReader( IOUtils.toString(input) ) );
+                        
+                        Template tmpl = new Template(reader);
+                        tmpl.set(TMPL_BASEPATH, httpd.getBasePath());
+                        tmpl.set(TMPL_APIBASEPATH, httpd.getApiBasePath());
+                        
+                        String str = tmpl.toString();
+                        CopyUtils.copy(str, response.getOutputStream());
+                        
+                        cache.put(loc, str);
+                        
+                        request.setHandled(true);
+                        
+                    } catch (TemplateCreationException ex) {
+                        throw new IOException("Can't create template! Message: "+ex.getMessage());
+                    } finally {
+                        input.close();
+                        reader.close();
+                    }
+                    
                 }
                 
             }
