@@ -57,7 +57,7 @@ public class Roosster implements Runnable
     private static final String PROP_FILE       = "/roosster.properties";
     private static final String RES_BUNDLE      = "roosster_resources";
     
-    public static final String DEF_PORT         = "8181";
+    public static final String DEF_PORT         = "9889";
     public static final String PROP_PORT        = "server.port";
 
 

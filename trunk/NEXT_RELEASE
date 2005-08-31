@@ -32,7 +32,12 @@ General
 * let actions run async
 * bulk editing
 * file system monitoring
-
+* implement LOG viewer
+* handle network errors better, and handle status codes 301, 302, 4xx and 5xx 
+* implement search history (for the current session only, for now)
+* give locale to QueryParser
+* implement custom analyzer
+* implement simple search.html page
 
 
 Scratchpad Feature:
