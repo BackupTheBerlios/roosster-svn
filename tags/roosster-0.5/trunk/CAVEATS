@@ -1,7 +1,0 @@
-
-Version 0.5
-============
-
-* when syncing only the tag list is synced (and restricted in the way that
-  it's impossible to determine if a tag was deleted, therefore, deleted tags
-  are restored at the next sync) 
