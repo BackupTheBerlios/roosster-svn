@@ -1,0 +1,48 @@
+<!--
+  
+-->
+<entrylist total="" offset="" limit="">
+  <entry href="http://example.com/?test" 
+         issued="...w3cdate..."
+         modified="...w3cdate..."
+         added="...w3cdate..." 
+         edited="...w3cdate..."
+         type=".."  
+         title="..."
+         public="true">
+    <author name="" email=""/>
+    <author name="" email=""/>
+    <tag>test</tag>
+    <tag>cat</tag>
+    <tag>dogs</tag>
+    <tag>home</tag>
+    <note>...</note>
+    <content>...</content>
+  </entry>
+</entrylist>
+
+
+<!-- 
+
+  Only set by server, if contained in client-generated streams, it's ignored: 
+    total = determines number of total items (e.g. of search result), if paging is used
+    limit = number of entries in current list
+    offset = offset of current result "portion" in number of total entries
+
+  href = act as primary key
+  type = MIME-type / will be determined by server, if not set
+  issued = date
+  modified = date
+  added = date
+  edited = date, read only
+  title = if not set, or server can't determine one URL is used
+  author = on entry can have multiple authors, though the app will currently only 
+           recognize one
+  note =  NO HTML
+  content = NO HTML
+  tag = multiple tags are recognized
+  
+  
+  * date elements must be empty or in the format of http://www.w3.org/TR/NOTE-datetime
+           
+-->

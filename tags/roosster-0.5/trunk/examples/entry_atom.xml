@@ -1,0 +1,24 @@
+<entry xmlns="http://example.com/newformat#" >
+  <title>My First Entry</title>
+  <summary>A very boring entry...</summary>
+
+  <author>
+    <name>Bob B. Bobbington</name>
+    <url>http://bob.name/</url>
+  </author>
+
+  <issued>2003-02-05T12:29:29</issued>
+  <created>2003-02-05T14:10:58Z</created>
+  <modified>2003-02-05T14:10:58Z</modified>
+
+  <link rel="alternate" type="text/html"
+    href="http://example.org/reilly/2003/02/05#My_First_Entry"/>
+
+  <id>urn:example.org:reilly:1</id>
+
+  <content type="application/xhtml+xml" xml:lang="en-us">
+    <p xmlns="http://example.com/ns/newformat">Hello, <em>weblog</em> world! 2 </p>
+
+  </content>
+
+</entry> 
