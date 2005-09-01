@@ -1,6 +1,7 @@
 
-Revision XX / 2005-XX-XX / Benjamin Reitzammer
+Revision 106 / 2005-09-01 / Benjamin Reitzammer
 
+* Released version 0.5
 * index is only optimized after a configurable number of Entries have been added
 * show toggleable textfield with indexed content on edit tab
 * del.icio.us sync bugfixing
