@@ -1,0 +1,36 @@
+<html>
+<head>
+  <title>roosster - personal search engine</title>
+  <style type="text/css"> @import url({v:basepath}/styles.css); </style>
+  <script type="text/javascript" src="{v:basepath}/core.js" ></script>
+  <script type="text/javascript" src="{v:basepath}/scripts_search.js" ></script>
+  <script type="text/javascript" src="{v:basepath}/RoossterApi.js" ></script>
+</head>
+<body onload="roosster_init();">
+
+<div id="header">
+  <h1>roosster - personal search engine</h1>
+  <h3>Search Entries</h3>
+</div>
+
+<div id="output-messages">
+</div>
+
+<div id="content">
+
+  <form name="searchform" method="get" onsubmit="searchEntries(getById('query').value); return false;">
+    <table>
+      <tr>
+        <td><label for="query">Search</label></td>
+        <td><input type="text" id="query" name="query" size="40" /></td>
+        <td><input type="submit" value="send" /></td>
+      </tr>
+    </table>
+  </form>
+  
+  <div id="entries-out"></div>
+  
+</div>
+
+</body>
+</html>
