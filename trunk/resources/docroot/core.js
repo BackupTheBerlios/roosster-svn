@@ -10,6 +10,7 @@
  
  
 var API_ENDPOINT    = "{v:apibasepath}";
+var BASEPATH        = "{v:basepath}";
 var OUTPUT_MESSAGES = 'output-messages';
 var ENTRIESOUT      = "entries-out";
 
