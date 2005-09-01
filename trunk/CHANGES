@@ -5,7 +5,7 @@ Revision XX / 2005-XX-XX / Benjamin Reitzammer
 * show toggleable textfield with indexed content on edit tab
 * del.icio.us sync bugfixing
 * made ClasspathResourceHandler correctly serve images
-* added simple search html page
+* added simple search html page, which will evaluate a given 'query' param if given
 
 Revision 100 / 2005-07-22 / Benjamin Reitzammer
 

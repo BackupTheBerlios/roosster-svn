@@ -4,8 +4,6 @@
     <panel gap="4" top="4" bottom="4" weightx="1">
         <menubar weightx="1">
             <menu text="i18n.File" mnemonic="0">
-                <menuitem text="i18n.Open" accelerator="Ctrl O" mnemonic="0"/>
-                <separator/>
                 <menuitem text="i18n.Exit" accelerator="Ctrl Q" action="exitRoosster()" />
             </menu>
             <menu text="i18n.Sync">

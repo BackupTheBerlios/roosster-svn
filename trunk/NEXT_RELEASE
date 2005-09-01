@@ -37,7 +37,6 @@ General
 * implement search history (for the current session only, for now)
 * give locale to QueryParser
 * implement custom analyzer
-* implement simple search.html page
 
 
 Scratchpad Feature:
