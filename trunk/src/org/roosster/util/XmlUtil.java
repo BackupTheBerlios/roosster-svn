@@ -34,7 +34,6 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.log4j.Logger;
-import org.roosster.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -46,7 +45,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class XmlUtil implements Constants
+public class XmlUtil 
 {
     private static Logger LOG = Logger.getLogger(XmlUtil.class.getName());
 

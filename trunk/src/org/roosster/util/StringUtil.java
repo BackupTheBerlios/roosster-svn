@@ -43,49 +43,7 @@ public class StringUtil
 {
     private static Logger LOG = Logger.getLogger(StringUtil.class);
     
-    public static final String[] END_HTML = {"html", "htm", "shtml", "cgi", "php", "pl", "jsp"};
-    public static final String[] END_XML  = {"xml", "rss", "rdf", "rss2", "atom"};
-    
-    public static final String MIME_TYPE_TEXT  = "text/plain";
-    public static final String MIME_TYPE_HTML  = "text/html";
-    public static final String MIME_TYPE_XML   = "text/xml";
-    public static final String MIME_TYPE_PDF   = "application/pdf";    
-    public static final String MIME_TYPE_PS    = "application/postscript";    
-    
-    
-    /**
-     * @return null if no corresponding MIME-type could be found for the specified
-     * string
-     */
-    public static final String getFileType(URL url) 
-    {
-        String returnStr = null;
-        
-        if ( url != null ) {
-          
-            String urlStr = url.toString();
-            int dotIndex = urlStr.lastIndexOf(".");
-            
-            if ( dotIndex != -1 ) { 
-                String fileEnd = urlStr.substring(dotIndex+1);
-          
-                if ( "pdf".equals(fileEnd) )
-                    returnStr = MIME_TYPE_PDF;
-                else if ( "ps".equals(fileEnd) )
-                    returnStr = MIME_TYPE_PS;
-                else if ( "txt".equals(fileEnd) )
-                    returnStr = MIME_TYPE_TEXT;
-                else if ( Arrays.binarySearch(END_HTML, fileEnd) >= 0 )
-                    returnStr = MIME_TYPE_HTML;
-                else if ( Arrays.binarySearch(END_XML, fileEnd) >= 0 )
-                    returnStr = MIME_TYPE_XML;
-            }
-        }
-        
-        return returnStr;      
-    }
-    
-    
+ 
     /**
      * 
      */
@@ -156,7 +114,7 @@ public class StringUtil
         else if ( strings.length < 1 || joinStr == null )
             return "";
         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for(int i = 0; i < strings.length; i++) {
             if ( strings[i] != null ) {
                 sb.append(strings[i].trim());
@@ -179,7 +137,7 @@ public class StringUtil
         else if ( arr.length < 1 || joinStr == null )
             return "";
         
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for(int i = 0; i < arr.length; i++) {
             if ( arr[i] != null ) {
                 sb.append(arr[i].toString());
@@ -200,7 +158,7 @@ public class StringUtil
         if (needed <= 0) 
             return s;
         
-        StringBuffer sb = new StringBuffer(length);
+        StringBuilder sb = new StringBuilder(length);
         sb.append(s);
         for (int i = 0; i < needed; i++) {
             sb.append(c);

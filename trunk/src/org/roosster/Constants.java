@@ -24,41 +24,41 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.roosster.util;
+package org.roosster;
 
-import java.util.Map;
-import java.util.Properties;
-import org.apache.log4j.PropertyConfigurator;
 
 /**
- * 
+ *
  * @author <a href="mailto:benjamin@roosster.org">Benjamin Reitzammer</a>
  */
-public class LogUtil 
+public interface Constants
 {
-    public static final String DEBUG_LOGGING_PROPS   = "/debug_log4j.properties";
-    public static final String VERBOSE_LOGGING_PROPS = "/verbose_log4j.properties";
-    public static final String DEFAULT_LOGGING_PROPS = "/default_log4j.properties";
-    
-    public static final String DEBUG_LOGGING   = "d";
-    public static final String VERBOSE_LOGGING = "v";
-    
+    /**
+     */
+    public static final String APP_URI      = "http://www.roosster.org";
     
     /**
-     * 
      */
-    public static void configureLogging(Map cmdLine) throws java.io.IOException
-    {
-        String propFile = DEFAULT_LOGGING_PROPS;
-      
-        if ( cmdLine.containsKey(DEBUG_LOGGING) )
-            propFile = DEBUG_LOGGING_PROPS;
-        else if ( cmdLine.containsKey(VERBOSE_LOGGING) )
-            propFile = VERBOSE_LOGGING_PROPS;
-      
-        Properties props = new Properties();
-        props.load( LogUtil.class.getResourceAsStream(propFile) );
-        PropertyConfigurator.configure(props);
-    }
+    public static final String APP_NAME     = "roosster search";
+
+    /**
+     */
+    public static final String APP_VERSION  = "roosster.app.version";
+
+    /**
+     */
+    public static final String ENTRY_DATE_FORMAT_SHORT = "yyyyMMdd";
+
+    /**
+     */
+    public static final String ENTRY_DATE_FORMAT_LONG  = "yyyyMMddHHmmZ";
+        
+    /** TODO make this configurable
+     */
+    public static final String DISPLAY_DATE_FORMAT  = "dd/MM/yyyy HH:mm";
+    
+    /**
+     */
+    public static final String W3C_DATEFORMAT   = "yyyy-MM-dd'T'HH:mm:ssZ";
     
 }

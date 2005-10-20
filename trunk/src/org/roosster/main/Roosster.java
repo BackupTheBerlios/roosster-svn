@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 import org.roosster.util.LogUtil;
+import org.roosster.network.HttpProxy;
+
 
 /**
  *
@@ -39,7 +41,10 @@ public class Roosster implements Runnable
 {
   
     private Map              cmdLine  = null;
+    private HttpProxy        proxy    = null;
     
+    public  static final int    DEFAULT_PORT     = 9889;
+    public  static final String PROP_PORT        = "server.port";    
     
     /**
      * 
@@ -82,6 +87,11 @@ public class Roosster implements Runnable
             Locale.setDefault( new Locale((String) cmdLine.get(Constants.PROP_LOCALE)) );
         */
         
+        String portStr = (String) cmdLine.get(PROP_PORT);
+        int port = portStr == null ? DEFAULT_PORT : Integer.valueOf(portStr).intValue();
+
+        proxy = new HttpProxy(port);
+        
         // to allow easy call chaining
         return this;
     }
@@ -91,6 +101,7 @@ public class Roosster implements Runnable
      */
     public void start() throws Exception
     {
+        proxy.start();
     }
   
 
@@ -98,6 +109,7 @@ public class Roosster implements Runnable
      */
     public void stop() throws Exception
     {
+        proxy.closeSocket();
     }
   
 

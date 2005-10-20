@@ -160,13 +160,19 @@
     <target name="run" depends="compile" description="Runs the roosster application">
         <java classname="${main.class}" fork="true">
             <classpath refid="run.classpath" />
-            <arg line="${debug.log.arg}"/>
+            <arg line="${log.arg}"/>
         </java>
     </target>
     
     
     <target name="run-with-debug" depends="compile" description="Runs the roosster application">
-        <property name="debug.log.arg" value="-d" />
+        <property name="log.arg" value="-d" />
+        <antcall target="run" inheritAll="true" inheritRefs="true" />
+    </target>    
+    
+    
+    <target name="run-with-info" depends="compile" description="Runs the roosster application">
+        <property name="log.arg" value="-v" />
         <antcall target="run" inheritAll="true" inheritRefs="true" />
     </target>
     
