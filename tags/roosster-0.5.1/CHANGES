@@ -1,0 +1,62 @@
+
+Revision 106 / 2005-09-01 / Benjamin Reitzammer
+
+* Released version 0.5
+* index is only optimized after a configurable number of Entries have been added
+* show toggleable textfield with indexed content on edit tab
+* del.icio.us sync bugfixing
+* made ClasspathResourceHandler correctly serve images
+* added simple search html page, which will evaluate a given 'query' param if given
+
+Revision 100 / 2005-07-22 / Benjamin Reitzammer
+
+* cleaned up behaviour, when entries get added via a feed, and one of many entries
+  of this feed is duplicate (currently throws Exception, when encountering
+  duplicate, and dumping remaining entries), do it in EntryStore
+* refactored DuplicateEntryException to DuplicateEntriesException, accepts
+  now an array of URLs
+* implemented shutdown hook
+* fixed del.icio.us sync which didn't properly store it's last sync time, and
+  produced wrong sync behaviour because of this.
+* small GUI changes
+  
+Revision 99 / 2005-07-21 / Benjamin Reitzammer
+
+* started fresh with version 0.5, thrown out obsolete junk,
+  will only develop one version of roosster, which will be a GUI
+  version (based on http://thinlet.sf.net) that's got a web
+  server running in the background, that offers an API (for 
+  bookmarklet and scripting support)
+* implemented autocomplete for tags
+* internationalized thinlet GUI
+* implemented pager
+* implemented clickable links (needs 'mozilla' executable in PATH on unix/linux)o
+* embedded jetty server
+* implemented roosster API, is available at /roosster/api on localhost at 
+  specified port
+* implemented first draft of del.icio.us sync
+* add button for viewing cached copy
+* show (and make editable) public/private in edit screen
+* shows dates in edit screen
+* added delete button
+* removed obsolete/unused classes
+* moved code from MapperUtil to Roosster
+* added generate-apidoc target to build.xml
+* add nogui option to CLI to run webserver only
+* added public/private to table
+* use icons for public/private
+* added small 'about'-dialog
+* SearchCommand returns now all Entries (paged) when given an empty query string
+* added inurl field to Entry.class
+* implemented access to Tags via HTTP API 
+* decode HTML entities in GUI
+* move message area to bottom and style it like standard status bars 
+  distinguish between warning, info and standard via color
+* search results can be sorted
+* ApiHttpHandler now returns <RoossterException> formatted errors
+* added simple HTML and JS to docroot, for user friendly Bookmarklet support
+* implemented Bookmarklets
+* auto-complete for tags in HTML interface
+
+
+

@@ -1,0 +1,14 @@
+README
+======
+
+Rosster is very simple.
+Give it a URL, and rosster fetches the URL's content, wether it's a HTTP URL or
+any other URL, stores and indexes it. Then you can retrieve entries by URL
+or you can search all entries, you ever addded to roosster's index.
+
+That's about it.
+
+For the latest version and news about roosster go to http://roosster.org
+
+
+
