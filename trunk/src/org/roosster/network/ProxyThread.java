@@ -394,3 +394,17 @@ class ProxyThread extends Thread
 	
 }
 
+
+
+/*
+
+// TODO use content-type to determine charset.
+ByteArrayInputStream res = new ByteArrayInputStream(response);
+
+System.out.println("\n\n HEADER ");
+String line = readLine(res);
+while ( !"".equals(line) ) { 
+    System.out.println("-----> "+line);
+    line = readLine(res);
+}
+*/
